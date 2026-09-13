@@ -4,4 +4,5 @@
 
 #javac -d bin src/*.java
 
+#và:
 #java -cp bin Frame  
