@@ -23,7 +23,7 @@ public class Mob extends Rectangle{
     
 	public void spawnMob(int mobID) { // 0,0 da başlıyacağını belirliyor
 		 //determines that the mob will start at coordinate 0 a 0
-		for(int y= 0; y<Screen.room.block.length; y++ ) {
+		for(int y= 0; y<Screen.room.block.length; y++ ) { // loop through the left edge to check if there's a ground tile to spawn mob
 			if(Screen.room.block[y][0].groundID == Value.groundRoad) {
 				setBounds(Screen.room.block[y][0].x, Screen.room.block[y][0].y, mobSize, mobSize);
 				xC = 0;
@@ -152,7 +152,9 @@ public class Mob extends Rectangle{
 	   
 	   
 	public void draw(Graphics g) {
-		g.drawImage(Screen.tileset_mob[mobID], x, y, width, height, null);
+		if (!inGame) return;
+        // Draws the current animation frame scaled to the tile/mob size
+        g.drawImage(Screen.mobOrcWalk[Screen.orcAnimFrame], x, y, width, height, null);
 
 		int barY = y - (healthSpace + healthHeight);
 		double healthPercent = (double) health / maxHealth;

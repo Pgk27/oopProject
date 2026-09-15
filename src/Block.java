@@ -27,7 +27,7 @@ public class Block extends Rectangle{
 		setBounds(x,y,width, height);
 		towerSquare = new Rectangle(x-(towerSquareSize/2), y-(towerSquareSize/2), width+(towerSquareSize), height+(towerSquareSize));
 		towerSquare2 = new Rectangle(x-(towerSquareSize2/2), y-(towerSquareSize2/2), width+(towerSquareSize2), height+(towerSquareSize2));//2. kule
-		towerSquare3= new Rectangle(x-(towerSquareSize3/2), y-(towerSquareSize3/2), width+(towerSquareSize3), height+(towerSquareSize3));//2. kule 
+		towerSquare3 = new Rectangle(x-(towerSquareSize3/2), y-(towerSquareSize3/2), width+(towerSquareSize3), height+(towerSquareSize3));//2. kule 
 		this.groundID = groundID;
 		this.airID = airID;
 	} 

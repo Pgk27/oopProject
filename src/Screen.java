@@ -13,12 +13,17 @@ public class Screen extends JPanel implements Runnable {
 	public static Image[] tileset_mobb = new Image[100];        
 	public static Image[] tileset_mobbb = new Image[100];      
 	
+	// initilizers for animations
+	public static Image[] mobOrcWalk = new Image[8]; // 8 walking frames
+	public static int orcAnimFrame = 0;
+	public static int orcAnimTime = 80; // Animation frame delay
+	public static int orcAnimTick = 0;
 	
 	
 	public static int myWidth, myHeight;
-	public static int coinage = 10, health=100; //başlangıç parası, canı
+	public static int coinage = 10, health = 100; //başlangıç parası, canı
 	public static int killed = 0 , killsToWin = 0, level = 1, maxlevel = 3;
-	public static int winTime =2000,winFrame =0;
+	public static int winTime = 2000, winFrame = 0;
 	public static boolean isFirst = true;
 	public static boolean isDebug = false; // çerçeve modu
 	public static boolean isWin = false;
@@ -56,10 +61,6 @@ public class Screen extends JPanel implements Runnable {
 		}
 	}
 	
-	
-	
-	
-	
 	public void define() {
 		room = new Room();
 		save = new Save();
@@ -69,11 +70,11 @@ public class Screen extends JPanel implements Runnable {
 		health = 10; // starting health
 		
 		
-		for(int i=0; i < tileset_ground.length; i++) {
+		for(int i = 0; i < tileset_ground.length; i++) {
 			tileset_ground[i] = new ImageIcon("res/tileset_ground.png").getImage();
 			tileset_ground[i] = createImage(new FilteredImageSource(tileset_ground[i].getSource(), new CropImageFilter(0, 26*i, 26, 26)));
 		}
-		for(int i=0; i < tileset_air.length; i++) {
+		for(int i = 0; i < tileset_air.length; i++) {
 			tileset_air[i] = new ImageIcon("res/tileset_air.png").getImage();
 			tileset_air[i] = createImage(new FilteredImageSource(tileset_air[i].getSource(), new CropImageFilter(0, 26*i, 26, 26)));
 		}
@@ -82,7 +83,14 @@ public class Screen extends JPanel implements Runnable {
 		tileset_res[1] = new ImageIcon("res/heart.png").getImage();
 		tileset_res[2] = new ImageIcon("res/coin.png").getImage();
 		
-		tileset_mob[0] = new ImageIcon("res/mob1.png").getImage();
+		for (int i = 0; i < mobOrcWalk.length; i++){
+			mobOrcWalk[i] = loadAndCropSingleFrame("characterSprites/orcWalk00" + i + ".png");
+		}
+
+		tileset_mob[0] = mobOrcWalk[0];
+		if (Value.mobMonster < tileset_mob.length) {
+			tileset_mob[Value.mobMonster] = mobOrcWalk[0];
+		}
 		tileset_mobb[0] = new ImageIcon("res/mob2.png").getImage(); 
 		tileset_mobbb[0] = new ImageIcon("res/mob3.png").getImage();  
 		
@@ -228,7 +236,16 @@ public class Screen extends JPanel implements Runnable {
 				}else { //level 3
 					mobSpawner3();
 				}
-				
+				// Advance animation cycle
+				orcAnimTick++;
+				if (orcAnimTick >= orcAnimTime) {
+					orcAnimFrame++;
+					if (orcAnimFrame >= mobOrcWalk.length){
+						orcAnimFrame = 0;
+					}
+					orcAnimTick = 0;
+            	}
+
 				for(int i = 0; i < mobs.length; i++) { // mobun hareketi
 					if(mobs[i].inGame) {
 						mobs[i].physic();
@@ -271,45 +288,68 @@ public class Screen extends JPanel implements Runnable {
 			} catch(Exception e)  {}
 		}
 	}
+
+	// crop frame by frame
+	public static Image loadAndCropSingleFrame(String path) {
+		try {
+			BufferedImage raw = javax.imageio.ImageIO.read(new File(path));
+			if (raw == null) return null;
+
+			int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
+			int maxX = 0, maxY = 0;
+			boolean hasVisiblePixel = false;
+
+			// 1. Quét tìm viền bounding box của các pixel thực sự có hình
+			for (int y = 0; y < raw.getHeight(); y++) {
+				for (int x = 0; x < raw.getWidth(); x++) {
+					int rgb = raw.getRGB(x, y);
+					Color c = new Color(rgb, true);
+
+					// Loại trừ pixel trong suốt (alpha thấp) HOẶC màu nền trắng/xám sáng
+					boolean isTransparent = (c.getAlpha() < 20);
+					boolean isWhiteBg = (c.getRed() > 230 && c.getGreen() > 230 && c.getBlue() > 230);
+
+					if (!isTransparent && !isWhiteBg) {
+						hasVisiblePixel = true;
+						if (x < minX) minX = x;
+						if (x > maxX) maxX = x;
+						if (y < minY) minY = y;
+						if (y > maxY) maxY = y;
+					}
+				}
+			}
+
+			// Nếu ảnh trống, trả về nguyên bản
+			if (!hasVisiblePixel) return raw;
+
+			// Thêm 2 pixel đệm ở rìa để không cấn mép vũ khí/bóng
+			minX = Math.max(0, minX - 2);
+			minY = Math.max(0, minY - 2);
+			maxX = Math.min(raw.getWidth() - 1, maxX + 2);
+			maxY = Math.min(raw.getHeight() - 1, maxY + 2);
+
+			int width = maxX - minX + 1;
+			int height = maxY - minY + 1;
+
+			// 2. Cắt ảnh con và lọc trong suốt các pixel nền thừa
+			BufferedImage cropped = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					int rgb = raw.getRGB(minX + x, minY + y);
+					Color c = new Color(rgb, true);
+
+					if (c.getAlpha() >= 20 && !(c.getRed() > 230 && c.getGreen() > 230 && c.getBlue() > 230)) {
+						cropped.setRGB(x, y, rgb);
+					} else {
+						cropped.setRGB(x, y, 0x00000000); // Đặt thành trong suốt
+					}
+				}
+			}
+
+			return cropped;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
-			
-			
-			
-		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
