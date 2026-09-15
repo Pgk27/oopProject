@@ -59,7 +59,8 @@ public class Frame extends JFrame{
 				break;
 				default: System.out.println("Not a valid response");
 			}
-		 }
+		}
+		scanner.close();
 		System.out.println("Byeeee!");	
 	}
 }

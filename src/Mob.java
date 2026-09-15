@@ -2,26 +2,26 @@ import java.awt.*;
 
 public class Mob extends Rectangle{
 
-	public int xC, yC; //  x,y kordinatları for mob
-	public int health;
-	public int maxHealth;
-	public int healthSpace = 5, healthHeight = 10;
-	public int mobSize = 52;
-	public int mobWalk = 0;
-	public int upward = 0, downward = 1, right = 2, left = 3;
-	public int direction = right;
-	public int mobID = Value.mobAir;
-	public boolean inGame = false;
-	public boolean hasUpward = false;
-	public boolean hasDownward =  false;
-	public boolean hasLeft =  false;
-	public boolean hasRight =  false;
+	int xC, yC; //  x,y kordinatları for mob
+	protected int health;
+	protected int maxHealth;
+	protected int healthSpace = 3, healthHeight = 6;
+	protected int mobSize = 52;
+	protected int upward = 0, downward = 1, right = 2, left = 3;
+	int mobWalk = 0;
+	int direction = right;
+	int mobID = Value.mobAir;
+	boolean inGame = false;
+	boolean hasUpward = false;
+	boolean hasDownward =  false;
+	boolean hasLeft =  false;
+	boolean hasRight =  false;
 	
-	public Mob() {
-
+	Mob() {
+		
 	}
     
-	public void spawnMob(int mobID) { // 0,0 da başlıyacağını belirliyor
+	void spawnMob(int mobID) { // 0,0 da başlıyacağını belirliyor
 		 //determines that the mob will start at coordinate 0 a 0
 		for(int y= 0; y<Screen.room.block.length; y++ ) { // loop through the left edge to check if there's a ground tile to spawn mob
 			if(Screen.room.block[y][0].groundID == Value.groundRoad) {
@@ -39,20 +39,26 @@ public class Mob extends Rectangle{
 		
 	}
 	   
-	public void deleteMob() {
+	void deleteMob() {
 		inGame = false;
 		direction = right;
 		mobWalk = 0;
-		Screen.room.block[0][0].getMoney(mobID); // mobun öldükten sonra para vermsini sağlıyor
+	}
+
+	void mobDead(){
+		inGame = false;
+		direction = right;
+		mobWalk = 0;
+		Screen.room.block[0][0].getMoney(mobID);
 	}
 	
-	public void looseHealth() {
+	void playerLoseHealth() {
 		Screen.health -= 1;   
 	}
 	// mob geçince kaç canın gider
 	   
-	public int walkFrame = 0, walkSpeed = 20;  // mobun hızı
-	public void physic() {
+	int walkFrame = 0, walkSpeed = 20;  // mobun hızı
+	void physic() {
 		if(walkFrame >= walkSpeed) {
 			if(direction == right) 
 				x+=1;
@@ -114,9 +120,9 @@ public class Mob extends Rectangle{
 					catch(Exception e) {}
 				}
 				
-				if(Screen.room.block[yC][xC].airID == Value.airblackHole) {// eğer black hole ile mobun kordinatları aynı ise mobu siler ve canını götürür
+				if(Screen.room.block[yC][xC].airID == Value.airblackHole) {// mob disappears when walking to the end point
 					deleteMob();
-					looseHealth();
+					playerLoseHealth();
 				}
 
 				hasUpward= false;
@@ -132,29 +138,39 @@ public class Mob extends Rectangle{
 		}
 	}
 	   
-	public void loseHealth(int amo) {
+	void loseHealth(int amo) {
 		health -= amo;
 		checkDeath();
 	}
 	   
-	public void checkDeath() {
+	void checkDeath() {
 		if(health <= 0)
-			deleteMob();
+			mobDead();
 	}
 	   
 	   
-	public boolean isDead() {
+	boolean isDead() {
 		if(inGame)
 			return false;
 		else
 			return true;
 	}
 	   
+	Image getSprite(){
+		if (Screen.mobOrcWalk != null && Screen.mobOrcWalk.length > 0){
+			return Screen.mobOrcWalk[Screen.AnimFrame];
+		}
+		return Screen.tileset_mob[mobID];
+	}
 	   
-	public void draw(Graphics g) {
+	void draw(Graphics g) {
 		if (!inGame) return;
         // Draws the current animation frame scaled to the tile/mob size
-        g.drawImage(Screen.mobOrcWalk[Screen.orcAnimFrame], x, y, width, height, null);
+
+		Image Sprite = getSprite();
+		if (Sprite != null)
+        	g.drawImage(Sprite, x, y, width, height, null);
+
 
 		int barY = y - (healthSpace + healthHeight);
 		double healthPercent = (double) health / maxHealth;
@@ -182,12 +198,3 @@ public class Mob extends Rectangle{
 		g.drawRect(x, barY, width - 1, healthHeight - 1);
 	}
 }
-
-
-
-
-
-
-
-
-

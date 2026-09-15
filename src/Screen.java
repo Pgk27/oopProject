@@ -15,9 +15,10 @@ public class Screen extends JPanel implements Runnable {
 	
 	// initilizers for animations
 	public static Image[] mobOrcWalk = new Image[8]; // 8 walking frames
-	public static int orcAnimFrame = 0;
-	public static int orcAnimTime = 80; // Animation frame delay
-	public static int orcAnimTick = 0;
+	public static Image[] mobDemonWalk = new Image[8];
+	public static int AnimFrame = 0;
+	public static int AnimTime = 80; // ANIMATION FRAME DELAY
+	public static int AnimTick = 0;
 	
 	
 	public static int myWidth, myHeight;
@@ -35,15 +36,10 @@ public class Screen extends JPanel implements Runnable {
 	public static Save save;
 	public static Store store;
 	
-	
-	
-	
+
 	public static Mob[] mobs = new Mob[100]; // gelen mob sayısı
-	 
-	public static Mob2[] mobss = new Mob2[100];           
-	public static Mob3[] mobsss = new Mob3[100];             
-	
-	
+	public static Mob2[] mobss = new Mob2[100];
+	public static Mob3[] mobsss = new Mob3[100];
 	
 	public Screen(Frame frame) {
 		frame.addMouseListener(new KeyHandel());
@@ -52,9 +48,8 @@ public class Screen extends JPanel implements Runnable {
 		thread.start();
 	}
 	
-	
 	public static void hasWon() {
-		if(killed == killsToWin) {
+		if(killed >= killsToWin) {
 			isWin = true;
 			killed = 0;		
 			coinage = 0; 
@@ -86,27 +81,30 @@ public class Screen extends JPanel implements Runnable {
 		for (int i = 0; i < mobOrcWalk.length; i++){
 			mobOrcWalk[i] = loadAndCropSingleFrame("characterSprites/orcWalk00" + i + ".png");
 		}
+		for (int i = 0; i < mobDemonWalk.length; i++){
+			mobDemonWalk[i] = loadAndCropSingleFrame("characterSprites/Demon/tile00" + i + ".png");
+		}
 
 		tileset_mob[0] = mobOrcWalk[0];
 		if (Value.mobMonster < tileset_mob.length) {
 			tileset_mob[Value.mobMonster] = mobOrcWalk[0];
 		}
-		tileset_mobb[0] = new ImageIcon("res/mob2.png").getImage(); 
+		tileset_mobb[0] = mobDemonWalk[0];
 		tileset_mobbb[0] = new ImageIcon("res/mob3.png").getImage();  
 		
 		
 		save.loadSave(new File("save/map" + level )); //map ı yüklüyor
 		
 		
-		for( int i = 0 ;i <mobs.length;i++) { // mob class ındaki özellikleri moblara atıyor
+		for( int i = 0 ; i <mobs.length;i++) { // mob class ındaki özellikleri moblara atıyor
 			mobs[i] = new Mob(); 
 		}
 		
-		for( int i = 0 ;i <mobss.length;i++) { 
+		for( int i = 0 ; i < mobss.length;i++) { 
 			mobss[i] = new Mob2();
 		}
 		
-		for( int i = 0 ;i <mobsss.length;i++) { 
+		for( int i = 0 ; i < mobsss.length;i++) { 
 			mobsss[i] = new Mob3();
 		}
 	}
@@ -190,7 +188,7 @@ public class Screen extends JPanel implements Runnable {
 	public int spawnTime2 = 1400, spawnFrame2 = 0;   
 	public void mobSpawner2() {
 		if(spawnFrame2 >= spawnTime2) {
-			for(int i = 0; i<mobss.length;i++) {
+			for(int i = 0; i < mobss.length;i++) {
 				if(!mobss[i].inGame) {
 					mobss[i].spawnMob(Value.mobMonster);
 					break;
@@ -229,7 +227,7 @@ public class Screen extends JPanel implements Runnable {
 					mobSpawner();
 				}
 				else if(level == 2){ // mobu o levelda spawnlıyor
-					mobSpawner();
+					mobSpawner3();
 				}
 				else if(level == 3){ //  mobu o levelda spawnlıyor
 					mobSpawner2();
@@ -237,13 +235,13 @@ public class Screen extends JPanel implements Runnable {
 					mobSpawner3();
 				}
 				// Advance animation cycle
-				orcAnimTick++;
-				if (orcAnimTick >= orcAnimTime) {
-					orcAnimFrame++;
-					if (orcAnimFrame >= mobOrcWalk.length){
-						orcAnimFrame = 0;
+				AnimTick++;
+				if (AnimTick >= AnimTime) {
+					AnimFrame++;
+					if (AnimFrame >= mobOrcWalk.length){
+						AnimFrame = 0;
 					}
-					orcAnimTick = 0;
+					AnimTick = 0;
             	}
 
 				for(int i = 0; i < mobs.length; i++) { // mobun hareketi
