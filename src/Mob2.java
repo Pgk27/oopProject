@@ -3,6 +3,7 @@ public class Mob2 extends Mob {
 	Mob2() {
 		super();
 		this.walkSpeed = 5;
+		this.spawnTime = 1200;
 	}
 
 	@Override

@@ -8,17 +8,21 @@ public class Mob extends Rectangle{
 	protected int healthSpace = 3, healthHeight = 6;
 	protected int mobSize = 52;
 	protected int upward = 0, downward = 1, right = 2, left = 3;
+	protected int walkFrame = 0;
+	int walkSpeed;
+	int spawnTime;
 	int mobWalk = 0;
 	int direction = right;
 	int mobID = Value.mobAir;
 	boolean inGame = false;
 	boolean hasUpward = false;
-	boolean hasDownward =  false;
-	boolean hasLeft =  false;
-	boolean hasRight =  false;
+	boolean hasDownward = false;
+	boolean hasLeft = false;
+	boolean hasRight = false;
 	
 	Mob() {
-		
+		this.walkSpeed = 20; // lower is faster
+		this.spawnTime = 1600;
 	}
     
 	void spawnMob(int mobID) { // 0,0 da başlıyacağını belirliyor
@@ -55,9 +59,7 @@ public class Mob extends Rectangle{
 	void playerLoseHealth() {
 		Screen.health -= 1;   
 	}
-	// mob geçince kaç canın gider
-	   
-	int walkFrame = 0, walkSpeed = 20;  // mobun hızı
+
 	void physic() {
 		if(walkFrame >= walkSpeed) {
 			if(direction == right) 
@@ -196,5 +198,9 @@ public class Mob extends Rectangle{
 		// 3. Static border around the entire bar
 		g.setColor(Color.BLACK);
 		g.drawRect(x, barY, width - 1, healthHeight - 1);
+	}
+
+	int getSpawnTime(){
+		return spawnTime;
 	}
 }

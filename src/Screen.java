@@ -4,51 +4,54 @@ import java.io.*;
 import java.awt.image.*;
 
 public class Screen extends JPanel implements Runnable {
-	public Thread thread = new Thread(this);
+	Thread thread = new Thread(this);
 	
-	public static Image[] tileset_ground = new Image[100];
-	public static Image[] tileset_air = new Image[100];
-	public static Image[] tileset_res = new Image[100];
-	public static Image[] tileset_mob = new Image[100];
-	public static Image[] tileset_mobb = new Image[100];        
-	public static Image[] tileset_mobbb = new Image[100];      
+	static Image[] tileset_ground = new Image[100];
+	static Image[] tileset_air = new Image[100];
+	static Image[] tileset_res = new Image[100];
+	static Image[] tileset_mob = new Image[100];
+	static Image[] tileset_mobb = new Image[100];        
+	static Image[] tileset_mobbb = new Image[100];      
 	
 	// initilizers for animations
-	public static Image[] mobOrcWalk = new Image[8]; // 8 walking frames
-	public static Image[] mobDemonWalk = new Image[8];
-	public static int AnimFrame = 0;
-	public static int AnimTime = 80; // ANIMATION FRAME DELAY
-	public static int AnimTick = 0;
+	static Image[] mobOrcWalk = new Image[8]; // 8 walking frames
+	static Image[] mobDemonWalk = new Image[8];
+	static Image[] mobCatRun = new Image[10]; // cat has 10 running frames
+
+	static int AnimFrame = 0;
+	static int AnimTime = 50; // ANIMATION FRAME DELAY
+	static int AnimTick = 0;
+	static int spawnFrame = 0;
 	
 	
-	public static int myWidth, myHeight;
-	public static int coinage = 10, health = 100; //başlangıç parası, canı
-	public static int killed = 0 , killsToWin = 0, level = 1, maxlevel = 3;
-	public static int winTime = 2000, winFrame = 0;
-	public static boolean isFirst = true;
-	public static boolean isDebug = false; // çerçeve modu
-	public static boolean isWin = false;
+	static int myWidth, myHeight;
+	static int coinage = 10, health = 100; //başlangıç parası, canı
+	static int killed = 0 , killsToWin = 0, level = 1, maxlevel = 3;
+	static int winTime = 2000, winFrame = 0;
+	static boolean isFirst = true;
+	static boolean isDebug = false; // çerçeve modu
+	static boolean isWin = false;
 	
 	
-	public static Point mse = new Point();//imlecin ekrandaki yerini belirlememize yarayacak
+	static Point mse = new Point();//imlecin ekrandaki yerini belirlememize yarayacak
 	
-	public static Room room;
-	public static Save save;
-	public static Store store;
+	static Room room;
+	static Save save;
+	static Store store;
 	
 
-	public static Mob[] mobs = new Mob[100]; // gelen mob sayısı
-	public static Mob2[] mobss = new Mob2[100];
-	public static Mob3[] mobsss = new Mob3[100];
+	static Mob[] mobs = new Mob[100]; // gelen mob sayısı
+	static Mob2[] mobss = new Mob2[100];
+	static Mob3[] mobsss = new Mob3[100];
 	
-	public Screen(Frame frame) {
+	Screen(Frame frame) {
 		frame.addMouseListener(new KeyHandel());
 		frame.addMouseMotionListener(new KeyHandel());
 		
 		thread.start();
 	}
 	
-	public static void hasWon() {
+	static void hasWon() {
 		if(killed >= killsToWin) {
 			isWin = true;
 			killed = 0;		
@@ -56,7 +59,7 @@ public class Screen extends JPanel implements Runnable {
 		}
 	}
 	
-	public void define() {
+	void define() {
 		room = new Room();
 		save = new Save();
 		store = new Store();
@@ -84,13 +87,13 @@ public class Screen extends JPanel implements Runnable {
 		for (int i = 0; i < mobDemonWalk.length; i++){
 			mobDemonWalk[i] = loadAndCropSingleFrame("characterSprites/Demon/tile00" + i + ".png");
 		}
+		for (int i = 0; i < mobCatRun.length; i++){
+			mobCatRun[i] = loadAndCropSingleFrame("characterSprites/Cat/tile00" + i + ".png");
+		}
 
 		tileset_mob[0] = mobOrcWalk[0];
-		if (Value.mobMonster < tileset_mob.length) {
-			tileset_mob[Value.mobMonster] = mobOrcWalk[0];
-		}
 		tileset_mobb[0] = mobDemonWalk[0];
-		tileset_mobbb[0] = new ImageIcon("res/mob3.png").getImage();  
+		tileset_mobbb[0] = mobCatRun[0];
 		
 		
 		save.loadSave(new File("save/map" + level )); //map ı yüklüyor
@@ -169,12 +172,12 @@ public class Screen extends JPanel implements Runnable {
 	}
 	 
 	
-	public int spawnTime = 1600, spawnFrame = 0;   // oluşma aralıkları
-	public void mobSpawner() {
+	int spawnTime = 1600;   // oluşma aralıkları
+	void mobSpawner() {
 		if(spawnFrame >= spawnTime) {
 			for(int i = 0; i < mobs.length; i++) {
 				if(!mobs[i].inGame) {
-					mobs[i].spawnMob(Value.mobMonster);
+					mobs[i].spawnMob(Value.mobMonster1);
 					break;
 				}
 			}
@@ -185,12 +188,12 @@ public class Screen extends JPanel implements Runnable {
 		}
 	}
 
-	public int spawnTime2 = 1400, spawnFrame2 = 0;   
-	public void mobSpawner2() {
+	int spawnTime2 = 1400, spawnFrame2 = 0;   
+	void mobSpawner2() {
 		if(spawnFrame2 >= spawnTime2) {
 			for(int i = 0; i < mobss.length;i++) {
 				if(!mobss[i].inGame) {
-					mobss[i].spawnMob(Value.mobMonster);
+					mobss[i].spawnMob(Value.mobMonster2);
 					break;
 				}
 			}
@@ -201,12 +204,12 @@ public class Screen extends JPanel implements Runnable {
 		}
 	}
 	
-	public int spawnTime3 = 1200, spawnFrame3 = 0;    
-	public void mobSpawner3() {
+	int spawnTime3 = 1200, spawnFrame3 = 0;    
+	void mobSpawner3() {
 		if(spawnFrame3 >= spawnTime3) {
 			for(int i = 0; i<mobsss.length;i++) {
 				if(!mobsss[i].inGame) {
-					mobsss[i].spawnMob(Value.mobMonster);
+					mobsss[i].spawnMob(Value.mobMonster3);
 					break;
 				}
 			}
@@ -227,7 +230,7 @@ public class Screen extends JPanel implements Runnable {
 					mobSpawner();
 				}
 				else if(level == 2){ // mobu o levelda spawnlıyor
-					mobSpawner3();
+					mobSpawner();
 				}
 				else if(level == 3){ //  mobu o levelda spawnlıyor
 					mobSpawner2();
@@ -241,6 +244,7 @@ public class Screen extends JPanel implements Runnable {
 					if (AnimFrame >= mobOrcWalk.length){
 						AnimFrame = 0;
 					}
+					if (AnimFrame % 10 == 0) coinage++; 
 					AnimTick = 0;
             	}
 
@@ -288,7 +292,7 @@ public class Screen extends JPanel implements Runnable {
 	}
 
 	// crop frame by frame
-	public static Image loadAndCropSingleFrame(String path) {
+	static Image loadAndCropSingleFrame(String path) {
 		try {
 			BufferedImage raw = javax.imageio.ImageIO.read(new File(path));
 			if (raw == null) return null;

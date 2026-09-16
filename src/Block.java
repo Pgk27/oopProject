@@ -58,11 +58,11 @@ public class Block extends Rectangle{
 		}
 		
 		if (!shotingMob1) { // burası towerların kendi menzillerine girene kadar beklemesini sağlıyor 
-			if (airID == Value.airTowerLaser ||airID == Value.airTowerLaser2||airID == Value.airTowerLaser3 )  { // başka tower için ya da ile ekle
+			if (airID == Value.airTowerLaser || airID == Value.airTowerLaser2 || airID == Value.airTowerLaser3)  { // başka tower için ya da ile ekle
 				for (int i = 0; i < Screen.mobs.length; i++) {
 					if (Screen.mobs[i].inGame) {
 						if (towerSquare.intersects(Screen.mobs[i])) { //çerçevenin içerisinde vurmasını sağlıyor
-							shotingMob1 = true; // 
+							shotingMob1 = true;
 							shotMob = i;
 						}
 					}
@@ -185,7 +185,8 @@ public class Block extends Rectangle{
 	}
 	
 	public void getMoney(int mobID) {
-		Screen.coinage += Value.deathReward[mobID]; // get money when killing mobs
+		if (mobID >= 0 && mobID < Value.deathReward.length) // avoid ArrayOutOfBounds exception
+			Screen.coinage += Value.deathReward[mobID]; // get money when killing mobs
 	}
 	
 	public void fight(Graphics g) {

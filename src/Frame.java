@@ -35,7 +35,7 @@ public class Frame extends JFrame{
 		clip.open(audioStream);												//duruma göre kaldırılabilir
 		
 		String response = "";
-			
+		
 		while(!response.equals("Q")) {
 			System.out.println("Press P to start playing\nP = play, S = Stop, R = Reset, Q = Quit");
 			System.out.print("Enter your choice: ");
