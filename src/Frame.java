@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 
 import java.awt.*;
@@ -8,7 +7,7 @@ import java.util.Scanner;
 import javax.sound.sampled.*;
 
 public class Frame extends JFrame{
-	public static String title = "Cmpe 114 Tower Defense";
+	public static String title = "Tower Defense Demo";
 	public static Dimension size = new Dimension(700, 600);
 	
 	public Frame() {
@@ -25,30 +24,18 @@ public class Frame extends JFrame{
 		
 		setVisible(true);
 	}
-	
-	
+
 	
 	public static void main(String args[]) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-		
-		
-		
-     Scanner scanner = new Scanner(System.in);
+     	Scanner scanner = new Scanner(System.in);
      
-		
 		File file = new File("interstellar.wav");
 		AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);  // interstellar theme çalması için gereken kodlar 
 		Clip clip = AudioSystem.getClip();									//internetten müzik çalmak için bulduğumuz kod dizisi
 		clip.open(audioStream);												//duruma göre kaldırılabilir
 		
-		
-		
-		
-		 
-		
-		
-		
 		String response = "";
-			
+		
 		while(!response.equals("Q")) {
 			System.out.println("Press P to start playing\nP = play, S = Stop, R = Reset, Q = Quit");
 			System.out.print("Enter your choice: ");
@@ -72,38 +59,8 @@ public class Frame extends JFrame{
 				break;
 				default: System.out.println("Not a valid response");
 			}
-		 }
+		}
+		scanner.close();
 		System.out.println("Byeeee!");	
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 	}
 }
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
