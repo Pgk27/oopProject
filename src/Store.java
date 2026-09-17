@@ -21,7 +21,12 @@ public class Store {
 	public boolean holdsItem = false ;
 	
 	public Store() {
-		define();
+		for(int i = 0; i < button.length; i++) {
+			button[i] = new Rectangle((Screen.myWidth/2) - ((shopWidth*(buttonSize+cellSpace))/2) + ((buttonSize+cellSpace)*i), (Screen.room.block[Screen.room.worldHeight-1][0].y) +Screen.room.blockSize + awayFromRoom, buttonSize, buttonSize);
+		}
+		
+		buttonHealth = new Rectangle(Screen.room.block[0][0].x-1, button[0].y, iconSize,iconSize);
+		buttonCoins = new Rectangle(Screen.room.block[0][0].x-1, button[0].y + button[0].height-iconSize, iconSize,iconSize);
 	}
 	
 	public void click(int mouseButton) {
@@ -69,14 +74,6 @@ public class Store {
 		}
 	}
 	
-	public void define() { // shop un konumu
-		for(int i = 0; i < button.length; i++) {
-			button[i] = new Rectangle((Screen.myWidth/2) - ((shopWidth*(buttonSize+cellSpace))/2) + ((buttonSize+cellSpace)*i), (Screen.room.block[Screen.room.worldHeight-1][0].y) +Screen.room.blockSize + awayFromRoom, buttonSize, buttonSize);
-		}
-		
-		buttonHealth = new Rectangle(Screen.room.block[0][0].x-1, button[0].y, iconSize,iconSize);
-		buttonCoins = new Rectangle(Screen.room.block[0][0].x-1, button[0].y + button[0].height-iconSize, iconSize,iconSize);
-	}
 	
 	public void draw(Graphics g) {
 		for(int i = 0; i < button.length; i++) {
