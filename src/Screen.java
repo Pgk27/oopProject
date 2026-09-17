@@ -85,16 +85,16 @@ public class Screen extends JPanel implements Runnable {
 		tileset_res[2] = new ImageIcon("res/coin.png").getImage();
 		
 		for (int i = 0; i < mobOrcWalk.length; i++){
-			mobOrcWalk[i] = loadAndCropSingleFrame("characterSprites/orc/walk00" + i + ".png");
-			mobDemonWalk[i] = loadAndCropSingleFrame("characterSprites/demon/walk00" + i + ".png");
-			mobSlimeWalk[i] = loadAndCropSingleFrame("characterSprites/slime/walk00" + i + ".png");
+			mobOrcWalk[i] = loadFrame("characterSprites/orc/walk00" + i + ".png");
+			mobDemonWalk[i] = loadFrame("characterSprites/demon/walk00" + i + ".png");
+			mobSlimeWalk[i] = loadFrame("characterSprites/slime/walk00" + i + ".png");
 		}
 		for (int i = 0; i < mobOrcDead.length; i++){
-			mobOrcDead[i] = loadAndCropSingleFrame("characterSprites/orc/dead00" + i + ".png");
-			mobDemonDead[i] = loadAndCropSingleFrame("characterSprites/demon/dead00" + i + ".png");
+			mobOrcDead[i] = loadFrame("characterSprites/orc/dead00" + i + ".png");
+			mobDemonDead[i] = loadFrame("characterSprites/demon/dead00" + i + ".png");
 		}
 		for(int i = 0; i < mobSlimeDead.length; i++){
-			mobSlimeDead[i] = loadAndCropSingleFrame("characterSprites/slime/dead00" + i + ".png");
+			mobSlimeDead[i] = loadFrame("characterSprites/slime/dead00" + i + ".png");
 		}
 
 		tileset_mob[0] = mobOrcWalk[0];
@@ -299,7 +299,7 @@ public class Screen extends JPanel implements Runnable {
 	}
 
 	// crop frame by frame
-	static Image loadAndCropSingleFrame(String path) {
+	static Image loadFrame(String path) {
 		try {
 			BufferedImage raw = javax.imageio.ImageIO.read(new File(path));
 			if (raw == null) return null;
