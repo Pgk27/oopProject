@@ -16,17 +16,20 @@ public class Screen extends JPanel implements Runnable {
 	// initilizers for animations
 	static Image[] mobOrcWalk = new Image[8]; // 8 walking frames
 	static Image[] mobDemonWalk = new Image[8];
-	static Image[] mobCatRun = new Image[10]; // cat has 10 running frames
+	static Image[] mobSlimeWalk = new Image[8]; // cat has 10 running frames
+
+	static Image[] mobOrcDead = new Image[4];
+	static Image[] mobDemonDead = new Image[4];
+	static Image[] mobSlimeDead = new Image[7];
 
 	static int AnimFrame = 0;
-	static int AnimTime = 50; // ANIMATION FRAME DELAY
+	static int AnimTime = 40; // ANIMATION FRAME DELAY
 	static int AnimTick = 0;
-	static int spawnFrame = 0;
 	
 	
 	static int myWidth, myHeight;
 	static int coinage = 10, health = 100; //başlangıç parası, canı
-	static int killed = 0 , killsToWin = 0, level = 1, maxlevel = 3;
+	static int killed = 0, killsToWin = 0, level = 1, maxlevel = 3;
 	static int winTime = 2000, winFrame = 0;
 	static boolean isFirst = true;
 	static boolean isDebug = false; // çerçeve modu
@@ -64,7 +67,7 @@ public class Screen extends JPanel implements Runnable {
 		save = new Save();
 		store = new Store();
 		
-		coinage = 10; // starting coin
+		coinage = 100; // starting coin
 		health = 10; // starting health
 		
 		
@@ -82,24 +85,27 @@ public class Screen extends JPanel implements Runnable {
 		tileset_res[2] = new ImageIcon("res/coin.png").getImage();
 		
 		for (int i = 0; i < mobOrcWalk.length; i++){
-			mobOrcWalk[i] = loadAndCropSingleFrame("characterSprites/orcWalk00" + i + ".png");
+			mobOrcWalk[i] = loadAndCropSingleFrame("characterSprites/orc/walk00" + i + ".png");
+			mobDemonWalk[i] = loadAndCropSingleFrame("characterSprites/demon/walk00" + i + ".png");
+			mobSlimeWalk[i] = loadAndCropSingleFrame("characterSprites/slime/walk00" + i + ".png");
 		}
-		for (int i = 0; i < mobDemonWalk.length; i++){
-			mobDemonWalk[i] = loadAndCropSingleFrame("characterSprites/Demon/tile00" + i + ".png");
+		for (int i = 0; i < mobOrcDead.length; i++){
+			mobOrcDead[i] = loadAndCropSingleFrame("characterSprites/orc/dead00" + i + ".png");
+			mobDemonDead[i] = loadAndCropSingleFrame("characterSprites/demon/dead00" + i + ".png");
 		}
-		for (int i = 0; i < mobCatRun.length; i++){
-			mobCatRun[i] = loadAndCropSingleFrame("characterSprites/Cat/tile00" + i + ".png");
+		for(int i = 0; i < mobSlimeDead.length; i++){
+			mobSlimeDead[i] = loadAndCropSingleFrame("characterSprites/slime/dead00" + i + ".png");
 		}
 
 		tileset_mob[0] = mobOrcWalk[0];
 		tileset_mobb[0] = mobDemonWalk[0];
-		tileset_mobbb[0] = mobCatRun[0];
+		tileset_mobbb[0] = mobSlimeWalk[0];
 		
 		
 		save.loadSave(new File("save/map" + level )); //map ı yüklüyor
 		
 		
-		for( int i = 0 ; i <mobs.length;i++) { // mob class ındaki özellikleri moblara atıyor
+		for( int i = 0 ; i < mobs.length;i++) { // mob class ındaki özellikleri moblara atıyor
 			mobs[i] = new Mob(); 
 		}
 		
@@ -162,7 +168,7 @@ public class Screen extends JPanel implements Runnable {
 			g.fillRect(0, 0, getWidth(), getHeight());  
 			g.setColor(new Color(0,0,0));  //yazı , siyah
 			g.setFont(new Font("Courier New",Font.BOLD,14));
-			if(level > maxlevel) {			
+			if(level >= maxlevel) {			
 				g.drawString("You won the whole game! Please wait and the window will close...", 10, 20);
 			}
 			else {
@@ -172,7 +178,7 @@ public class Screen extends JPanel implements Runnable {
 	}
 	 
 	
-	int spawnTime = 1600;   // oluşma aralıkları
+	int spawnTime = 1600, spawnFrame = 0;   // oluşma aralıkları
 	void mobSpawner() {
 		if(spawnFrame >= spawnTime) {
 			for(int i = 0; i < mobs.length; i++) {
@@ -230,10 +236,10 @@ public class Screen extends JPanel implements Runnable {
 					mobSpawner();
 				}
 				else if(level == 2){ // mobu o levelda spawnlıyor
-					mobSpawner();
+					mobSpawner2();
 				}
 				else if(level == 3){ //  mobu o levelda spawnlıyor
-					mobSpawner2();
+					mobSpawner3();
 				}else { //level 3
 					mobSpawner3();
 				}
@@ -271,7 +277,8 @@ public class Screen extends JPanel implements Runnable {
 			else {
 				  if(isWin) {
 					    if(winFrame>=winTime) {
-					    	if(level >  maxlevel) {
+							level++;
+					    	if(level > maxlevel) {
 					    		System.exit(0);
 					    	}else {
 								define();
@@ -296,59 +303,7 @@ public class Screen extends JPanel implements Runnable {
 		try {
 			BufferedImage raw = javax.imageio.ImageIO.read(new File(path));
 			if (raw == null) return null;
-
-			int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
-			int maxX = 0, maxY = 0;
-			boolean hasVisiblePixel = false;
-
-			// 1. Quét tìm viền bounding box của các pixel thực sự có hình
-			for (int y = 0; y < raw.getHeight(); y++) {
-				for (int x = 0; x < raw.getWidth(); x++) {
-					int rgb = raw.getRGB(x, y);
-					Color c = new Color(rgb, true);
-
-					// Loại trừ pixel trong suốt (alpha thấp) HOẶC màu nền trắng/xám sáng
-					boolean isTransparent = (c.getAlpha() < 20);
-					boolean isWhiteBg = (c.getRed() > 230 && c.getGreen() > 230 && c.getBlue() > 230);
-
-					if (!isTransparent && !isWhiteBg) {
-						hasVisiblePixel = true;
-						if (x < minX) minX = x;
-						if (x > maxX) maxX = x;
-						if (y < minY) minY = y;
-						if (y > maxY) maxY = y;
-					}
-				}
-			}
-
-			// Nếu ảnh trống, trả về nguyên bản
-			if (!hasVisiblePixel) return raw;
-
-			// Thêm 2 pixel đệm ở rìa để không cấn mép vũ khí/bóng
-			minX = Math.max(0, minX - 2);
-			minY = Math.max(0, minY - 2);
-			maxX = Math.min(raw.getWidth() - 1, maxX + 2);
-			maxY = Math.min(raw.getHeight() - 1, maxY + 2);
-
-			int width = maxX - minX + 1;
-			int height = maxY - minY + 1;
-
-			// 2. Cắt ảnh con và lọc trong suốt các pixel nền thừa
-			BufferedImage cropped = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-			for (int y = 0; y < height; y++) {
-				for (int x = 0; x < width; x++) {
-					int rgb = raw.getRGB(minX + x, minY + y);
-					Color c = new Color(rgb, true);
-
-					if (c.getAlpha() >= 20 && !(c.getRed() > 230 && c.getGreen() > 230 && c.getBlue() > 230)) {
-						cropped.setRGB(x, y, rgb);
-					} else {
-						cropped.setRGB(x, y, 0x00000000); // Đặt thành trong suốt
-					}
-				}
-			}
-
-			return cropped;
+			return raw;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

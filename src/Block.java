@@ -2,27 +2,24 @@
 import java.awt.*;
 
 public class Block extends Rectangle{
-	public Rectangle towerSquare;
-	public Rectangle towerSquare2; // 2.kule
-	public Rectangle towerSquare3; // 3.kule
+	Rectangle towerSquare;
+	Rectangle towerSquare2; // 2.kule
+	Rectangle towerSquare3; // 3.kule
 	
+	int towerSquareSize = 130;   //tower range, ne kadar uzağa vurabilir.
+	int towerSquareSize2= 130;   //2. kule menzil
+	int towerSquareSize3= 200;  //3. kule menzil
+	int groundID;
+	int airID;
+	int loseTime = 100, loseFrame = 0; // hasar vurma aralığı, kulelerin
 	
-	public int towerSquareSize = 130;   //tower range, ne kadar uzağa vurabilir.
-	public int towerSquareSize2= 130;   //2. kule menzil
-	public int towerSquareSize3= 200;  //3. kule menzil
-	public int groundID;
-	public int airID;
-	public int loseTime=100, loseFrame =0; // hasar vurma aralığı, kulelerin
+	int shotMob = 0;// kulelerin alanındaki mobları vurması için
+	boolean shotingMob1 = false ;
+	boolean shotingMob2 = false ;   //kulelerin moblara vurması için gereken kod
+	boolean shotingMob3 = false ;
 	
-	
-	public int shotMob = 0;// kulelerin alanındaki mobları vurması için
-	public boolean shotingMob1 = false ;
-	public boolean shotingMob2 = false ;   //kulelerin moblara vurması için gereken kod
-	public boolean shotingMob3 = false ;
-	
-	
-	
-	public Block(int x, int y, int width, int height, int groundID, int airID) { // kule menzillerinin oyunun içinde tanımlanması
+
+	Block(int x, int y, int width, int height, int groundID, int airID) { // kule menzillerinin oyunun içinde tanımlanması
 		
 		setBounds(x,y,width, height);
 		towerSquare = new Rectangle(x-(towerSquareSize/2), y-(towerSquareSize/2), width+(towerSquareSize), height+(towerSquareSize));
@@ -32,7 +29,7 @@ public class Block extends Rectangle{
 		this.airID = airID;
 	} 
 	
-	public void draw(Graphics g) { // tileset air ve ground  içindeki png leri koyuyor..
+	void draw(Graphics g) { // tileset air ve ground  içindeki png leri koyuyor..
 		g.drawImage(Screen.tileset_ground[groundID], x, y, width, height, null);
 		
 		if(airID != Value.airAir) {
@@ -40,8 +37,8 @@ public class Block extends Rectangle{
 		}
 	}
 	
-	public void physic() { // physics for tower shooting and mob taking damage
-
+	void physic() { // physics for tower shooting and mob taking damage
+		
 		if (shotMob != 0 && towerSquare.intersects(Screen.mobs[shotMob])   ) { // mob 1 get shot
 			shotingMob1 = true;
 		}
@@ -91,7 +88,6 @@ public class Block extends Rectangle{
 				shotingMob1 = false;
 				shotMob = 0;
 
-				Screen.killed += 1;
 				Screen.hasWon();
 			}
 		}
@@ -132,9 +128,6 @@ public class Block extends Rectangle{
 			if (Screen.mobss[shotMob].isDead()) {
 				shotingMob2 = false;
 				shotMob = 0;
-
-				Screen.killed += 1;
-
 				Screen.hasWon();
 			}
 		}    
@@ -176,20 +169,17 @@ public class Block extends Rectangle{
 			if (Screen.mobsss[shotMob].isDead()) {
 				shotingMob3 = false;
 				shotMob = 0;
-
-				Screen.killed += 1;
-
 				Screen.hasWon();
 			}
 		}
 	}
 	
-	public void getMoney(int mobID) {
+	void getMoney(int mobID) {
 		if (mobID >= 0 && mobID < Value.deathReward.length) // avoid ArrayOutOfBounds exception
 			Screen.coinage += Value.deathReward[mobID]; // get money when killing mobs
 	}
 	
-	public void fight(Graphics g) {
+	void fight(Graphics g) {
 		if(Screen.isDebug) {
 			if(airID == Value.airTowerLaser) {
 				g.drawRect(towerSquare.x, towerSquare.y, towerSquare.width, towerSquare.height);

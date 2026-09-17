@@ -19,10 +19,20 @@ public class Mob extends Rectangle{
 	boolean hasDownward = false;
 	boolean hasLeft = false;
 	boolean hasRight = false;
+
+	// scale kích thước cho một số mob có frame ảnh rộng
+	protected double renderScale;
+	protected boolean isDying = false;
+	protected int deadFrame = 0;
+	protected int deadSpeed = 35; // Giá trị càng lớn càng chậm (walkSpeed mặc định là 20)
+	protected int deadTick = 0;
+	protected int deadDelay = 0;
+	protected int deadDelayLimit = 1500; // Delay tại frame cuối trước khi biến mất (~1.5 đến 2 giây)
 	
 	Mob() {
 		this.walkSpeed = 20; // lower is faster
 		this.spawnTime = 1600;
+		this.renderScale = 1.5;
 	}
     
 	void spawnMob(int mobID) { // 0,0 da başlıyacağını belirliyor
@@ -38,22 +48,14 @@ public class Mob extends Rectangle{
 		this.mobID = mobID;
 		this.health = mobSize;
 		this.maxHealth = health;
+
+		this.isDying = false;
+		this.deadFrame = 0;
+		this.deadTick = 0;
+		this.deadDelay = 0;
 		
 		inGame = true;
 		
-	}
-	   
-	void deleteMob() {
-		inGame = false;
-		direction = right;
-		mobWalk = 0;
-	}
-
-	void mobDead(){
-		inGame = false;
-		direction = right;
-		mobWalk = 0;
-		Screen.room.block[0][0].getMoney(mobID);
 	}
 	
 	void playerLoseHealth() {
@@ -61,6 +63,28 @@ public class Mob extends Rectangle{
 	}
 
 	void physic() {
+		if (isDying){ // tính toán frame cho animation mob chết
+			if (Screen.mobOrcDead != null && Screen.mobOrcDead.length > 0){
+				if (deadFrame < Screen.mobOrcDead.length - 1){
+					deadTick++;
+					if (deadTick >= deadSpeed){
+						deadFrame++;
+						deadTick = 0;
+					}
+				}
+				else{
+					deadDelay++;
+					if(deadDelay >= deadDelayLimit){
+						deleteMob();
+					}
+				}
+			}
+			else{
+				deleteMob();
+			}
+			return;
+		}
+
 		if(walkFrame >= walkSpeed) {
 			if(direction == right) 
 				x+=1;
@@ -141,24 +165,47 @@ public class Mob extends Rectangle{
 	}
 	   
 	void loseHealth(int amo) {
+		if (isDying) return;
 		health -= amo;
 		checkDeath();
 	}
 	   
 	void checkDeath() {
-		if(health <= 0)
+		if (health <= 0){
 			mobDead();
+		}
 	}
 	   
 	   
 	boolean isDead() {
-		if(inGame)
-			return false;
-		else
-			return true;
+		return !inGame || isDying;
 	}
-	   
+
+	void deleteMob() {
+		isDying = false;
+		inGame = false;
+		direction = right;
+		mobWalk = 0;
+	}
+
+	void mobDead(){
+		mobWalk = 0;
+		isDying = true;
+		deadFrame = 0;
+		deadTick = 0;
+		deadDelay = 0;
+		
+		Screen.killed++;
+		Screen.room.block[0][0].getMoney(mobID);
+	}
+
 	Image getSprite(){
+		if (isDying){ // dying mob animation
+			if (Screen.mobOrcDead != null && Screen.mobOrcDead.length > 0){
+				return Screen.mobOrcDead[deadFrame];
+			}
+		}
+		// mob's normal walking animation
 		if (Screen.mobOrcWalk != null && Screen.mobOrcWalk.length > 0){
 			return Screen.mobOrcWalk[Screen.AnimFrame];
 		}
@@ -170,9 +217,19 @@ public class Mob extends Rectangle{
         // Draws the current animation frame scaled to the tile/mob size
 
 		Image Sprite = getSprite();
-		if (Sprite != null)
-        	g.drawImage(Sprite, x, y, width, height, null);
+		if (Sprite != null){
+			// 1. Tính kích thước vẽ dựa trên hệ số phóng to
+            int drawW = (int) (width * renderScale);
+            int drawH = (int) (height * renderScale);
 
+            // 2. Căn giữa theo trục X, và giữ đáy chân quái chạm sàn (không bị bay lơ lửng)
+            int drawX = x - (drawW - width) / 2;
+            int drawY = y - (drawH - height);
+
+            g.drawImage(Sprite, drawX, drawY, drawW, drawH, null);
+		}
+
+		if (isDying) return;
 
 		int barY = y - (healthSpace + healthHeight);
 		double healthPercent = (double) health / maxHealth;
