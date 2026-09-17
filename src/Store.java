@@ -1,20 +1,20 @@
-import java.awt.*;
+import java.awt.*; //Chịu trách nhiệm về kinh tế và tương tác đặt tháp
 
 public class Store {
-	public static int shopWidth = 8;
+	public static int shopWidth = 8; // số lượng ô
 	public static int buttonSize = 52;
-	public static int cellSpace = 2;
-	public static int awayFromRoom = 29; // oyun ekranı ile slot arasındaki boşluk
-	public static int iconSize = 20; // image ların boyutu
-	public static int iconSpace = 6; // kalp ,coin ve yanlarındaki yazı arasındaki boşluk
-	public static int iconTextY = 15;
-	public static int itemIn = 4;   // kulelerin cell içindeki boyutu
+	public static int cellSpace = 2; // khoảng trống giữa các ô
+	public static int awayFromRoom = 29; // khoảng cách từ map đến store
+	public static int iconSize = 20; 
+	public static int iconSpace = 6; // khoảng cách nữa số và icon tim với coin
+	public static int iconTextY = 15; // ép lui xuống để đẹp mắt:))	
+	public static int itemIn = 4;   // khi vào trong game thì mỗi cạnh được ép xuống 4 pixel
 	public static int heldID = -1;
 	public static int realID = -1;
-	public static int[] buttonID = {Value.airTowerLaser, Value.airTowerLaser2 ,Value.airTowerLaser3 ,Value.airAir ,Value.airAir ,Value.airAir ,Value.airAir ,Value.airTrashCan  };  //shop için yerler
+	public static int[] buttonID = {Value.airTowerLaser, Value.airTowerLaser2 ,Value.airTowerLaser3 ,Value.airAir ,Value.airAir ,Value.airAir ,Value.airAir ,Value.airTrashCan  };  //thứ tự hiển thị trong shop
 	public static int[] buttonPrice = {10,30,75,0,0,0,0,0};
 	
-	public Rectangle[] button = new Rectangle[shopWidth]; // store un sayısı
+	public Rectangle[] button = new Rectangle[shopWidth]; // chắc là dùng cho eventListener
 	public Rectangle buttonHealth ;
 	public Rectangle buttonCoins ;
 	

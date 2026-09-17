@@ -1,9 +1,9 @@
 
-import java.awt.*;
+import java.awt.*; //Chịu trách nhiệm về logic bắn và chiến đấu của tháp
 
 public class Block extends Rectangle{
 	public Rectangle towerSquare;
-	public Rectangle towerSquare2; // 2.kule
+	public Rectangle towerSquare2; // 2.kule	
 	public Rectangle towerSquare3; // 3.kule
 	
 	
