@@ -25,6 +25,10 @@ public class Screen extends JPanel implements Runnable {
 	static int AnimFrame = 0;
 	static int AnimTime = 40; // ANIMATION FRAME DELAY
 	static int AnimTick = 0;
+
+	//for Tower
+	static Image[] cacherTower = new Image[8];
+	// sẽ update tiếp sau
 	
 	
 	static int myWidth, myHeight;
@@ -75,9 +79,13 @@ public class Screen extends JPanel implements Runnable {
 			tileset_ground[i] = new ImageIcon("res/tileset_ground.png").getImage();
 			tileset_ground[i] = createImage(new FilteredImageSource(tileset_ground[i].getSource(), new CropImageFilter(0, 26*i, 26, 26)));
 		}
-		for(int i = 0; i < tileset_air.length; i++) {
-			tileset_air[i] = new ImageIcon("res/tileset_air.png").getImage();
-			tileset_air[i] = createImage(new FilteredImageSource(tileset_air[i].getSource(), new CropImageFilter(0, 26*i, 26, 26)));
+		// for(int i = 0; i < tileset_air.length; i++) {
+		// 	tileset_air[i] = new ImageIcon("res/tileset_air.png").getImage();
+		// 	tileset_air[i] = createImage(new FilteredImageSource(tileset_air[i].getSource(), new CropImageFilter(0, 26*i, 26, 26)));
+		// }
+
+		for (int i = 0; i < cacherTower.length; i++) {
+			cacherTower[i] = loadFrame("characterSprites/cacherTower/cacherTower" + i + ".png");
 		}
 		
 		tileset_res[0] = new ImageIcon("res/cell.png").getImage();

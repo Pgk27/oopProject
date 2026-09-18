@@ -48,9 +48,9 @@ public class Frame extends JFrame{
      	Scanner scanner = new Scanner(System.in);
      
 		File file = new File("interstellar.wav");
-		AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);  // interstellar theme çalması için gereken kodlar 
-		Clip clip = AudioSystem.getClip();									//internetten müzik çalmak için bulduğumuz kod dizisi
-		clip.open(audioStream);												//duruma göre kaldırılabilir
+		AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);  
+		Clip clip = AudioSystem.getClip();									
+		clip.open(audioStream);												
 		
 		String response = "";
 		

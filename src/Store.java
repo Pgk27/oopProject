@@ -32,7 +32,7 @@ public class Store {
 	public void click(int mouseButton) {
 		if(mouseButton == 1) {
 			for(int i = 0;i < button.length; i++) {
-				if(button[i].contains(Screen.mse)) {
+				if(button[i].contains(Screen.mse)) { // nghe tọa độ xem cái nào juan	
 					if(buttonID[i] != Value.airAir) {
 						if(buttonID[i] == Value.airTrashCan) { // if touch TrashCan, stop holding item
 							holdsItem = false;
@@ -83,7 +83,15 @@ public class Store {
 				g.fillRect(button[i].x, button[i].y, button[i].width, button[i].height); // içini dolduruyor
 			}
 
-			g.drawImage(Screen.tileset_res[0] ,button[i].x,  button[i].y, button[i].width, button[i].height,null); // store daki slotların çizilmesi
+			//g.drawImage(Screen.tileset_res[0] ,button[i].x,  button[i].y, button[i].width, button[i].height,null); // store daki slotların çizilmesi
+			g.drawImage(
+				Screen.cacherTower[0],
+				button[i].x + itemIn,
+				button[i].y + itemIn,
+				button[i].width - itemIn * 2,
+				button[i].height - itemIn * 2,
+				null
+			);
 			if(buttonID[i] != Value.airAir)   g.drawImage(Screen.tileset_air[buttonID[i]],button[i].x + itemIn,  button[i].y+ itemIn, button[i].width- (itemIn*2), button[i].height-(itemIn*2),null);// air içindeki image ların çizilmesi
 			if(buttonPrice[i]> 0) {
 				g.setColor(new Color(255,255,255));
@@ -106,7 +114,18 @@ public class Store {
 		
 		
 		if(holdsItem) {// store dan elimize aldığımız kule vs. mouseda çiziyor(durmasını sağlıyor)
-			g.drawImage(Screen.tileset_air[heldID], Screen.mse.x - ((button[0].width- (itemIn*2) )/2) + itemIn, Screen.mse.y -((button[0].width- (itemIn*2) )/2)+ itemIn, button[0].width- (itemIn*2), button[0].height-(itemIn*2),null);
+			//g.drawImage(Screen.tileset_air[heldID], Screen.mse.x - ((button[0].width- (itemIn*2) )/2) + itemIn, Screen.mse.y -((button[0].width- (itemIn*2) )/2)+ itemIn, button[0].width- (itemIn*2), button[0].height-(itemIn*2),null);
+			g.drawImage(
+				Screen.cacherTower[0],
+				Screen.mse.x - ((button[0].width - itemIn * 2) / 2) + itemIn,
+				Screen.mse.y - ((button[0].width - itemIn * 2) / 2) + itemIn,
+				button[0].width - itemIn * 2,
+				button[0].height - itemIn * 2,
+				null
+			);
+
+			// update lại hình ảnh của các tháp thành tháp cung tên hết
+			
 		}
 	}
 }
