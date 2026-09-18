@@ -84,15 +84,39 @@ public class Store {
 			}
 
 			//g.drawImage(Screen.tileset_res[0] ,button[i].x,  button[i].y, button[i].width, button[i].height,null); // store daki slotların çizilmesi
+			
+			// Vẽ khung cho tất cả ô shop
 			g.drawImage(
-				Screen.cacherTower[0],
-				button[i].x + itemIn,
-				button[i].y + itemIn,
-				button[i].width - itemIn * 2,
-				button[i].height - itemIn * 2,
+				Screen.tileset_res[0],
+				button[i].x,
+				button[i].y,
+				button[i].width,
+				button[i].height,
 				null
 			);
-			if(buttonID[i] != Value.airAir)   g.drawImage(Screen.tileset_air[buttonID[i]],button[i].x + itemIn,  button[i].y+ itemIn, button[i].width- (itemIn*2), button[i].height-(itemIn*2),null);// air içindeki image ların çizilmesi
+
+			// Chỉ vẽ tháp ở các ô chứa tháp
+			if (buttonID[i] == Value.airTowerLaser || buttonID[i] == Value.airTowerLaser2 || buttonID[i] == Value.airTowerLaser3) {
+				g.drawImage(
+					Screen.cacherTower[0],
+					button[i].x + itemIn,
+					button[i].y + itemIn,
+					button[i].width - itemIn * 2,
+					button[i].height - itemIn * 2,
+					null
+				);
+			}
+			if (buttonID[i] != Value.airAir && i != 0 && i != 1 && i !=2) {
+				g.drawImage(
+					Screen.tileset_air[buttonID[i]],
+					button[i].x + itemIn,
+					button[i].y + itemIn,
+					button[i].width - itemIn * 2,
+					button[i].height - itemIn * 2,
+					null
+				);
+			}
+			
 			if(buttonPrice[i]> 0) {
 				g.setColor(new Color(255,255,255));
 				g.setFont(new Font("Courier New", Font.BOLD, 14));
