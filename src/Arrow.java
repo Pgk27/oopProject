@@ -1,4 +1,4 @@
-import java.awt.*;
+import java.awt.*; // để tạm đây nhé chứ nếu cho cái này vào logic nó loạn lắm
 public class Arrow {
     public double x, y;
     public int speed = 5; // Tốc độ bay của mũi tên

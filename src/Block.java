@@ -1,13 +1,10 @@
 
 import java.awt.*; //Chịu trách nhiệm về logic bắn và chiến đấu của tháp
-import java.util.ArrayList;
-import java.util.Iterator;
 
 public class Block extends Rectangle{
 	Rectangle towerSquare;
 	Rectangle towerSquare2; // 2.kule
 	Rectangle towerSquare3; // 3.kule
-	public ArrayList<Arrow> arrows = new ArrayList<>(); // Quản lý mũi tên của riêng tháp này
 	
 	int towerSquareSize = 130;   //tower range, ne kadar uzağa vurabilir.
 	int towerSquareSize2= 130;   //2. kule menzil
@@ -44,13 +41,25 @@ public class Block extends Rectangle{
 		g.drawImage(Screen.tileset_ground[groundID], x, y, width, height, null);
 
 		if (airID != Value.airAir) {
+
+			Image[] towerFrames;
+			if (airID == Value.airTowerLaser2) {
+				towerFrames = Screen.mageTower;
+			} 
+			else if (airID == Value.airTowerLaser){
+				towerFrames = Screen.cacherTower;
+			}
+			else{
+				towerFrames = Screen.cannon;
+			}
+
 			int animationFrame = 0;
 			if(shotingMob1 || shotingMob2 || shotingMob3){
-				animationFrame = Screen.AnimFrame % Screen.cacherTower.length;
+				animationFrame = Screen.AnimFrame % towerFrames.length;
 			}
 			// do là hàm draw sẽ vẽ lại mỗi lần nên mình không cần vòng lặp để reset lại 
 
-			Image currentFrame = Screen.cacherTower[animationFrame];
+			Image currentFrame = towerFrames[animationFrame];
             
             // 2. Tìm tọa độ X của con quái vật đang bị nhắm bắn
             int targetX = this.x; // Khởi tạo mặc định
@@ -70,16 +79,6 @@ public class Block extends Rectangle{
 	}
 	
 	void physic() { // physics for tower shooting and mob taking damage
-
-		// 1. Cập nhật vị trí các mũi tên đang bay
-		Iterator<Arrow> iterator = arrows.iterator();
-		while (iterator.hasNext()) {
-			Arrow a = iterator.next();
-			a.tick(); // Cho mũi tên bay đi
-			if (a.isDead) {
-				iterator.remove(); // Xóa mũi tên nếu đã trúng địch
-			}
-		}
 		
 		if (shotMob != 0 && towerSquare.intersects(Screen.mobs[shotMob])   ) { // mob 1 get shot, check xem co de len nhau k
 			shotingMob1 = true;
@@ -186,7 +185,7 @@ public class Block extends Rectangle{
 				}
 			}
 		}
-
+		
 		if (shotingMob3) {
 			if (loseFrame >= loseTime) {
 				if(airID == Value.airTowerLaser) {
@@ -198,6 +197,7 @@ public class Block extends Rectangle{
 				else if(airID == Value.airTowerLaser3) {
 					Screen.mobsss[shotMob].loseHealth(10); // mobun ne kadar canı gidiyor
 				}
+
 				loseFrame = 0;
 			} 
 			else {
@@ -206,40 +206,11 @@ public class Block extends Rectangle{
 
 			if (Screen.mobsss[shotMob].isDead()) {
 				shotingMob3 = false;
-				shotMob = -1; // không có mục tiêu
+				shotMob = 0;
 				Screen.hasWon();
 			}
 		}
-
-		//logic bắn tên và khựng thời gian
-
-		if (shotingMob1 || shotingMob2 || shotingMob3) {
-			if (loseFrame >= loseTime) { 
-				// ĐÃ NẠP TÊN XONG -> Tạo mũi tên và nhắm vào đúng loại quái
-				double startX = x + (width / 2.0);
-				double startY = y + (height / 2.0);
-				
-				if (shotingMob1) {
-					arrows.add(new Arrow(startX, startY, Screen.mobs[shotMob], 4));
-				} 
-				else if (shotingMob2) {
-					arrows.add(new Arrow(startX, startY, Screen.mobss[shotMob], 4));
-				} 
-				else if (shotingMob3) {
-					arrows.add(new Arrow(startX, startY, Screen.mobsss[shotMob], 4));
-				}
-				
-				loseFrame = 0; // Đưa thời gian khựng về 0 để nạp mũi tên tiếp theo
-			} else {
-				loseFrame += 1; // Đang trong lúc kéo cung nạp tên
-			}
-		} 
-		else {
-			// Tùy chọn: Khi quái chết hết và không bắn ai, reset cung về trạng thái sẵn sàng ngay lập tức
-			loseFrame = 0;
-		}
 	}
-	
 	
 	void getMoney(int mobID) {
 		if (mobID >= 0 && mobID < Value.deathReward.length) // avoid ArrayOutOfBounds exception
@@ -255,60 +226,59 @@ public class Block extends Rectangle{
 
 		if(Screen.isDebug) {
 			if(airID == Value.airTowerLaser) {
-				g.drawRect(towerSquare.x, towerSquare.y, towerSquare.width, towerSquare.height);
+				g2d.drawRect(towerSquare.x, towerSquare.y, towerSquare.width, towerSquare.height);
 			}
 			
 			if(airID == Value.airTowerLaser2) { // 2.kule menzil
-				g.drawRect(towerSquare2.x, towerSquare2.y, towerSquare2.width, towerSquare2.height);
+				g2d.drawRect(towerSquare2.x, towerSquare2.y, towerSquare2.width, towerSquare2.height);
 			}
 			
 			if(airID == Value.airTowerLaser3) { // 3.kule menzil
-				g.drawRect(towerSquare3.x, towerSquare3.y, towerSquare3.width, towerSquare3.height);
+				g2d.drawRect(towerSquare3.x, towerSquare3.y, towerSquare3.width, towerSquare3.height);
 			}
 		}
 
 		//MOB1
-		// bỏ đi
-		// if(shotingMob1&&airID == Value.airTowerLaser) {    // kulenin lazeri
-		// 	g.setColor((new Color(255,255,0)));  //lazerin rengi
-		// 	g.drawLine(x + (width/2), y + (height/2), Screen.mobs[shotMob].x + (Screen.mobs[shotMob].width/2), Screen.mobs[shotMob].y+ (Screen.mobs[shotMob].height/2));
-		// }
+		if(shotingMob1&&airID == Value.airTowerLaser) {    // kulenin lazeri
+			g2d.setColor((new Color(255,255,0)));  //lazerin rengi
+			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobs[shotMob].x + (Screen.mobs[shotMob].width/2), Screen.mobs[shotMob].y+ (Screen.mobs[shotMob].height/2));
+		}
 		else if(shotingMob1&&airID == Value.airTowerLaser2) {    // kulenin lazeri
-			g.setColor((new Color(0,153,0)));  //lazerin rengi
-			g.drawLine(x + (width/2), y + (height/2), Screen.mobs[shotMob].x + (Screen.mobs[shotMob].width/2), Screen.mobs[shotMob].y+ (Screen.mobs[shotMob].height/2));
+			g2d.setColor((new Color(0,153,0)));  //lazerin rengi
+			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobs[shotMob].x + (Screen.mobs[shotMob].width/2), Screen.mobs[shotMob].y+ (Screen.mobs[shotMob].height/2));
 		}
 		else if(shotingMob1&&airID == Value.airTowerLaser3) {    // kulenin lazeri
-			g.setColor((new Color(51,153,255)));  //lazerin rengi
-			g.drawLine(x + (width/2), y + (height/2), Screen.mobs[shotMob].x + (Screen.mobs[shotMob].width/2), Screen.mobs[shotMob].y+ (Screen.mobs[shotMob].height/2));
+			g2d.setColor((new Color(51,153,255)));  //lazerin rengi
+			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobs[shotMob].x + (Screen.mobs[shotMob].width/2), Screen.mobs[shotMob].y+ (Screen.mobs[shotMob].height/2));
 		}
 		
 		//MOB2
-		// if(shotingMob2 && airID == Value.airTowerLaser) {    // kulenin lazeri
-		// 	g.setColor((new Color(255,255,0)));  //lazerin rengi
-		// 	g.drawLine(x + (width/2), y + (height/2), Screen.mobss[shotMob].x + (Screen.mobss[shotMob].width/2), Screen.mobss[shotMob].y+ (Screen.mobss[shotMob].height/2));
-		// }
+		if(shotingMob2 && airID == Value.airTowerLaser) {    // kulenin lazeri
+			g2d.setColor((new Color(255,255,0)));  //lazerin rengi
+			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobss[shotMob].x + (Screen.mobss[shotMob].width/2), Screen.mobss[shotMob].y+ (Screen.mobss[shotMob].height/2));
+		}
 		else if(shotingMob2 && airID == Value.airTowerLaser2) {    // kulenin lazeri
-			g.setColor((new Color(0,153,0)));  //lazerin rengi
-			g.drawLine(x + (width/2), y + (height/2), Screen.mobss[shotMob].x + (Screen.mobss[shotMob].width/2), Screen.mobss[shotMob].y+ (Screen.mobss[shotMob].height/2));
+			g2d.setColor((new Color(0,153,0)));  //lazerin rengi
+			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobss[shotMob].x + (Screen.mobss[shotMob].width/2), Screen.mobss[shotMob].y+ (Screen.mobss[shotMob].height/2));
 		}
 		else if(shotingMob2 && airID == Value.airTowerLaser3) {    // kulenin lazeri
-			g.setColor((new Color(51,153,255)));  //lazerin rengi
-			g.drawLine(x + (width/2), y + (height/2), Screen.mobss[shotMob].x + (Screen.mobss[shotMob].width/2), Screen.mobss[shotMob].y+ (Screen.mobss[shotMob].height/2));
+			g2d.setColor((new Color(51,153,255)));  //lazerin rengi
+			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobss[shotMob].x + (Screen.mobss[shotMob].width/2), Screen.mobss[shotMob].y+ (Screen.mobss[shotMob].height/2));
 		}
 		
 		
 		//MOB3
-		// if(shotingMob3&&airID == Value.airTowerLaser) {    // kulenin lazeri
-		// 	g.setColor((new Color(255,255,0)));  //lazerin rengi
-		// 	g.drawLine(x + (width/2), y + (height/2), Screen.mobsss[shotMob].x + (Screen.mobsss[shotMob].width/2), Screen.mobsss[shotMob].y+ (Screen.mobsss[shotMob].height/2));
-		// }
+		if(shotingMob3&&airID == Value.airTowerLaser) {    // kulenin lazeri
+			g2d.setColor((new Color(255,255,0)));  //lazerin rengi
+			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobsss[shotMob].x + (Screen.mobsss[shotMob].width/2), Screen.mobsss[shotMob].y+ (Screen.mobsss[shotMob].height/2));
+		}
 		else if(shotingMob3&&airID == Value.airTowerLaser2) {    // kulenin lazeri
-			g.setColor((new Color(0,153,0)));  //lazerin rengi
-			g.drawLine(x + (width/2), y + (height/2), Screen.mobsss[shotMob].x + (Screen.mobsss[shotMob].width/2), Screen.mobsss[shotMob].y+ (Screen.mobsss[shotMob].height/2));
+			g2d.setColor((new Color(0,153,0)));  //lazerin rengi
+			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobsss[shotMob].x + (Screen.mobsss[shotMob].width/2), Screen.mobsss[shotMob].y+ (Screen.mobsss[shotMob].height/2));
 		}
 		else if(shotingMob3&&airID == Value.airTowerLaser3) {    // kulenin lazeri
-			g.setColor((new Color(51,153,255)));  //lazerin rengi
-			g.drawLine(x + (width/2), y + (height/2), Screen.mobsss[shotMob].x + (Screen.mobsss[shotMob].width/2), Screen.mobsss[shotMob].y+ (Screen.mobsss[shotMob].height/2));
+			g2d.setColor((new Color(51,153,255)));  //lazerin rengi
+			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobsss[shotMob].x + (Screen.mobsss[shotMob].width/2), Screen.mobsss[shotMob].y+ (Screen.mobsss[shotMob].height/2));
 		}
 	}
 }

@@ -96,7 +96,7 @@ public class Store {
 			);
 
 			// Chỉ vẽ tháp ở các ô chứa tháp
-			if (buttonID[i] == Value.airTowerLaser || buttonID[i] == Value.airTowerLaser2 || buttonID[i] == Value.airTowerLaser3) {
+			if (buttonID[i] == Value.airTowerLaser) {
 				g.drawImage(
 					Screen.cacherTower[0],
 					button[i].x + itemIn,
@@ -106,6 +106,29 @@ public class Store {
 					null
 				);
 			}
+
+			else if (buttonID[i] == Value.airTowerLaser2) {
+				g.drawImage(
+					Screen.mageTower[0],
+					button[i].x + itemIn,
+					button[i].y + itemIn,
+					button[i].width - itemIn * 2,
+					button[i].height - itemIn * 2,
+					null
+				);
+			}
+
+			else if (buttonID[i] == Value.airTowerLaser3) {
+				g.drawImage(
+					Screen.cannon[0],
+					button[i].x + itemIn,
+					button[i].y + itemIn,
+					button[i].width - itemIn * 2,
+					button[i].height - itemIn * 2,
+					null
+				);
+			}
+
 			if (buttonID[i] != Value.airAir && i != 0 && i != 1 && i !=2) {
 				g.drawImage(
 					Screen.tileset_air[buttonID[i]],
@@ -139,14 +162,26 @@ public class Store {
 		
 		if(holdsItem) {// store dan elimize aldığımız kule vs. mouseda çiziyor(durmasını sağlıyor)
 			//g.drawImage(Screen.tileset_air[heldID], Screen.mse.x - ((button[0].width- (itemIn*2) )/2) + itemIn, Screen.mse.y -((button[0].width- (itemIn*2) )/2)+ itemIn, button[0].width- (itemIn*2), button[0].height-(itemIn*2),null);
+			Image holdingItem;
+			if (heldID == Value.airTowerLaser2) {
+				holdingItem = Screen.mageTower[0];
+			} 
+			else if (heldID == Value.airTowerLaser) {
+				holdingItem = Screen.cacherTower[0];
+			}
+			else {
+				holdingItem = Screen.cannon[0];
+			}
 			g.drawImage(
-				Screen.cacherTower[0],
+				holdingItem,
 				Screen.mse.x - ((button[0].width - itemIn * 2) / 2) + itemIn,
 				Screen.mse.y - ((button[0].width - itemIn * 2) / 2) + itemIn,
 				button[0].width - itemIn * 2,
 				button[0].height - itemIn * 2,
 				null
 			);
+
+
 
 			// update lại hình ảnh của các tháp thành tháp cung tên hết
 			

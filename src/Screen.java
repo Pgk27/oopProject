@@ -28,6 +28,8 @@ public class Screen extends JPanel implements Runnable {
 
 	//for Tower
 	static Image[] cacherTower = new Image[8];
+	static Image[] mageTower = new Image[8];
+	static Image[] cannon = new Image[8];
 	// sẽ update tiếp sau
 	
 	
@@ -86,6 +88,12 @@ public class Screen extends JPanel implements Runnable {
 
 		for (int i = 0; i < cacherTower.length; i++) {
 			cacherTower[i] = loadFrame("characterSprites/cacherTower/cacherTower" + i + ".png");
+		}
+		for (int i = 0; i < mageTower.length; i++) {
+			mageTower[i] = loadFrame("characterSprites/mageTower/mageTower" + i + ".png");
+		}
+		for(int i = 0; i < cannon.length; i++){
+			cannon[i] = loadFrame("characterSprites/cannon/cannon" + i + ".png");
 		}
 		
 		tileset_res[0] = new ImageIcon("res/cell.png").getImage();
