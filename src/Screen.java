@@ -1,10 +1,13 @@
 
 
 import java.awt.*;
-
-import javax.swing.*;
-import java.io.*;
 import java.awt.image.*;
+import java.io.*;
+import javax.swing.*;
+
+
+
+
 
 
 
@@ -35,6 +38,7 @@ public class Screen extends JPanel implements Runnable {
 	public static Room room;
 	public static Save save;
 	public static Store store;
+	public static Tiles tiles;
 	
 	
 	
@@ -47,8 +51,8 @@ public class Screen extends JPanel implements Runnable {
 	
 	
 	public Screen(Frame frame) {
-		frame.addMouseListener(new KeyHandel());
-		frame.addMouseMotionListener(new KeyHandel());
+		this.addMouseListener(new KeyHandel());
+		this.addMouseMotionListener(new KeyHandel());
 		
 		thread.start();
 	}
@@ -74,6 +78,7 @@ public class Screen extends JPanel implements Runnable {
 		room = new Room();
 		save = new Save();
 		store = new Store();
+		tiles = new Tiles();
 		
 		coinage = 10;
 		health = 10;//başlangıc canı burda ayarlanıyor istesek health=this.health da yapabilirdik
@@ -141,89 +146,47 @@ public class Screen extends JPanel implements Runnable {
 	
 	
 	
+	public static int gameState=0;
+	public static  final int tileScreen=0;
+	public static final int playGame=1;
+	public static final int settings=2;
+	public static final int selectSkill=3;
+	public static final int gameShop=4;
+	public static final int buyItem=5;
+	public static final int gachaHero=6;
+
 	
+
+	private GameRender gameRender = new GameRender();
 	
-		
-	public void paintComponent(Graphics g) {
-		if(isFirst) { // oyuna ilk giriş ise, oyunu ekrana çizer
-			myWidth = getWidth();
-			myHeight = getHeight();
-			define(); 
-			
-			isFirst = false;
-		}
-		
-		g.setColor(new Color(70, 70, 70));//arka planın rengi 
-		g.fillRect(0, 0, getWidth(), getHeight());
-		
-		
-		room.draw(g); //room daki tasarımların screen de görünmesini sağlıyor
-		
-		
-		for( int i = 0 ; i<mobs.length;i++) { // mobları ekrana çizdiğimiz yer burası / spawnlan mıyor!!!!!
-			  if(mobs[i].inGame) {
-				  mobs[i].draw(g);
-				  
-				  
-			  }
-		}
-		
-		
-		for( int i = 0 ; i<mobss.length;i++) { 
-			  if(mobss[i].inGame) {
-				  mobss[i].draw(g);
-				  
-				   
-				  
-			  }
-		}
-		
-		for( int i = 0 ; i<mobsss.length;i++) { 
-			  if(mobsss[i].inGame) {
-				  mobsss[i].draw(g);
-				  
-				   
-				  
-			  }
-		}
-		
-		
-		store.draw(g); //Store çizmek için constructorları store classında
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		if(health < 1) {
-			g.setColor(new Color(240,20,20));
-			g.fillRect(0, 0, myWidth, myHeight);
-			g.setColor(new Color(225,255,255));
-			g.setFont(new Font("Courier New",Font.BOLD,14));
-			g.drawString("Game Over, Unlucky...:(", 10, 20);
-		}
-		
-		if(isWin) {
-			g.setColor(new Color(255,255,255)); // arka plan , beyaz
-			g.fillRect(0, 0, getWidth(), getHeight());  
-			g.setColor(new Color(0,0,0));  //yazı , siyah
-			g.setFont(new Font("Courier New",Font.BOLD,14));                    //yazıların renkleri ve leveller bitince cıkacak yazılar 
-			if(level  >   maxlevel) {			
-				g.drawString("You won the whole game! Please wait and the window will close...", 10, 20);
-				
-			}else {
-			g.drawString("You won! Congratulations! Please wait for the next level...", 10, 20);
-			}
-			
-		}
-		
-		
-		
+	@Override 
+	public void paintComponent(Graphics g) {  // Hàm vẽ chính
+		if(isFirst) { 
+            myWidth = getWidth();  
+            myHeight = getHeight(); 
+            define();
+            
+            isFirst = false;
+        }
+
+		super.paintComponent(g);
+		gameRender.render(g, getWidth(), getHeight());
+	
 	}
-	 
+		
+		
+		
+
+
+
+
+
+
+
+
+
+
+
 	
 	public int spawnTime = 1600, spawnFrame = 0;   // oluşma aralıkları
 	public void mobSpawner() {
@@ -279,10 +242,10 @@ public class Screen extends JPanel implements Runnable {
 			    }
 			  
 			  spawnFrame3 = 0;
-		  }else {
+		  	}else {
 			  spawnFrame3 +=1;
-		  }
 		
+			}
 		
 	}
 	
@@ -311,7 +274,8 @@ public class Screen extends JPanel implements Runnable {
 	
 	public void run() {
 		while(true) {
-			if(!isFirst && health > 0 && !isWin) {
+			if(!isFirst && gameState == playGame) {
+				if(health > 0 && !isWin) {
 				room.physic(); // oyunu ekrana veriyor
 				
 				
@@ -373,9 +337,7 @@ public class Screen extends JPanel implements Runnable {
 				
 				
 				
-			}else {
-				
-				  if(isWin) {
+				} else if(isWin) {
 					  
 					    if(winFrame>=winTime) {
 					    	if(level >  maxlevel) {
@@ -396,9 +358,7 @@ public class Screen extends JPanel implements Runnable {
 					  
 					  
 					  
-				  }
-				
-				
+				}
 			}
 			repaint();
 			
@@ -408,45 +368,6 @@ public class Screen extends JPanel implements Runnable {
 			} catch(Exception e)  {}
 		}
 	}
+			
+	
 }
-			
-			
-			
-		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
