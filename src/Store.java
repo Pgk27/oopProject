@@ -11,8 +11,8 @@ public class Store {
 	public static int itemIn = 4;   // khi vào trong game thì mỗi cạnh được ép xuống 4 pixel
 	public static int heldID = -1;
 	public static int realID = -1;
-	public static int[] buttonID = {Value.airTowerLaser, Value.airTowerLaser2 ,Value.airTowerLaser3 ,Value.airAir ,Value.airAir ,Value.airAir ,Value.airAir ,Value.airTrashCan  };  //thứ tự hiển thị trong shop
-	public static int[] buttonPrice = {10,30,75,0,0,0,0,0};
+	public static int[] buttonID = {Value.airTowerLaser, Value.airTowerLaser2 ,Value.airTowerLaser3 ,Value.airTowerLaser4 ,Value.airAir ,Value.airAir ,Value.airAir ,Value.airTrashCan  };  //thứ tự hiển thị trong shop
+	public static int[] buttonPrice = {10,30,75,40,0,0,0,0};
 	
 	public Rectangle[] button = new Rectangle[shopWidth]; // chắc là dùng cho eventListener
 	public Rectangle buttonHealth ;
@@ -129,7 +129,18 @@ public class Store {
 				);
 			}
 
-			if (buttonID[i] != Value.airAir && i != 0 && i != 1 && i !=2) {
+			else if (buttonID[i] == Value.airTowerLaser4) {
+				g.drawImage(
+					Screen.goldMiner[0],
+					button[i].x + itemIn,
+					button[i].y + itemIn,
+					button[i].width - itemIn * 2,
+					button[i].height - itemIn * 2,
+					null
+				);
+			}
+
+			if (buttonID[i] != Value.airAir && i > 3) {
 				g.drawImage(
 					Screen.tileset_air[buttonID[i]],
 					button[i].x + itemIn,
@@ -169,9 +180,13 @@ public class Store {
 			else if (heldID == Value.airTowerLaser) {
 				holdingItem = Screen.cacherTower[0];
 			}
+			else if(heldID == Value.airTowerLaser4) {
+				holdingItem = Screen.goldMiner[0];
+			}
 			else {
 				holdingItem = Screen.cannon[0];
 			}
+
 			g.drawImage(
 				holdingItem,
 				Screen.mse.x - ((button[0].width - itemIn * 2) / 2) + itemIn,

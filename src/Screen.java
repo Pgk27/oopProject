@@ -30,6 +30,7 @@ public class Screen extends JPanel implements Runnable {
 	static Image[] cacherTower = new Image[8];
 	static Image[] mageTower = new Image[8];
 	static Image[] cannon = new Image[8];
+	static Image[] goldMiner = new Image[8];
 	// sẽ update tiếp sau
 	
 	
@@ -94,6 +95,9 @@ public class Screen extends JPanel implements Runnable {
 		}
 		for(int i = 0; i < cannon.length; i++){
 			cannon[i] = loadFrame("characterSprites/cannon/cannon" + i + ".png");
+		}
+		for(int i = 0; i < goldMiner.length; i++){
+			goldMiner[i] = loadFrame("characterSprites/goldMiner/goldMiner" + i + ".png");
 		}
 		
 		tileset_res[0] = new ImageIcon("res/cell.png").getImage();
@@ -259,14 +263,14 @@ public class Screen extends JPanel implements Runnable {
 				}else { //level 3
 					mobSpawner3();
 				}
-				// Advance animation cycle
+				// Advance animation cycle ==> ??????? sos cứu t Cường ơi éo hiểu :))))
 				AnimTick++;
 				if (AnimTick >= AnimTime) {
 					AnimFrame++;
 					if (AnimFrame >= mobOrcWalk.length){
 						AnimFrame = 0;
 					}
-					if (AnimFrame % 10 == 0) coinage++; 
+					// if (AnimFrame % 10 == 0) coinage++; 
 					AnimTick = 0;
             	}
 

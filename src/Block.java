@@ -5,10 +5,15 @@ public class Block extends Rectangle{
 	Rectangle towerSquare;
 	Rectangle towerSquare2; // 2.kule
 	Rectangle towerSquare3; // 3.kule
-	
+	Rectangle towerSquare4;
+	int goldMineTick = 0; // tichs danhf rieng cho coin
+	int goldMinerAnimFrame = 0;
+
+
 	int towerSquareSize = 130;   //tower range, ne kadar uzağa vurabilir.
 	int towerSquareSize2= 130;   //2. kule menzil
 	int towerSquareSize3= 200;  //3. kule menzil
+	int towerSquareSize4= 2000000; // set cho xôm
 	int groundID;
 	int airID;
 	int loseTime = 100, loseFrame = 0; // hasar vurma aralığı, kulelerin
@@ -25,6 +30,7 @@ public class Block extends Rectangle{
 		towerSquare = new Rectangle(x-(towerSquareSize/2), y-(towerSquareSize/2), width+(towerSquareSize), height+(towerSquareSize));
 		towerSquare2 = new Rectangle(x-(towerSquareSize2/2), y-(towerSquareSize2/2), width+(towerSquareSize2), height+(towerSquareSize2));//2. kule
 		towerSquare3 = new Rectangle(x-(towerSquareSize3/2), y-(towerSquareSize3/2), width+(towerSquareSize3), height+(towerSquareSize3));//2. kule 
+		towerSquare4 = new Rectangle(x-(towerSquareSize4/2), y-(towerSquareSize4/2), width+(towerSquareSize4), height+(towerSquareSize4));//2. kule 
 		this.groundID = groundID;
 		this.airID = airID;
 	} 
@@ -46,16 +52,31 @@ public class Block extends Rectangle{
 			if (airID == Value.airTowerLaser2) {
 				towerFrames = Screen.mageTower;
 			} 
-			else if (airID == Value.airTowerLaser){
+			else if (airID == Value.airTowerLaser) {
 				towerFrames = Screen.cacherTower;
 			}
-			else{
+			else if (airID == Value.airTowerLaser4) {
+				towerFrames = Screen.goldMiner;
+			}
+			else if(airID == Value.airTowerLaser3){
 				towerFrames = Screen.cannon;
+			}
+			else {
+				// đây là tile nền / cổng thành / vật thể map, không phải tower ==> ý là k phải mảng nên k gán kiểu kia được
+				// không dùng towerFrames ở đây
+				g.drawImage(Screen.tileset_air[airID], x, y, width, height, null);
+				return; // vẽ xong là đi ra, cái này tạm thôi sau này lấy cổng thành sau
 			}
 
 			int animationFrame = 0;
 			if(shotingMob1 || shotingMob2 || shotingMob3){
 				animationFrame = Screen.AnimFrame % towerFrames.length;
+			}
+			else if(towerFrames == Screen.goldMiner){
+				if(Screen.AnimTick % 120003 == 0){
+					goldMinerAnimFrame = (goldMinerAnimFrame + 1) % towerFrames.length;
+				}
+				animationFrame = goldMinerAnimFrame;
 			}
 			// do là hàm draw sẽ vẽ lại mỗi lần nên mình không cần vòng lặp để reset lại 
 
@@ -68,7 +89,7 @@ public class Block extends Rectangle{
             else if (shotingMob3) targetX = Screen.mobsss[shotMob].x;//[cite: 1]
             
             // 3. So sánh tọa độ để vẽ ảnh 
-            if (targetX < this.x) {
+            if (targetX < this.x && towerFrames != Screen.goldMiner) {
                 // Quái ở bên TRÁI -> Lật ảnh bằng cách cộng width vào X và đặt width thành số âm
                 g.drawImage(currentFrame, x + width, y, -width, height, null);
             } else {
@@ -79,6 +100,17 @@ public class Block extends Rectangle{
 	}
 	
 	void physic() { // physics for tower shooting and mob taking damage
+
+		//logic kiếm vàng đặt ở đây vì nếu đặt trong hàm getmoney nó lại dựa vào tiêu diệt quái để có
+		
+
+		if (airID == Value.airTowerLaser4) {
+			goldMineTick++;
+			if (goldMineTick >= 1250) {
+				Screen.coinage += 1;
+				goldMineTick = 0;
+			}
+		}
 		
 		if (shotMob != 0 && towerSquare.intersects(Screen.mobs[shotMob])   ) { // mob 1 get shot, check xem co de len nhau k
 			shotingMob1 = true;

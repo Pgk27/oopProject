@@ -10,6 +10,7 @@ public class Value {
 	static int airTowerLaser = 2;
 	static int airTowerLaser2 = 3;  // tower 2
 	static int airTowerLaser3 = 4;  // tower 3
+	static int airTowerLaser4 = 5;  // goldminer
 
 
 	static protected int mobAir = -1;
