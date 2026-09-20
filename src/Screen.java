@@ -49,6 +49,7 @@ public class Screen extends JPanel implements Runnable {
 	static Save save;
 	static Store store;
 	public static Tiles tiles;
+	public static WaveManager waveManager;
 	
 
 	static Mob[] mobs = new Mob[100]; // gelen mob sayısı
@@ -63,10 +64,10 @@ public class Screen extends JPanel implements Runnable {
 	}
 	
 	static void hasWon() {
-		if(killed >= killsToWin) {
+		if(waveManager != null && waveManager.isAllWavesFinished() && !waveManager.isAnyMobAlive()) {
 			isWin = true;
 			killed = 0;		
-			coinage = 0; 
+			// coinage = 0; 
 		}
 	}
 	
@@ -138,6 +139,8 @@ public class Screen extends JPanel implements Runnable {
 		for( int i = 0 ; i < mobsss.length;i++) { 
 			mobsss[i] = new Mob3();
 		}
+		
+		waveManager = new WaveManager(level);
 	}
 
 	public static int gameState=0;
@@ -221,17 +224,9 @@ public class Screen extends JPanel implements Runnable {
 				if(health > 0 && !isWin) {
 					room.physic(); // oyunu ekrana veriyor
 
-					if(level == 1) { // mobu o levelda spawnlıyor
-						mobSpawner();
-					}
-					else if(level == 2){ // mobu o levelda spawnlıyor
-						mobSpawner2();
-					}
-					else if(level == 3){ //  mobu o levelda spawnlıyor
-						mobSpawner3();
-					}else { //level 3
-						mobSpawner3();
-					}
+					waveManager.update();
+					hasWon(); // Liên tục kiểm tra điều kiện thắng để bắt kịp lúc animation quái chết kết thúc
+					
 					// Advance animation cycle ==> ??????? sos cứu t Cường ơi éo hiểu :))))
 					AnimTick++;
 					if (AnimTick >= AnimTime) {
