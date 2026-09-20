@@ -75,6 +75,7 @@ public class Screen extends JPanel implements Runnable {
 		room = new Room();
 		save = new Save();
 		store = new Store();
+		Screen.tiles = new Tiles();
 		
 		coinage = 100; // starting coin
 		health = 10; // starting health
