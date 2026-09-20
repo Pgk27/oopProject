@@ -168,7 +168,10 @@ public class Store {
 		
 		
 		g.drawString("Killed = "+ Screen.killed, 570,460); // killed / show
-		g.drawString("Kills to win = "+ (Screen.killsToWin-Screen.killed), 570,490);
+		
+		if (Screen.waveManager != null) {
+			g.drawString("Wave: " + Screen.waveManager.getCurrentWave() + " / " + Screen.waveManager.getTotalWaves(), 570,490);
+		}
 		
 		
 		if(holdsItem) {// store dan elimize aldığımız kule vs. mouseda çiziyor(durmasını sağlıyor)
