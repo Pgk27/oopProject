@@ -9,7 +9,7 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 	Rectangle quitGame = new Rectangle(500, 450, 144 , 72);
 	Rectangle settings = new Rectangle(5, 5, 35, 35);
 	Rectangle store = new Rectangle(500, 375, 144 , 72);
-	Rectangle backz = new Rectangle(5, 5, 50, 35);
+	Rectangle backz = new Rectangle(10, 35, 50, 35);
 	public void mouseClicked(MouseEvent e) {
 		if(Screen.gameState == Screen.tileScreen) {
 			int mouseX = e.getX();
