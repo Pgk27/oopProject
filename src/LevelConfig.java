@@ -1,6 +1,11 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Lớp cấu hình toàn bộ Data cho các Màn chơi (Level).
+ * Được thiết kế theo hướng Data-Driven: tách biệt logic game và dữ liệu màn chơi.
+ * Bạn có thể dễ dàng thay đổi thời gian, số lượng quái và sức mạnh quái ở đây mà không cần sửa code cốt lõi.
+ */
 public class LevelConfig {
     public List<WaveData> waves;
 

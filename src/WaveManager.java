@@ -1,3 +1,8 @@
+/**
+ * Lớp quản lý toàn bộ hệ thống sinh quái (Wave Management).
+ * Hoạt động độc lập bằng cách đếm số frame (globalTick) trong Game Loop.
+ * Theo dõi thời gian để kích hoạt Wave mới, spawn quái và kiểm tra điều kiện kết thúc màn.
+ */
 public class WaveManager {
     public LevelConfig config;
     public int globalTick = 0;

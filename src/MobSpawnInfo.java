@@ -1,5 +1,9 @@
+/**
+ * Lớp đại diện cho thông tin cấu hình sinh quái (spawn) của một loại quái vật cụ thể trong 1 Wave.
+ * Hệ thống Data-Driven sử dụng lớp này để không phải hard-code logic sinh quái.
+ */
 public class MobSpawnInfo {
-    public int mobType; // Value.mobMonster1 (Orc), Value.mobMonster2 (Demon), Value.mobMonster3 (Slime)
+    public int mobType; // ID của quái vật: Value.mobMonster1 (Orc), Value.mobMonster2 (Demon), Value.mobMonster3 (Slime)
     public int totalCount;
     public int spawnInterval; // in frames (each frame is ~1ms sleep in Screen.java)
     public double hpMultiplier;
