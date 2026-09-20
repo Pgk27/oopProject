@@ -48,6 +48,7 @@ public class Screen extends JPanel implements Runnable {
 	static Room room;
 	static Save save;
 	static Store store;
+	public static Tiles tiles;
 	
 
 	static Mob[] mobs = new Mob[100]; // gelen mob sayısı
@@ -73,6 +74,7 @@ public class Screen extends JPanel implements Runnable {
 		room = new Room();
 		save = new Save();
 		store = new Store();
+		Screen.tiles = new Tiles();
 		
 		coinage = 100; // starting coin
 		health = 10; // starting health
@@ -137,67 +139,33 @@ public class Screen extends JPanel implements Runnable {
 			mobsss[i] = new Mob3();
 		}
 	}
+
+	public static int gameState=0;
+	public static  final int tileScreen=0;
+	public static final int playGame=1;
+	public static final int settings=2;
+	public static final int selectSkill=3;
+	public static final int gameShop=4;
+	public static final int buyItem=5;
+	public static final int gachaHero=6;
+
+	private GameRender gameRender = new GameRender();
 	
-		
-	public void paintComponent(Graphics g) {
-		if(isFirst) { // oyuna ilk giriş ise, oyunu ekrana çizer
-			myWidth = getWidth();
-			myHeight = getHeight();
-			define(); 
-			
-			isFirst = false;
-		}
-		
-		g.setColor(new Color(70, 70, 70));//arka planın rengi 
-		g.fillRect(0, 0, getWidth(), getHeight());
-		
-		
-		room.draw(g); //room daki tasarımların screen de görünmesini sağlıyor
-		
-		
-		for( int i = 0; i < mobs.length; i++) { // mobları ekrana çizdiğimiz yer burası / spawnlan mıyor!!!!!
-			if(mobs[i].inGame) {
-				mobs[i].draw(g);
-			}
-		}
-		
-		
-		for(int i = 0; i < mobss.length; i++) { 
-			if(mobss[i].inGame) {
-				mobss[i].draw(g);
-			}
-		}
-		
-		for(int i = 0; i < mobsss.length; i++) { 
-			if(mobsss[i].inGame) {
-				mobsss[i].draw(g); 
-			}
-		}
-		store.draw(g); //Store çizmek için constructorları store classında
-		
-		if(health < 1) {
-			g.setColor(new Color(240,20,20));
-			g.fillRect(0, 0, myWidth, myHeight);
-			g.setColor(new Color(225,255,255));
-			g.setFont(new Font("Courier New",Font.BOLD,14));
-			g.drawString("Game Over, Unlucky...:(", 10, 20);
-		}
-		
-		if(isWin) {
-			g.setColor(new Color(255,255,255));
-			g.fillRect(0, 0, getWidth(), getHeight());  
-			g.setColor(new Color(0,0,0));  //yazı , siyah
-			g.setFont(new Font("Courier New",Font.BOLD,14));
-			if(level >= maxlevel) {			
-				g.drawString("You won the whole game! Please wait and the window will close...", 10, 20);
-			}
-			else {
-				g.drawString("You won! Congratulations! Please wait for the next level...", 10, 20);
-			}
-		}
+	@Override 
+	public void paintComponent(Graphics g) {  // Hàm vẽ chính --> đẩy sang gamerender.java
+		if(isFirst) { 
+            myWidth = getWidth();  
+            myHeight = getHeight(); 
+            define();
+            
+            isFirst = false;
+        }
+
+		super.paintComponent(g);
+		gameRender.render(g, getWidth(), getHeight());
+	
 	}
-	 
-	
+		
 	int spawnTime = 1600, spawnFrame = 0;   // oluşma aralıkları
 	void mobSpawner() {
 		if(spawnFrame >= spawnTime) {
@@ -249,67 +217,69 @@ public class Screen extends JPanel implements Runnable {
 	
 	public void run() {
 		while(true) {
-			if(!isFirst && health > 0 && !isWin) {
-				room.physic(); // oyunu ekrana veriyor
+			if(!isFirst && gameState == playGame) {
+				if(health > 0 && !isWin) {
+					room.physic(); // oyunu ekrana veriyor
 
-				if(level == 1) { // mobu o levelda spawnlıyor
-					mobSpawner();
-				}
-				else if(level == 2){ // mobu o levelda spawnlıyor
-					mobSpawner2();
-				}
-				else if(level == 3){ //  mobu o levelda spawnlıyor
-					mobSpawner3();
-				}else { //level 3
-					mobSpawner3();
-				}
-				// Advance animation cycle ==> ??????? sos cứu t Cường ơi éo hiểu :))))
-				AnimTick++;
-				if (AnimTick >= AnimTime) {
-					AnimFrame++;
-					if (AnimFrame >= mobOrcWalk.length){
-						AnimFrame = 0;
+					if(level == 1) { // mobu o levelda spawnlıyor
+						mobSpawner();
 					}
-					// if (AnimFrame % 10 == 0) coinage++; 
-					AnimTick = 0;
-            	}
+					else if(level == 2){ // mobu o levelda spawnlıyor
+						mobSpawner2();
+					}
+					else if(level == 3){ //  mobu o levelda spawnlıyor
+						mobSpawner3();
+					}else { //level 3
+						mobSpawner3();
+					}
+					// Advance animation cycle ==> ??????? sos cứu t Cường ơi éo hiểu :))))
+					AnimTick++;
+					if (AnimTick >= AnimTime) {
+						AnimFrame++;
+						if (AnimFrame >= mobOrcWalk.length){
+							AnimFrame = 0;
+						}
+						// if (AnimFrame % 10 == 0) coinage++; 
+						AnimTick = 0;
+					}
 
-				for(int i = 0; i < mobs.length; i++) { // mobun hareketi
-					if(mobs[i].inGame) {
-						mobs[i].physic();
+					for(int i = 0; i < mobs.length; i++) { // mobun hareketi
+						if(mobs[i].inGame) {
+							mobs[i].physic();
+						}
+						
 					}
 					
+					for(int i = 0; i <mobss.length; i++) { //////////////*******************
+						if(mobss[i].inGame) {
+							mobss[i].physic();
+						}
+						
+					}
+					for(int i = 0; i < mobsss.length; i++) { ////////////////////**************************
+						if(mobsss[i].inGame) {
+							mobsss[i].physic();
+						}
+						
+					}	
 				}
-				
-				for(int i = 0; i <mobss.length; i++) { //////////////*******************
-					if(mobss[i].inGame) {
-						mobss[i].physic();
+				else {
+					if(isWin) {
+							if(winFrame>=winTime) {
+								level++;
+								if(level > maxlevel) {
+									System.exit(0);
+								}else {
+									define();
+									isWin = false;
+								}
+								winFrame = 0;
+							}
+							else {
+								winFrame +=1;
+							}
 					}
-					
 				}
-				for(int i = 0; i < mobsss.length; i++) { ////////////////////**************************
-					if(mobsss[i].inGame) {
-						mobsss[i].physic();
-					}
-					
-				}	
-			}
-			else {
-				  if(isWin) {
-					    if(winFrame>=winTime) {
-							level++;
-					    	if(level > maxlevel) {
-					    		System.exit(0);
-					    	}else {
-								define();
-								isWin = false;
-					    	}
-					    	winFrame = 0;
-					    }
-						else {
-					    	winFrame +=1;
-					    }
-				  }
 			}
 			repaint();
 			try {
