@@ -3,6 +3,7 @@ import javax.swing.*;
 import java.io.*;
 import java.awt.image.*;
 
+
 public class Screen extends JPanel implements Runnable {
 	Thread thread = new Thread(this);
 	
@@ -48,6 +49,7 @@ public class Screen extends JPanel implements Runnable {
 	static Room room;
 	static Save save;
 	static Store store;
+	public static Tiles tiles;
 	
 
 	static Mob[] mobs = new Mob[100]; // gelen mob sayısı
@@ -137,67 +139,33 @@ public class Screen extends JPanel implements Runnable {
 			mobsss[i] = new Mob3();
 		}
 	}
+
+	public static int gameState=0;
+	public static  final int tileScreen=0;
+	public static final int playGame=1;
+	public static final int settings=2;
+	public static final int selectSkill=3;
+	public static final int gameShop=4;
+	public static final int buyItem=5;
+	public static final int gachaHero=6;
+
+	private GameRender gameRender = new GameRender();
 	
-		
-	public void paintComponent(Graphics g) {
-		if(isFirst) { // oyuna ilk giriş ise, oyunu ekrana çizer
-			myWidth = getWidth();
-			myHeight = getHeight();
-			define(); 
-			
-			isFirst = false;
-		}
-		
-		g.setColor(new Color(70, 70, 70));//arka planın rengi 
-		g.fillRect(0, 0, getWidth(), getHeight());
-		
-		
-		room.draw(g); //room daki tasarımların screen de görünmesini sağlıyor
-		
-		
-		for( int i = 0; i < mobs.length; i++) { // mobları ekrana çizdiğimiz yer burası / spawnlan mıyor!!!!!
-			if(mobs[i].inGame) {
-				mobs[i].draw(g);
-			}
-		}
-		
-		
-		for(int i = 0; i < mobss.length; i++) { 
-			if(mobss[i].inGame) {
-				mobss[i].draw(g);
-			}
-		}
-		
-		for(int i = 0; i < mobsss.length; i++) { 
-			if(mobsss[i].inGame) {
-				mobsss[i].draw(g); 
-			}
-		}
-		store.draw(g); //Store çizmek için constructorları store classında
-		
-		if(health < 1) {
-			g.setColor(new Color(240,20,20));
-			g.fillRect(0, 0, myWidth, myHeight);
-			g.setColor(new Color(225,255,255));
-			g.setFont(new Font("Courier New",Font.BOLD,14));
-			g.drawString("Game Over, Unlucky...:(", 10, 20);
-		}
-		
-		if(isWin) {
-			g.setColor(new Color(255,255,255));
-			g.fillRect(0, 0, getWidth(), getHeight());  
-			g.setColor(new Color(0,0,0));  //yazı , siyah
-			g.setFont(new Font("Courier New",Font.BOLD,14));
-			if(level >= maxlevel) {			
-				g.drawString("You won the whole game! Please wait and the window will close...", 10, 20);
-			}
-			else {
-				g.drawString("You won! Congratulations! Please wait for the next level...", 10, 20);
-			}
-		}
+	@Override 
+	public void paintComponent(Graphics g) {  // Hàm vẽ chính --> đẩy sang gamerender.java
+		if(isFirst) { 
+            myWidth = getWidth();  
+            myHeight = getHeight(); 
+            define();
+            
+            isFirst = false;
+        }
+
+		super.paintComponent(g);
+		gameRender.render(g, getWidth(), getHeight());
+	
 	}
-	 
-	
+		
 	int spawnTime = 1600, spawnFrame = 0;   // oluşma aralıkları
 	void mobSpawner() {
 		if(spawnFrame >= spawnTime) {
