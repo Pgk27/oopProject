@@ -46,7 +46,7 @@ public class WaveManager {
                         allMobsSpawnedInThisWave = false;
                         
                         info.frameCounter++;
-                        if (info.frameCounter >= info.spawnInterval) {
+                        if (info.frameCounter >= info.spawnInterval + (int) (Math.random() * ((500000 - info.spawnInterval) + 1 )) {
                             spawnMob(info);
                             info.spawnedCount++;
                             info.frameCounter = 0;
