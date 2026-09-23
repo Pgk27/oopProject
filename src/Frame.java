@@ -6,7 +6,7 @@ import javax.swing.*;
 
 public class Frame extends JFrame{
 	public static String title = "FINAL KINGDOM";
-	public static Dimension size = new Dimension(700, 600);
+	public static Dimension size = new Dimension(1200, 800);
 	
 	public Frame() {
 		setTitle(title);
