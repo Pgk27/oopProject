@@ -5,7 +5,7 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 
 public class Frame extends JFrame{
-	public static String title = "Tower Defense Demo";
+	public static String title = "FINAL KINGDOM";
 	public static Dimension size = new Dimension(700, 600);
 	
 	public Frame() {

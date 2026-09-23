@@ -20,13 +20,13 @@ public class LevelConfig {
             // LEVEL 1
             // Wave 1 (0:00 - 0:25): 10x Slime (Spawn mỗi 2s).
             WaveData w1 = new WaveData(0); // 0s
-            w1.addSpawn(new MobSpawnInfo(Value.mobMonster3, 10, 2000, 1.0, 1.0, 1.0)); // Slime
+            w1.addSpawn(new MobSpawnInfo(Value.mobMonster1, 10, 1500, 1.0, 1.0, 1.0)); // Slime
             config.waves.add(w1);
 
             // Wave 2 (0:30 - 0:55): 8x Slime + 3x Orc xuất hiện xen kẽ (Spawn mỗi 1.5s).
             WaveData w2 = new WaveData(30000); // 30s
-            w2.addSpawn(new MobSpawnInfo(Value.mobMonster3, 8, 1500, 1.0, 1.0, 1.0)); // Slime
-            w2.addSpawn(new MobSpawnInfo(Value.mobMonster1, 3, 1500, 1.0, 1.0, 1.0)); // Orc
+            w2.addSpawn(new MobSpawnInfo(Value.mobMonster1, 14, 1500, 1.0, 1.0, 1.0)); // Slime
+            w2.addSpawn(new MobSpawnInfo(Value.mobMonster1, 14, 1500, 1.0, 1.0, 1.0)); // Orc
             config.waves.add(w2);
 
         } else if (level == 2) {
