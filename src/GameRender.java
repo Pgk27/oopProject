@@ -71,6 +71,12 @@ public class GameRender {
                   Screen.mobsss[i].draw(g);
               }
         }
+
+        for (int i = 0; i < Screen.mini.length; i++){
+            if (Screen.mini[i].inGame){
+                Screen.mini[i].draw(g);
+            }
+        }
         
         Screen.store.draw(g); 
         
