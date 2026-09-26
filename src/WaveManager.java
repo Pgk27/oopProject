@@ -55,7 +55,7 @@ public class WaveManager {
                                 info.frameCounter = 0;
                             }
                         }
-                        if (isCohort && info.frameCounter >= (info.spawnInterval - info.spawnInterval*(0.7+ (int)(Math.random() * (0.9 - 0.7))))) {
+                        if (isCohort && info.frameCounter >= (info.spawnInterval - info.spawnInterval*(0.7+ (int) (Math.random() * (0.9 - 0.7))))) {
                             spawnMob(info);
                             info.spawnedCount++;
                             info.frameCounter = 0;
