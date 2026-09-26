@@ -198,6 +198,7 @@ public class Mob extends Rectangle{
 		deadTick = 0;
 		deadDelay = 0;
 		
+		
 		Screen.killed++;
 		Screen.room.block[0][0].getMoney(mobID);
 	}

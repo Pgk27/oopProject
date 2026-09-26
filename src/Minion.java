@@ -1,32 +1,10 @@
 import java.awt.*;
 
-public class Minion extends Rectangle {
-    protected int xC, yC; //  x,y kordinatları for mob
-	protected int health;
-	protected int maxHealth;
-	protected int healthSpace = 3, healthHeight = 6;
-	protected int mobSize = 52;
-	protected int upward = 0, downward = 1, right = 2, left = 3;
-	protected int walkFrame = 0;
-    protected boolean inGame = false;
-    protected double renderScale;
-	protected boolean isDying = false;
-	protected int deadFrame = 0;
-	protected int deadSpeed = 35; // Giá trị càng lớn càng chậm (walkSpeed mặc định là 20)
-	protected int deadTick = 0;
-	protected int deadDelay = 0;
-	protected int deadDelayLimit = 1500; // Delay tại frame cuối trước khi biến mất (~1.5 đến 2 giây)
-    protected int damage = 10;
-    protected int mobID = Value.mobAir;
+public class Minion extends Mob {
 
     Minion(){    
 		this.renderScale = 1;
-    }
-
-    void loseHealth(int amo) {
-		if (isDying) return;
-		health -= amo;
-		checkDeath();
+		this.dmgReduction = 0;     
 	}
 	   
 	void checkDeath() {
@@ -34,12 +12,12 @@ public class Minion extends Rectangle {
 			mobDead();
 		}
 	}
-	   
-	   
-	boolean isDead() {
-		return !inGame || isDying;
-	}
+	
+	@Override
+	void physic(){
 
+	}
+	   
 	void deleteMob() {
 		isDying = false;
 		inGame = false;
@@ -54,7 +32,7 @@ public class Minion extends Rectangle {
 		Screen.killed++;
 		Screen.room.block[0][0].getMoney(mobID);
 	}
-	
+
 	void spawnMob(int mobID) {
 		 //determines that the mob will start at coordinate 0 a 0
 		for(int y= 0; y<Screen.room.block.length; y++ ) { // loop through the left edge to check if there's a ground tile to spawn mob
