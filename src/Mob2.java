@@ -5,6 +5,7 @@ public class Mob2 extends Mob {
 		this.walkSpeed = 5;
 		this.spawnTime = 1200;
 		this.renderScale = 1.0;
+		this.dmgReduction = 0.25;
 	}
 
 	@Override

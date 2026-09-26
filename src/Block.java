@@ -118,6 +118,7 @@ public class Block extends Rectangle {
 			else if (targetType == 2 && shotMob < Screen.mobss.length) currentTarget = Screen.mobss[shotMob];
 			else if (targetType == 3 && shotMob < Screen.mobsss.length) currentTarget = Screen.mobsss[shotMob];
 
+			// xét trường hợp không bắn target
 			if (currentTarget == null || !currentTarget.inGame || currentTarget.isDead() || !range.intersects(currentTarget)) {
 				targetType = 0;
 				shotMob = -1;
@@ -130,37 +131,50 @@ public class Block extends Rectangle {
 		// 2. Nếu chưa có mục tiêu, tìm đúng 1 mục tiêu duy nhất trong tầm bắn
 		if (targetType == 0) {
 			// Quét nhóm mobs 1
+			int bestIndex = -1;
+			int bestType = 0;
+			double nearestDist = Integer.MAX_VALUE;
 			for (int i = 0; i < Screen.mobs.length; i++) {
 				if (Screen.mobs[i].inGame && !Screen.mobs[i].isDead() && range.intersects(Screen.mobs[i])) {
-					targetType = 1;
-					shotMob = i;
-					shotingMob1 = true;
-					break;
+					double dist = distanceCheck(Screen.mobs[i]);
+					if (nearestDist > dist){
+						nearestDist = dist;
+						bestIndex = i;
+						bestType = 1;
+					}
 				}
 			}
+			
 
 			// Nếu nhóm 1 không có, quét tiếp nhóm mobss 2
-			if (targetType == 0) {
-				for (int i = 0; i < Screen.mobss.length; i++) {
-					if (Screen.mobss[i].inGame && !Screen.mobss[i].isDead() && range.intersects(Screen.mobss[i])) {
-						targetType = 2;
-						shotMob = i;
-						shotingMob2 = true;
-						break;
-					}
+			for (int i = 0; i < Screen.mobss.length; i++) {
+				if (Screen.mobss[i].inGame && !Screen.mobss[i].isDead() && range.intersects(Screen.mobss[i])) {
+					double dist = distanceCheck(Screen.mobss[i]);
+					if (nearestDist > dist){
+						nearestDist = dist;
+						bestIndex = i;
+						bestType = 2;
+					}	
 				}
 			}
 
 			// Nếu nhóm 2 không có, quét tiếp nhóm mobsss 3
-			if (targetType == 0) {
-				for (int i = 0; i < Screen.mobsss.length; i++) {
-					if (Screen.mobsss[i].inGame && !Screen.mobsss[i].isDead() && range.intersects(Screen.mobsss[i])) {
-						targetType = 3;
-						shotMob = i;
-						shotingMob3 = true;
-						break;
+			for (int i = 0; i < Screen.mobsss.length; i++) {
+				if (Screen.mobsss[i].inGame && !Screen.mobsss[i].isDead() && range.intersects(Screen.mobsss[i])) {
+					double dist = distanceCheck(Screen.mobsss[i]);
+					if (nearestDist > dist){
+						nearestDist = dist;
+						bestIndex = i;
+						bestType = 3;
 					}
 				}
+			}
+			if (bestType != 0){
+				targetType = bestType;
+				shotMob = bestIndex;
+				if (bestType == 1) shotingMob1 = true;
+				else if(bestType == 2) shotingMob2 = true;
+				else if(bestType == 3) shotingMob3 = true;
 			}
 		}
 
@@ -172,9 +186,9 @@ public class Block extends Rectangle {
 			else if (targetType == 3 && shotMob < Screen.mobsss.length) target = Screen.mobsss[shotMob];
 
 			if (loseFrame >= loseTime) {
-				int damage = 2;
-				if (airID == Value.airTowerLaser2) damage = 4;
-				else if (airID == Value.airTowerLaser3) damage = 10;
+				double damage = 2 * (1-target.dmgReduction);
+				if (airID == Value.airTowerLaser2) damage = 4 * (1-target.dmgReduction);
+				else if (airID == Value.airTowerLaser3) damage = 10 * (1-target.dmgReduction);
 
 				if (target != null) {
 					target.loseHealth(damage);
@@ -248,5 +262,16 @@ public class Block extends Rectangle {
 					Screen.mobsss[shotMob].x + (Screen.mobsss[shotMob].width / 2),
 					Screen.mobsss[shotMob].y + (Screen.mobsss[shotMob].height / 2));
 		}
+	}
+
+	double distanceCheck(Rectangle mob){
+		int towerCenterX = this.x + (this.width/2);
+		int towerCenterY = this.y + (this.height/2);
+		int mobCenterX = mob.x + (mob.width/2);
+		int mobCenterY = mob.y + (mob.height/2);
+
+		int dx = towerCenterX - mobCenterX;
+		int dy = towerCenterY - mobCenterY;
+		return (dx*dx) + (dy*dy);
 	}
 }

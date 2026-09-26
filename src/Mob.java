@@ -9,19 +9,21 @@ public class Mob extends Rectangle{
 	protected int mobSize = 52;
 	protected int upward = 0, downward = 1, right = 2, left = 3;
 	protected int walkFrame = 0;
-	int walkSpeed;
-	int spawnTime;
-	int mobWalk = 0;
-	int direction = right;
-	int mobID = Value.mobAir;
-	boolean inGame = false;
-	boolean hasUpward = false;
-	boolean hasDownward = false;
-	boolean hasLeft = false;
-	boolean hasRight = false;
+	protected int walkSpeed;
+	protected int spawnTime;
+	protected int mobWalk = 0;
+	protected int direction = right;
+	protected int mobID = Value.mobAir;
+
+	protected boolean inGame = false;
+	protected boolean hasUpward = false;
+	protected boolean hasDownward = false;
+	protected boolean hasLeft = false;
+	protected boolean hasRight = false;
 
 	// scale kích thước cho một số mob có frame ảnh rộng
 	protected double renderScale;
+	protected double dmgReduction;
 	protected boolean isDying = false;
 	protected int deadFrame = 0;
 	protected int deadSpeed = 35; // Giá trị càng lớn càng chậm (walkSpeed mặc định là 20)
@@ -33,6 +35,7 @@ public class Mob extends Rectangle{
 		this.walkSpeed = 20; // lower is faster
 		this.spawnTime = 1600;
 		this.renderScale = 1.5;
+		this.dmgReduction = 0;
 	}
     
 	void spawnMob(int mobID) { // 0,0 da başlıyacağını belirliyor
@@ -164,7 +167,7 @@ public class Mob extends Rectangle{
 		}
 	}
 	   
-	void loseHealth(int amo) {
+	void loseHealth(double amo) {
 		if (isDying) return;
 		health -= amo;
 		checkDeath();
@@ -209,7 +212,7 @@ public class Mob extends Rectangle{
 		if (Screen.mobOrcWalk != null && Screen.mobOrcWalk.length > 0){
 			return Screen.mobOrcWalk[Screen.AnimFrame];
 		}
-		return Screen.tileset_mob[mobID];
+		return Screen.mobOrcWalk[0];
 	}
 	   
 	void draw(Graphics g) {
