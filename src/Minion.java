@@ -1,0 +1,115 @@
+import java.awt.*;
+
+public class Minion extends Mob {
+
+    Minion(){    
+		this.renderScale = 1;
+		this.dmgReduction = 0;     
+	}
+	   
+	void checkDeath() {
+		if (health <= 0){
+			mobDead();
+		}
+	}
+	
+	@Override
+	void physic(){
+
+	}
+	   
+	void deleteMob() {
+		isDying = false;
+		inGame = false;
+	}
+
+	void mobDead(){
+		isDying = true;
+		deadFrame = 0;
+		deadTick = 0;
+		deadDelay = 0;
+		
+		Screen.killed++;
+		Screen.room.block[0][0].getMoney(mobID);
+	}
+
+	void spawnMob(int mobID) {
+		 //determines that the mob will start at coordinate 0 a 0
+		for(int y= 0; y<Screen.room.block.length; y++ ) { // loop through the left edge to check if there's a ground tile to spawn mob
+			if(Screen.room.block[y][0].groundID == Value.groundRoad) {
+				setBounds(Screen.room.block[y][6].x, Screen.room.block[y][6].y, mobSize, mobSize);
+				xC = 0;
+				yC = y;
+			}
+		}
+
+		this.mobID = mobID;
+		this.health = mobSize;
+		this.maxHealth = health;
+
+		this.isDying = false;
+		this.deadFrame = 0;
+		this.deadTick = 0;
+		this.deadDelay = 0;
+		
+		inGame = true;
+	}
+
+	Image getSprite(){
+		// if (isDying){ // dying mob animation
+		// 	if (Screen.mobOrcDead != null && Screen.mobOrcDead.length > 0){
+		// 		return Screen.mobOrcDead[deadFrame];
+		// 	}
+		// }
+		// mob's normal walking animation
+		if (Screen.minionIdle != null && Screen.minionIdle.length > 0){
+			return Screen.minionIdle[Screen.AnimFrame];
+		}
+		return Screen.tileset_mob[mobID];
+	}
+
+	void draw(Graphics g) {
+		if (!inGame) return;
+        // Draws the current animation frame scaled to the tile/mob size
+
+		Image Sprite = getSprite();
+		if (Sprite != null){
+			// 1. Tính kích thước vẽ dựa trên hệ số phóng to
+            int drawW = (int) (width * renderScale);
+            int drawH = (int) (height * renderScale);
+
+            // 2. Căn giữa theo trục X, và giữ đáy chân quái chạm sàn (không bị bay lơ lửng)
+            int drawX = x - (drawW - width) / 2;
+            int drawY = y - (drawH - height);
+
+            g.drawImage(Sprite, drawX, drawY, drawW, drawH, null);
+		}
+
+		if (isDying) return;
+
+		int barY = y - (healthSpace + healthHeight);
+		double healthPercent = (double) health / maxHealth;
+		int currentBarWidth = (int) (healthPercent * width);
+
+		// 1. Dark gray / black background (empty track)
+		g.setColor(new Color(40, 40, 40));
+		g.fillRect(x, barY, width, healthHeight);
+
+		// 2. Dynamic Color Selection based on health percentage
+		if (healthPercent > 0.50) {
+			g.setColor(new Color(50, 205, 50));   // Green (above 50%)
+		} else if (healthPercent > 0.25) {
+			g.setColor(new Color(255, 165, 0));  // Orange (25% - 50%)
+		} else {
+			g.setColor(new Color(220, 20, 60));   // Red (below 25% / Critical)
+		}
+
+		if (currentBarWidth > 0) {
+			g.fillRect(x, barY, currentBarWidth, healthHeight);
+		}
+
+		// 3. Static border around the entire bar
+		g.setColor(Color.BLACK);
+		g.drawRect(x, barY, width - 1, healthHeight - 1);
+	}
+}
