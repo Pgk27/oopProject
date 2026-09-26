@@ -14,6 +14,12 @@ public class Mob extends Rectangle{
 	protected int mobWalk = 0;
 	protected int direction = right;
 	protected int mobID = Value.mobAir;
+	protected int increPos = 0;
+
+	protected int coinDuration = 250; // thời gian animation đồng xu bay lên
+	protected int coinTick = 0;
+	protected int coinMaxFlyDist = 15; // độ cao đồng xu bay lên
+	
 
 	protected boolean inGame = false;
 	protected boolean hasUpward = false;
@@ -67,6 +73,10 @@ public class Mob extends Rectangle{
 
 	void physic() {
 		if (isDying){ // tính toán frame cho animation mob chết
+			if (coinTick < coinDuration){
+				coinTick++;
+			}
+
 			if (Screen.mobOrcDead != null && Screen.mobOrcDead.length > 0){
 				if (deadFrame < Screen.mobOrcDead.length - 1){
 					deadTick++;
@@ -198,7 +208,7 @@ public class Mob extends Rectangle{
 		deadTick = 0;
 		deadDelay = 0;
 		
-		
+		this.coinTick = 0;
 		Screen.killed++;
 		Screen.room.block[0][0].getMoney(mobID);
 	}
@@ -219,21 +229,32 @@ public class Mob extends Rectangle{
 	void draw(Graphics g) {
 		if (!inGame) return;
         // Draws the current animation frame scaled to the tile/mob size
+		// 1. Tính kích thước vẽ dựa trên hệ số phóng to
+		int drawW = (int) (width * renderScale);
+		int drawH = (int) (height * renderScale);
+
+		// 2. Căn giữa theo trục X, và giữ đáy chân quái chạm sàn (không bị bay lơ lửng)
+		int drawX = x - (drawW - width) / 2;
+		int drawY = y - (drawH - height);
 
 		Image Sprite = getSprite();
 		if (Sprite != null){
-			// 1. Tính kích thước vẽ dựa trên hệ số phóng to
-            int drawW = (int) (width * renderScale);
-            int drawH = (int) (height * renderScale);
-
-            // 2. Căn giữa theo trục X, và giữ đáy chân quái chạm sàn (không bị bay lơ lửng)
-            int drawX = x - (drawW - width) / 2;
-            int drawY = y - (drawH - height);
-
             g.drawImage(Sprite, drawX, drawY, drawW, drawH, null);
 		}
 
-		if (isDying) return;
+		if (isDying){
+			if (coinDuration > 0 && coinTick < coinDuration) {
+				double progress = (double) coinTick / coinDuration; // Giá trị từ 0.0 -> 1.0
+				int coinOffsetY = (int) (progress * coinMaxFlyDist); // Bay dần lên trên
+				
+				int coinX = x + (width / 2) - (Store.iconSize / 2);
+				int coinY = (y - coinOffsetY);
+
+				g.drawImage(Screen.tileset_res[2], coinX, coinY, Store.iconSize, Store.iconSize, null);
+			}
+			return;
+		}
+		
 
 		int barY = y - (healthSpace + healthHeight);
 		double healthPercent = (double) health / maxHealth;
