@@ -8,22 +8,26 @@ public class Screen extends JPanel implements Runnable {
 	
 	static Image[] tileset_ground = new Image[100];
 	static Image[] tileset_air = new Image[100];
-	static Image[] tileset_res = new Image[100];
-	static Image[] tileset_mob = new Image[100];
-	static Image[] tileset_mobb = new Image[100];        
-	static Image[] tileset_mobbb = new Image[100]; 
-	static Image[] tileset_minion = new Image[10];     
+	static Image[] tileset_res = new Image[100];    
 	
 	// initilizers for animations
-	static Image[] mobOrcWalk = new Image[8]; // 8 walking frames
-	static Image[] mobDemonWalk = new Image[8];
-	static Image[] mobSlimeWalk = new Image[8]; // cat has 10 running frames
+	static Image[] mobOrcWalkAnim = new Image[8]; // 8 walking frames
+	static Image[] mobOrcDeadAnim = new Image[4];
+	static Image[] mobOrcAttack1Anim = new Image[6];
+	static Image[] mobOrcAttack2Anim = new Image[6];
 
-	static Image[] mobOrcDead = new Image[4];
-	static Image[] mobDemonDead = new Image[4];
-	static Image[] mobSlimeDead = new Image[7];
+	static Image[] mobDemonWalkAnim = new Image[8];
+	static Image[] mobDemonDeadAnim = new Image[4];
+	static Image[] mobDemonAttack1Anim = new Image[8];
+	static Image[] mobDemonAttack2Anim = new Image[8];
 
-	static Image[] minionIdle = new Image[8];
+	static Image[] mobSlimeWalkAnim = new Image[8]; // cat has 10 running frames
+	static Image[] mobSlimeDeadAnim = new Image[7];
+	static Image[] mobSlimeAttack1Anim = new Image[8];
+	static Image[] mobSlimeAttack2Anim = new Image[8];
+
+	static Image[] minionIdleAnim = new Image[6];
+	static Image[] minionDeadAnim = new Image[4];
 
 	static int AnimFrame = 0;
 	static int AnimTime = 40; // ANIMATION FRAME DELAY
@@ -111,24 +115,41 @@ public class Screen extends JPanel implements Runnable {
 		tileset_res[1] = new ImageIcon("res/heart.png").getImage();
 		tileset_res[2] = new ImageIcon("res/coin.png").getImage();
 		
-		for (int i = 0; i < mobOrcWalk.length; i++){
-			mobOrcWalk[i] = loadFrame("characterSprites/orc/walk00" + i + ".png");
-			mobDemonWalk[i] = loadFrame("characterSprites/demon/walk00" + i + ".png");
-			mobSlimeWalk[i] = loadFrame("characterSprites/slime/walk00" + i + ".png");
+		for (int i = 0; i < mobOrcWalkAnim.length; i++){
+			mobOrcWalkAnim[i] = loadFrame("characterSprites/orc/walk00" + i + ".png");
+			mobDemonWalkAnim[i] = loadFrame("characterSprites/demon/walk00" + i + ".png");
+			mobSlimeWalkAnim[i] = loadFrame("characterSprites/slime/walk00" + i + ".png");
 		}
-		for (int i = 0; i < mobOrcDead.length; i++){
-			mobOrcDead[i] = loadFrame("characterSprites/orc/dead00" + i + ".png");
-			mobDemonDead[i] = loadFrame("characterSprites/demon/dead00" + i + ".png");
+		for (int i = 0; i < mobOrcDeadAnim.length; i++){
+			mobOrcDeadAnim[i] = loadFrame("characterSprites/orc/dead00" + i + ".png");
+			mobDemonDeadAnim[i] = loadFrame("characterSprites/demon/dead00" + i + ".png");
 		}
-		for(int i = 0; i < mobSlimeDead.length; i++){
-			mobSlimeDead[i] = loadFrame("characterSprites/slime/dead00" + i + ".png");
-		}
-
-		for (int i = 0; i < minionIdle.length; i++){
-			minionIdle[i] = loadFrame("characterSprites/minion/idle00" + i + ".png");
+		for(int i = 0; i < mobSlimeDeadAnim.length; i++){
+			mobSlimeDeadAnim[i] = loadFrame("characterSprites/slime/dead00" + i + ".png");
 		}
 
+		for (int i = 0; i < minionIdleAnim.length; i++){
+			minionIdleAnim[i] = loadFrame("characterSprites/minion/idle00" + i + ".png");
+		}
 
+		for (int i = 0; i < mobOrcAttack1Anim.length; i++){
+			mobOrcAttack1Anim[i] = loadFrame("characterSprites/orc/attack100" + i + ".png");
+			mobOrcAttack2Anim[i] = loadFrame("characterSprites/orc/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < mobDemonAttack1Anim.length; i++){
+			mobDemonAttack1Anim[i] = loadFrame("characterSprites/demon/attack100" + i + ".png");
+			mobDemonAttack2Anim[i] = loadFrame("characterSprites/demon/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < mobSlimeAttack1Anim.length; i++){
+			mobSlimeAttack1Anim[i] = loadFrame("characterSprites/slime/attack100" + i + ".png");
+			mobSlimeAttack2Anim[i] = loadFrame("characterSprites/slime/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < minionDeadAnim.length; i++){
+			minionDeadAnim[i] = loadFrame("characterSprites/minion/dead00" + i + ".png");
+		}
 		
 		
 		save.loadSave(new File("save/map" + level )); //map ı yüklüyor
@@ -192,7 +213,7 @@ public class Screen extends JPanel implements Runnable {
 					AnimTick++;
 					if (AnimTick >= AnimTime) {
 						AnimFrame++;
-						if (AnimFrame >= mobOrcWalk.length){
+						if (AnimFrame >= mobOrcWalkAnim.length){
 							AnimFrame = 0;
 						}
 						AnimTick = 0;
@@ -202,21 +223,24 @@ public class Screen extends JPanel implements Runnable {
 						if(mobs[i].inGame) {
 							mobs[i].physic();
 						}
-						
 					}
 					
 					for(int i = 0; i <mobss.length; i++) { 
 						if(mobss[i].inGame) {
 							mobss[i].physic();
 						}
-						
 					}
 					for(int i = 0; i < mobsss.length; i++) { 
 						if(mobsss[i].inGame) {
 							mobsss[i].physic();
 						}
-						
 					}	
+
+					for (int i = 0; i < mini.length; i++){
+						if(mini[i].inGame){
+							mini[i].physic();
+						}
+					}
 				}
 				else {
 					if(isWin) {

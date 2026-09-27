@@ -3,35 +3,49 @@ import java.awt.*;
 public class Minion extends Mob {
 
     Minion(){    
-		this.renderScale = 1;
+		this.renderScale = 2.0;
 		this.dmgReduction = 0;     
-	}
-	   
-	void checkDeath() {
-		if (health <= 0){
-			mobDead();
-		}
 	}
 	
 	@Override
 	void physic(){
-
+		if (isDying){ // tính toán frame cho animation mob chết
+			if (Screen.mobOrcDeadAnim != null && Screen.mobOrcDeadAnim.length > 0){
+				if (deadFrame < Screen.mobOrcDeadAnim.length - 1){
+					deadTick++;
+					if (deadTick >= deadSpeed){
+						deadFrame++;
+						deadTick = 0;
+					}
+				}
+				else{
+					deadDelay++;
+					if(deadDelay >= deadDelayLimit){
+						deleteMob();
+					}
+				}
+			}
+			else{
+				deleteMob();
+			}
+			return;
+		}
 	}
-	   
-	void deleteMob() {
-		isDying = false;
-		inGame = false;
-	}
 
+	@Override
 	void mobDead(){
 		isDying = true;
 		deadFrame = 0;
 		deadTick = 0;
 		deadDelay = 0;
-		
-		Screen.killed++;
-		Screen.room.block[0][0].getMoney(mobID);
 	}
+
+	@Override
+	void deleteMob() {
+		isDying = false;
+		inGame = false;
+	}
+
 
 	void spawnMob(int mobID) {
 		 //determines that the mob will start at coordinate 0 a 0
@@ -55,17 +69,21 @@ public class Minion extends Mob {
 		inGame = true;
 	}
 
+	@Override
+	void checkMatching(Minion[] mob){
+	}
+
 	Image getSprite(){
-		// if (isDying){ // dying mob animation
-		// 	if (Screen.mobOrcDead != null && Screen.mobOrcDead.length > 0){
-		// 		return Screen.mobOrcDead[deadFrame];
-		// 	}
-		// }
-		// mob's normal walking animation
-		if (Screen.minionIdle != null && Screen.minionIdle.length > 0){
-			return Screen.minionIdle[Screen.AnimFrame];
+		if (isDying){ // dying mob animation
+			if (Screen.minionDeadAnim != null && Screen.minionDeadAnim.length > 0){
+				return Screen.minionDeadAnim[deadFrame];
+			}
 		}
-		return Screen.tileset_mob[mobID];
+		// mob's normal walking animation
+		if (Screen.minionIdleAnim != null && Screen.minionIdleAnim.length > 0){
+			return Screen.minionIdleAnim[Screen.AnimFrame % Screen.minionIdleAnim.length];
+		}
+		return Screen.minionIdleAnim[0];
 	}
 
 	void draw(Graphics g) {

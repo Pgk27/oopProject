@@ -111,6 +111,9 @@ public class WaveManager {
                 }
             }
         }
+        if (!Screen.mini[0].inGame){
+            Screen.mini[0].spawnMob(Value.mobMinion);
+        }
     }
     
     public boolean isAllWavesFinished() {

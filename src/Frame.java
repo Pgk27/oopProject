@@ -47,7 +47,8 @@ public class Frame extends JFrame{
 	public static void main(String args[]) {
         try {
             // Tự động load và phát nhạc nền luôn không cần hỏi
-            File file = new File("interstellar.wav");
+			// tắt nhạc đây, đau đầu quá:)
+            File file = new File("");
             if (file.exists()) {
                 AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
                 Clip clip = AudioSystem.getClip();
