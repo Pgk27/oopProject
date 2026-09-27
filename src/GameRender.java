@@ -1,9 +1,10 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 public class GameRender {
-    
     public void render(Graphics g, int width, int height) {
         switch (Screen.gameState) {
             case Screen.tileScreen:
@@ -29,7 +30,6 @@ public class GameRender {
         }
     }
 
-
     private void drawTileScreen(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.tileScreen, 0, 0, width, height, null);
         g.drawImage(Screen.tiles.settingsButton, 5, 5, 35 , 35, null);
@@ -45,8 +45,6 @@ public class GameRender {
 
     }    
 
-
-
     private void drawPlayGame(Graphics g, int width, int height) {
         
         g.setColor(new Color(70, 70, 70)); 
@@ -54,28 +52,35 @@ public class GameRender {
         
         Screen.room.draw(g); 
         
-        for( int i = 0 ; i<Screen.mobs.length;i++) { 
-              if(Screen.mobs[i].inGame) {
-                  Screen.mobs[i].draw(g);
-              }
-        }
+        ArrayList<Mob> renderMobs = new ArrayList<>();
         
-        for( int i = 0 ; i<Screen.mobss.length;i++) { 
-              if(Screen.mobss[i].inGame) {
-                  Screen.mobss[i].draw(g);
-              }
+        for (int i = 0; i < Screen.mobs.length; i++) { 
+            if (Screen.mobs[i] != null && Screen.mobs[i].inGame) {
+                renderMobs.add(Screen.mobs[i]);
+            }
         }
-        
-        for( int i = 0 ; i<Screen.mobsss.length;i++) { 
-              if(Screen.mobsss[i].inGame) {
-                  Screen.mobsss[i].draw(g);
-              }
+        for (int i = 0; i < Screen.mobss.length; i++) { 
+            if (Screen.mobss[i] != null && Screen.mobss[i].inGame) {
+                renderMobs.add(Screen.mobss[i]);
+            }
+        }
+        for (int i = 0; i < Screen.mobsss.length; i++) { 
+            if (Screen.mobsss[i] != null && Screen.mobsss[i].inGame) {
+                renderMobs.add(Screen.mobsss[i]);
+            }
+        }
+        for (int i = 0; i < Screen.mini.length; i++){
+            if (Screen.mini[i] != null && Screen.mini[i].inGame){
+                renderMobs.add(Screen.mini[i]);
+            }
         }
 
-        for (int i = 0; i < Screen.mini.length; i++){
-            if (Screen.mini[i].inGame){
-                Screen.mini[i].draw(g);
-            }
+        // sắp xếp quái theo tọa độ y --> con nào có tọa độ y nhỏ hơn thì được vẽ trước
+        // tránh trường hợp con ở trên đè lên con ở dưới
+        renderMobs.sort(Comparator.comparingInt(m -> m.y));
+        // thực hiện vẽ
+        for (Mob m : renderMobs) {
+            m.draw(g);
         }
         
         Screen.store.draw(g); 
@@ -100,6 +105,4 @@ public class GameRender {
             }
         }
     }
-
-
 }
