@@ -167,10 +167,13 @@ public class Store {
 		g.drawString(""+ Screen.coinage, buttonCoins.x + buttonCoins.width + iconSpace, buttonCoins.y + iconTextY); //kac coin kaldığını coinin yanına yazıyor
 		
 		
-		g.drawString("Killed = "+ Screen.killed, 570,460); // killed / show
+		int textX = Screen.myWidth - 150;
+		int textY = Screen.room.block[Screen.room.worldHeight-1][0].y + Screen.room.blockSize + awayFromRoom + 20;
+		
+		g.drawString("Killed = "+ Screen.killed, textX, textY); 
 		
 		if (Screen.waveManager != null) {
-			g.drawString("Wave: " + Screen.waveManager.getCurrentWave() + " / " + Screen.waveManager.getTotalWaves(), 570,490);
+			g.drawString("Wave: " + Screen.waveManager.getCurrentWave() + " / " + Screen.waveManager.getTotalWaves(), textX, textY + 30);
 		}
 		
 		

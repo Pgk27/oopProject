@@ -60,6 +60,16 @@ public class Screen extends JPanel implements Runnable {
 		frame.addMouseListener(new KeyHandel());
 		frame.addMouseMotionListener(new KeyHandel());
 		
+		this.setFocusable(true);
+		this.requestFocusInWindow();
+		this.addKeyListener(new java.awt.event.KeyAdapter() {
+			public void keyPressed(java.awt.event.KeyEvent e) {
+				if (e.getKeyCode() == java.awt.event.KeyEvent.VK_F11) {
+					frame.toggleFullScreen();
+				}
+			}
+		});
+		
 		thread.start();
 	}
 	
@@ -72,8 +82,8 @@ public class Screen extends JPanel implements Runnable {
 	}
 	
 	void define() {
-		room = new Room();
 		save = new Save();
+		save.loadSave(new File("save/map" + level ));
 		store = new Store();
 		Screen.tiles = new Tiles();
 		
@@ -125,7 +135,6 @@ public class Screen extends JPanel implements Runnable {
 		tileset_mobbb[0] = mobSlimeWalk[0];
 		
 		
-		save.loadSave(new File("save/map" + level )); //map ı yüklüyor
 		
 		
 		for( int i = 0 ; i < mobs.length;i++) { // mob class ındaki özellikleri moblara atıyor
@@ -154,19 +163,27 @@ public class Screen extends JPanel implements Runnable {
 
 	private GameRender gameRender = new GameRender();
 	
+	public static final int LOGICAL_WIDTH = 1024;
+	public static final int LOGICAL_HEIGHT = 768;
+	private BufferedImage offscreen;
+
 	@Override 
-	public void paintComponent(Graphics g) {  // Hàm vẽ chính --> đẩy sang gamerender.java
+	public void paintComponent(Graphics g) {
 		if(isFirst) { 
-            myWidth = getWidth();  
-            myHeight = getHeight(); 
+            myWidth = LOGICAL_WIDTH;  
+            myHeight = LOGICAL_HEIGHT; 
+            offscreen = new BufferedImage(LOGICAL_WIDTH, LOGICAL_HEIGHT, BufferedImage.TYPE_INT_RGB);
             define();
             
             isFirst = false;
         }
 
-		super.paintComponent(g);
-		gameRender.render(g, getWidth(), getHeight());
-	
+		Graphics2D g2d = offscreen.createGraphics();
+		super.paintComponent(g2d);
+		gameRender.render(g2d, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+		g2d.dispose();
+		
+		g.drawImage(offscreen, 0, 0, getWidth(), getHeight(), null);
 	}
 		
 	int spawnTime = 1600, spawnFrame = 0;   // oluşma aralıkları

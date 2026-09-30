@@ -7,7 +7,15 @@ public class Room {
 	
 	public Block[][] block;
 	
-	public Room() {
+	public Room(int width, int height) {
+		this.worldWidth = width;
+		this.worldHeight = height;
+		
+		int maxBlockWidth = Screen.myWidth / worldWidth;
+		int maxBlockHeight = (Screen.myHeight - 150) / worldHeight;
+		this.blockSize = Math.min(maxBlockWidth, maxBlockHeight);
+		if(this.blockSize < 10) this.blockSize = 10;
+		
 		define();
 	}
 	

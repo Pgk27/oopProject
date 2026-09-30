@@ -6,12 +6,12 @@ import javax.swing.*;
 
 public class Frame extends JFrame{
 	public static String title = "Tower Defense Demo";
-	public static Dimension size = new Dimension(700, 600);
+	public static Dimension size = new Dimension(1024, 768);
 	
 	public Frame() {
 		setTitle(title);
 		setSize(size);
-		setResizable(false); 
+		setResizable(true); 
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -62,6 +62,26 @@ public class Frame extends JFrame{
         // Khởi tạo và bật thẳng cửa sổ game lên ngay lập tức
         new Frame();
     }
+    
+    private boolean isFullScreen = false;
+	public void toggleFullScreen() {
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = env.getDefaultScreenDevice();
+        
+        dispose();
+        if (!isFullScreen) {
+            setUndecorated(true);
+            device.setFullScreenWindow(this);
+            isFullScreen = true;
+        } else {
+            device.setFullScreenWindow(null);
+            setUndecorated(false);
+            setSize(size);
+            setLocationRelativeTo(null);
+            isFullScreen = false;
+        }
+        setVisible(true);
+	}
 }
 	
 	
