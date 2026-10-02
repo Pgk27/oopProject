@@ -1,8 +1,8 @@
 import java.awt.*;
-import javax.swing.*;
-import java.io.*;
 import java.awt.image.*;
-
+import java.io.*;
+import java.util.Random;
+import javax.swing.*;
 
 public class Screen extends JPanel implements Runnable {
 	Thread thread = new Thread(this);
@@ -36,7 +36,7 @@ public class Screen extends JPanel implements Runnable {
 	
 	
 	static int myWidth, myHeight;
-	static int coinage = 10, health = 100; //başlangıç parası, canı
+	public static int health = 100; //başlangıç parası, canı
 	static int killed = 0, killsToWin = 0, level = 1, maxlevel = 3;
 	static int winTime = 2000, winFrame = 0;
 	static boolean isFirst = true;
@@ -50,6 +50,7 @@ public class Screen extends JPanel implements Runnable {
 	static Save save;
 	static Store store;
 	public static Tiles tiles;
+	public static WaveManager waveManager;
 	
 
 	static Mob[] mobs = new Mob[100]; // gelen mob sayısı
@@ -57,17 +58,17 @@ public class Screen extends JPanel implements Runnable {
 	static Mob3[] mobsss = new Mob3[100];
 	
 	Screen(Frame frame) {
-		frame.addMouseListener(new KeyHandel());
-		frame.addMouseMotionListener(new KeyHandel());
+		addMouseListener(new KeyHandel());
+		addMouseMotionListener(new KeyHandel());
 		
 		thread.start();
 	}
 	
 	static void hasWon() {
-		if(killed >= killsToWin) {
+		if(waveManager != null && waveManager.isAllWavesFinished() && !waveManager.isAnyMobAlive()) {
 			isWin = true;
 			killed = 0;		
-			coinage = 0; 
+			// coinage = 0; 
 		}
 	}
 	
@@ -77,7 +78,6 @@ public class Screen extends JPanel implements Runnable {
 		store = new Store();
 		Screen.tiles = new Tiles();
 		
-		coinage = 100; // starting coin
 		health = 10; // starting health
 		
 		
@@ -139,16 +139,49 @@ public class Screen extends JPanel implements Runnable {
 		for( int i = 0 ; i < mobsss.length;i++) { 
 			mobsss[i] = new Mob3();
 		}
+		
+		waveManager = new WaveManager(level);
 	}
 
-	public static int gameState=0;
-	public static  final int tileScreen=0;
+
+
+	public static int gameState = 0;
+
+	public static final int tileScreen=0;
 	public static final int playGame=1;
 	public static final int settings=2;
 	public static final int selectSkill=3;
 	public static final int gameShop=4;
 	public static final int buyItem=5;
-	public static final int gachaHero=6;
+	public static final int gacha=6;
+	public static final int gachaRate=7;
+	public static final int shardShop=8;
+	public static final int thongBao=9;
+
+
+	public static Random rand = new Random();
+	public static int randomNum;
+
+	
+	public static int gachaType;
+	public static final int gachaTornado=1;
+	public static final int gachaEnhance=2;
+	public static final int gachaMercenary=3;
+	public static final int summonHero=4;
+
+
+	public static boolean unlockTornado = false;
+	public static boolean unlockEnhance = false;
+	public static boolean unlockMercenary = false;
+	public static boolean unlockGiantOrc = false;
+
+	public static int coinage = 2000;
+	public static int shard =0;
+
+	public static boolean ok; 	//Đcm tluc thông minh vclll
+	//Con này fix bug đoạn coin sát mép số 10, đề phòng bọn nghẹo gacha ko có tiền mua tháp
+	//Nếu cứ so sánh thì bên keyhandle trừ tiền trước, sau đó sang bên render check coin thấy =10
+	//thì nó lại hiện tb cảnh cáo, bị lệch render với logic.
 
 	private GameRender gameRender = new GameRender();
 	
@@ -218,67 +251,61 @@ public class Screen extends JPanel implements Runnable {
 	
 	public void run() {
 		while(true) {
-			if(!isFirst && health > 0 && !isWin) {
-				room.physic(); // oyunu ekrana veriyor
+			if(!isFirst && gameState == playGame) {
+				if(health > 0 && !isWin) {
+					room.physic(); // oyunu ekrana veriyor
 
-				if(level == 1) { // mobu o levelda spawnlıyor
-					mobSpawner();
-				}
-				else if(level == 2){ // mobu o levelda spawnlıyor
-					mobSpawner2();
-				}
-				else if(level == 3){ //  mobu o levelda spawnlıyor
-					mobSpawner3();
-				}else { //level 3
-					mobSpawner3();
-				}
-				// Advance animation cycle ==> ??????? sos cứu t Cường ơi éo hiểu :))))
-				AnimTick++;
-				if (AnimTick >= AnimTime) {
-					AnimFrame++;
-					if (AnimFrame >= mobOrcWalk.length){
-						AnimFrame = 0;
+					waveManager.update();
+					hasWon(); // Liên tục kiểm tra điều kiện thắng để bắt kịp lúc animation quái chết kết thúc
+					
+					// Advance animation cycle ==> ??????? sos cứu t Cường ơi éo hiểu :))))
+					AnimTick++;
+					if (AnimTick >= AnimTime) {
+						AnimFrame++;
+						if (AnimFrame >= mobOrcWalk.length){
+							AnimFrame = 0;
+						}
+						// if (AnimFrame % 10 == 0) coinage++; 
+						AnimTick = 0;
 					}
-					// if (AnimFrame % 10 == 0) coinage++; 
-					AnimTick = 0;
-            	}
 
-				for(int i = 0; i < mobs.length; i++) { // mobun hareketi
-					if(mobs[i].inGame) {
-						mobs[i].physic();
+					for(int i = 0; i < mobs.length; i++) { // mobun hareketi
+						if(mobs[i].inGame) {
+							mobs[i].physic();
+						}
+						
 					}
 					
+					for(int i = 0; i <mobss.length; i++) { //////////////*******************
+						if(mobss[i].inGame) {
+							mobss[i].physic();
+						}
+						
+					}
+					for(int i = 0; i < mobsss.length; i++) { ////////////////////**************************
+						if(mobsss[i].inGame) {
+							mobsss[i].physic();
+						}
+						
+					}	
 				}
-				
-				for(int i = 0; i <mobss.length; i++) { //////////////*******************
-					if(mobss[i].inGame) {
-						mobss[i].physic();
+				else {
+					if(isWin) {
+							if(winFrame>=winTime) {
+								level++;
+								if(level > maxlevel) {
+									System.exit(0);
+								}else {
+									define();
+									isWin = false;
+								}
+								winFrame = 0;
+							}
+							else {
+								winFrame +=1;
+							}
 					}
-					
 				}
-				for(int i = 0; i < mobsss.length; i++) { ////////////////////**************************
-					if(mobsss[i].inGame) {
-						mobsss[i].physic();
-					}
-					
-				}	
-			}
-			else {
-				  if(isWin) {
-					    if(winFrame>=winTime) {
-							level++;
-					    	if(level > maxlevel) {
-					    		System.exit(0);
-					    	}else {
-								define();
-								isWin = false;
-					    	}
-					    	winFrame = 0;
-					    }
-						else {
-					    	winFrame +=1;
-					    }
-				  }
 			}
 			repaint();
 			try {

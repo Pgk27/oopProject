@@ -8,6 +8,17 @@ public class Mob3 extends Mob {
 	}
 
 	@Override 
+	int getSpawnTime(){
+		return spawnTime;
+	}
+	
+	public void applyMultiplier(double hpMult, double speedMult) {
+		this.maxHealth = (int)(this.maxHealth * hpMult);
+		this.health = this.maxHealth;
+		this.walkSpeed = (int)(this.walkSpeed / speedMult);
+	}
+
+	@Override 
 	Image getSprite(){
 		if (isDying){
 			if (Screen.mobSlimeDead != null && Screen.mobSlimeDead.length > 0){

@@ -260,4 +260,10 @@ public class Mob extends Rectangle{
 	int getSpawnTime(){
 		return spawnTime;
 	}
+	
+	public void applyMultiplier(double hpMult, double speedMult) {
+		this.maxHealth = (int)(this.maxHealth * hpMult);
+		this.health = this.maxHealth;
+		this.walkSpeed = (int)(this.walkSpeed / speedMult); // walkSpeed is frame delay
+	}
 }
