@@ -5,7 +5,7 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 
 public class Frame extends JFrame{
-	public static String title = "Tower Defense Demo";
+	public static String title = "FINAL KINGDOM";
 	public static Dimension size = new Dimension(700, 600);
 	
 	public Frame() {
@@ -47,7 +47,8 @@ public class Frame extends JFrame{
 	public static void main(String args[]) {
         try {
             // Tự động load và phát nhạc nền luôn không cần hỏi
-            File file = new File("interstellar.wav");
+			// tắt nhạc đây, đau đầu quá:)
+            File file = new File("");
             if (file.exists()) {
                 AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
                 Clip clip = AudioSystem.getClip();
@@ -63,20 +64,3 @@ public class Frame extends JFrame{
         new Frame();
     }
 }
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
