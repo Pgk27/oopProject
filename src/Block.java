@@ -1,7 +1,6 @@
-
 import java.awt.*; //Chịu trách nhiệm về logic bắn và chiến đấu của tháp
 
-public class Block extends Rectangle{
+public class Block extends Rectangle {
 	Rectangle towerSquare;
 	Rectangle towerSquare2; // 2.kule
 	Rectangle towerSquare3; // 3.kule
@@ -9,45 +8,42 @@ public class Block extends Rectangle{
 	int goldMineTick = 0; // tichs danhf rieng cho coin
 	int goldMinerAnimFrame = 0;
 
-
 	int towerSquareSize = 130;   //tower range, ne kadar uzağa vurabilir.
-	int towerSquareSize2= 130;   //2. kule menzil
-	int towerSquareSize3= 200;  //3. kule menzil
-	int towerSquareSize4= 2000000; // set cho xôm
+	int towerSquareSize2 = 130;  //2. kule menzil
+	int towerSquareSize3 = 200;  //3. kule menzil
+	int towerSquareSize4 = 2000000; // set cho xôm
 	int groundID;
 	int airID;
 	int loseTime = 100, loseFrame = 0; // hasar vurma aralığı, kulelerin
 	
-	int shotMob = 0;// kulelerin alanındaki mobları vurması için
-	boolean shotingMob1 = false ;
-	boolean shotingMob2 = false ;   //kulelerin moblara vurması için gereken kod
-	boolean shotingMob3 = false ;
-	
+	int shotMob = -1; // -1: chưa khóa mục tiêu nào (tránh lỗi quái ở vị trí số 0)
+	int targetType = 0; // 0: không có mục tiêu, 1: mobs, 2: mobss, 3: mobsss
+	boolean shotingMob1 = false;
+	boolean shotingMob2 = false;
+	boolean shotingMob3 = false;
 
 	Block(int x, int y, int width, int height, int groundID, int airID) { // kule menzillerinin oyunun içinde tanımlanması
-		
-		setBounds(x,y,width, height);
-		towerSquare = new Rectangle(x-(towerSquareSize/2), y-(towerSquareSize/2), width+(towerSquareSize), height+(towerSquareSize));
-		towerSquare2 = new Rectangle(x-(towerSquareSize2/2), y-(towerSquareSize2/2), width+(towerSquareSize2), height+(towerSquareSize2));//2. kule
-		towerSquare3 = new Rectangle(x-(towerSquareSize3/2), y-(towerSquareSize3/2), width+(towerSquareSize3), height+(towerSquareSize3));//2. kule 
-		towerSquare4 = new Rectangle(x-(towerSquareSize4/2), y-(towerSquareSize4/2), width+(towerSquareSize4), height+(towerSquareSize4));//2. kule 
+		setBounds(x, y, width, height);
+		towerSquare = new Rectangle(x - (towerSquareSize / 2), y - (towerSquareSize / 2), width + towerSquareSize, height + towerSquareSize);
+		towerSquare2 = new Rectangle(x - (towerSquareSize2 / 2), y - (towerSquareSize2 / 2), width + towerSquareSize2, height + towerSquareSize2);
+		towerSquare3 = new Rectangle(x - (towerSquareSize3 / 2), y - (towerSquareSize3 / 2), width + towerSquareSize3, height + towerSquareSize3);
+		towerSquare4 = new Rectangle(x - (towerSquareSize4 / 2), y - (towerSquareSize4 / 2), width + towerSquareSize4, height + towerSquareSize4);
 		this.groundID = groundID;
 		this.airID = airID;
 	} 
-	
-	// void draw(Graphics g) { // tileset air ve ground  içindeki png leri koyuyor..
-	// 	g.drawImage(Screen.tileset_ground[groundID], x, y, width, height, null);
-		
-	// 	if(airID != Value.airAir) {
-	// 		g.drawImage(Screen.tileset_air[airID], x, y, width, height, null);
-	// 	}
-	// }
+
+	// Lấy phạm vi bắn tương ứng với loại tháp hiện tại
+	Rectangle getTowerRange() {
+		if (airID == Value.airTowerLaser2) return towerSquare2;
+		if (airID == Value.airTowerLaser3) return towerSquare3;
+		if (airID == Value.airTowerLaser4) return towerSquare4;
+		return towerSquare;
+	}
 
 	void draw(Graphics g) {
 		g.drawImage(Screen.tileset_ground[groundID], x, y, width, height, null);
 
 		if (airID != Value.airAir) {
-
 			Image[] towerFrames;
 			if (airID == Value.airTowerLaser2) {
 				towerFrames = Screen.mageTower;
@@ -58,259 +54,224 @@ public class Block extends Rectangle{
 			else if (airID == Value.airTowerLaser4) {
 				towerFrames = Screen.goldMiner;
 			}
-			else if(airID == Value.airTowerLaser3){
+			else if (airID == Value.airTowerLaser3) {
 				towerFrames = Screen.cannon;
 			}
 			else {
-				// đây là tile nền / cổng thành / vật thể map, không phải tower ==> ý là k phải mảng nên k gán kiểu kia được
-				// không dùng towerFrames ở đây
 				g.drawImage(Screen.tileset_air[airID], x, y, width, height, null);
-				return; // vẽ xong là đi ra, cái này tạm thôi sau này lấy cổng thành sau
+				return;
 			}
 
 			int animationFrame = 0;
-			if(shotingMob1 || shotingMob2 || shotingMob3){
+			if (shotingMob1 || shotingMob2 || shotingMob3) {
 				animationFrame = Screen.AnimFrame % towerFrames.length;
 			}
-			else if(towerFrames == Screen.goldMiner){
-				if(Screen.AnimTick % 120003 == 0){
+			else if (towerFrames == Screen.goldMiner) {
+				if (Screen.AnimTick % 120003 == 0) {
 					goldMinerAnimFrame = (goldMinerAnimFrame + 1) % towerFrames.length;
 				}
 				animationFrame = goldMinerAnimFrame;
 			}
-			// do là hàm draw sẽ vẽ lại mỗi lần nên mình không cần vòng lặp để reset lại 
 
 			Image currentFrame = towerFrames[animationFrame];
             
-            // 2. Tìm tọa độ X của con quái vật đang bị nhắm bắn
-            int targetX = this.x; // Khởi tạo mặc định
-            if (shotingMob1) targetX = Screen.mobs[shotMob].x;       //[cite: 1]
-            else if (shotingMob2) targetX = Screen.mobss[shotMob].x; //[cite: 1]
-            else if (shotingMob3) targetX = Screen.mobsss[shotMob].x;//[cite: 1]
+			// Tìm tọa độ X của quái đang bị ngắm bắn để lật hình ảnh
+			int targetX = this.x;
+			if (shotMob != -1) {
+				if (shotingMob1 && shotMob < Screen.mobs.length) targetX = Screen.mobs[shotMob].x;
+				else if (shotingMob2 && shotMob < Screen.mobss.length) targetX = Screen.mobss[shotMob].x;
+				else if (shotingMob3 && shotMob < Screen.mobsss.length) targetX = Screen.mobsss[shotMob].x;
+			}
             
-            // 3. So sánh tọa độ để vẽ ảnh 
-            if (targetX < this.x && towerFrames != Screen.goldMiner) {
-                // Quái ở bên TRÁI -> Lật ảnh bằng cách cộng width vào X và đặt width thành số âm
-                g.drawImage(currentFrame, x + width, y, -width, height, null);
-            } else {
-                // Quái ở bên PHẢI -> Vẽ bình thường
-                g.drawImage(currentFrame, x, y, width, height, null);
-            }
+			if (targetX < this.x && towerFrames != Screen.goldMiner) {
+				// Quái ở bên TRÁI -> Lật ảnh
+				g.drawImage(currentFrame, x + width, y, -width, height, null);
+			} else {
+				// Quái ở bên PHẢI -> Vẽ bình thường
+				g.drawImage(currentFrame, x, y, width, height, null);
+			}
 		}
 	}
 	
-	void physic() { // physics for tower shooting and mob taking damage
-
-		//logic kiếm vàng đặt ở đây vì nếu đặt trong hàm getmoney nó lại dựa vào tiêu diệt quái để có
-		
-
+	void physic() {
+		// Logic kiếm vàng từ mỏ vàng
 		if (airID == Value.airTowerLaser4) {
 			goldMineTick++;
 			if (goldMineTick >= 1250) {
 				Screen.coinage += 1;
 				goldMineTick = 0;
 			}
+			return;
 		}
-		
-		if (shotMob != 0 && towerSquare.intersects(Screen.mobs[shotMob])   ) { // mob 1 get shot, check xem co de len nhau k
-			shotingMob1 = true;
-		}
-		else if(shotMob != 0 && towerSquare.intersects(Screen.mobss[shotMob])) { // mob 2 get shot
-			shotingMob2 = true;
-		}
-		else if(shotMob != 0 && towerSquare.intersects(Screen.mobsss[shotMob])) {
-			shotingMob3 = true;
-		}
-		else {
-			shotingMob1 = false;
-			shotingMob2 = false;
-			shotingMob3 = false;
-		}
-		
-		if (!shotingMob1) { // burası towerların kendi menzillerine girene kadar beklemesini sağlıyor 
-			if (airID == Value.airTowerLaser || airID == Value.airTowerLaser2 || airID == Value.airTowerLaser3)  { // başka tower için ya da ile ekle
-				for (int i = 0; i < Screen.mobs.length; i++) {
-					if (Screen.mobs[i].inGame) {
-						if (towerSquare.intersects(Screen.mobs[i])) { //çerçevenin içerisinde vurmasını sağlıyor
-							shotingMob1 = true;
-							shotMob = i;
-						}
-					}
-				}
-			}
-		}
-		
-		if (shotingMob1) {
-			if (loseFrame>=loseTime) {// her kule için ayrı değerimiz var  
-				if(airID == Value.airTowerLaser) {
-					Screen.mobs[shotMob].loseHealth(2); // mobun ne kadar canı gidiyor
-				}
-				else if(airID == Value.airTowerLaser2) {
-					Screen.mobs[shotMob].loseHealth(4); // mobun ne kadar canı gidiyor
-				}
-				else if(airID == Value.airTowerLaser3) {
-					Screen.mobs[shotMob].loseHealth(10); // mobun ne kadar canı gidiyor
-				}
-				loseFrame = 0;
-			} 
-			else {
-				loseFrame += 1;
-			}
 
-			if (Screen.mobs[shotMob].isDead()) {
+		// Chỉ các tháp bắn mới xử lý tấn công
+		if (airID != Value.airTowerLaser && airID != Value.airTowerLaser2 && airID != Value.airTowerLaser3) {
+			return;
+		}
+
+		Rectangle range = getTowerRange();
+
+		// 1. Kiểm tra mục tiêu hiện tại: Nếu ra ngoài phạm vi hoặc đã chết thì hủy ngắm
+		if (targetType != 0 && shotMob != -1) {
+			Mob currentTarget = null;
+			if (targetType == 1 && shotMob < Screen.mobs.length) currentTarget = Screen.mobs[shotMob];
+			else if (targetType == 2 && shotMob < Screen.mobss.length) currentTarget = Screen.mobss[shotMob];
+			else if (targetType == 3 && shotMob < Screen.mobsss.length) currentTarget = Screen.mobsss[shotMob];
+
+			// xét trường hợp không bắn target
+			if (currentTarget == null || !currentTarget.inGame || currentTarget.isDead() || !range.intersects(currentTarget)) {
+				targetType = 0;
+				shotMob = -1;
 				shotingMob1 = false;
-				shotMob = 0;
-
-				Screen.hasWon();
-			}
-		}
-		
-		
-		 
-		if (!shotingMob2) {
-			if (airID == Value.airTowerLaser ||airID == Value.airTowerLaser2||airID == Value.airTowerLaser3 )  { // başka tower için ya da ile ekle
-				for (int i = 0; i < Screen.mobss.length; i++) {
-					if (Screen.mobss[i].inGame) {
-						if (towerSquare.intersects(Screen.mobss[i]) ) {
-							shotingMob2 = true;
-							shotMob = i;
-						}
-
-					}
-				}
-			}
-		}
-
-		if (shotingMob2) {
-			if (loseFrame >= loseTime) {
-				if(airID == Value.airTowerLaser) {
-					Screen.mobss[shotMob].loseHealth(2); // mobun ne kadar canı gidiyor
-				}
-				else if(airID == Value.airTowerLaser2) {
-					Screen.mobss[shotMob].loseHealth(4); // mobun ne kadar canı gidiyor
-				}
-				else if(airID == Value.airTowerLaser3) {
-					Screen.mobss[shotMob].loseHealth(10); // mobun ne kadar canı gidiyor
-				}
-				loseFrame = 0;
-			} 
-			else {
-				loseFrame += 1;
-			}
-
-			if (Screen.mobss[shotMob].isDead()) {
 				shotingMob2 = false;
-				shotMob = 0;
-				Screen.hasWon();
+				shotingMob3 = false;
 			}
-		}    
-		
-		if (!shotingMob3) {
-			if (airID == Value.airTowerLaser ||airID == Value.airTowerLaser2||airID == Value.airTowerLaser3 )  { // başka tower için ya da ile ekle
-				for (int i = 0; i < Screen.mobsss.length; i++) {
-					if (Screen.mobsss[i].inGame) {
-						if (towerSquare.intersects(Screen.mobsss[i])) {
-							shotingMob3 = true;
-							shotMob = i;
-						}
+		}
+
+		// 2. Nếu chưa có mục tiêu, tìm đúng 1 mục tiêu duy nhất trong tầm bắn
+		if (targetType == 0) {
+			// Quét nhóm mobs 1
+			int bestIndex = -1;
+			int bestType = 0;
+			double nearestDist = Integer.MAX_VALUE;
+			for (int i = 0; i < Screen.mobs.length; i++) {
+				if (Screen.mobs[i].inGame && !Screen.mobs[i].isDead() && range.intersects(Screen.mobs[i])) {
+					double dist = distanceCheck(Screen.mobs[i]);
+					if (nearestDist > dist){
+						nearestDist = dist;
+						bestIndex = i;
+						bestType = 1;
 					}
 				}
 			}
-		}
-		
-		if (shotingMob3) {
-			if (loseFrame >= loseTime) {
-				if(airID == Value.airTowerLaser) {
-					Screen.mobsss[shotMob].loseHealth(2); // mobun ne kadar canı gidiyor
-				}
-				else if(airID == Value.airTowerLaser2) {
-					Screen.mobsss[shotMob].loseHealth(4); // mobun ne kadar canı gidiyor
-				}
-				else if(airID == Value.airTowerLaser3) {
-					Screen.mobsss[shotMob].loseHealth(10); // mobun ne kadar canı gidiyor
-				}
+			
 
-				loseFrame = 0;
-			} 
-			else {
-				loseFrame += 1;
+			// Nếu nhóm 1 không có, quét tiếp nhóm mobss 2
+			for (int i = 0; i < Screen.mobss.length; i++) {
+				if (Screen.mobss[i].inGame && !Screen.mobss[i].isDead() && range.intersects(Screen.mobss[i])) {
+					double dist = distanceCheck(Screen.mobss[i]);
+					if (nearestDist > dist){
+						nearestDist = dist;
+						bestIndex = i;
+						bestType = 2;
+					}	
+				}
 			}
 
-			if (Screen.mobsss[shotMob].isDead()) {
-				shotingMob3 = false;
-				shotMob = 0;
-				Screen.hasWon();
+			// Nếu nhóm 2 không có, quét tiếp nhóm mobsss 3
+			for (int i = 0; i < Screen.mobsss.length; i++) {
+				if (Screen.mobsss[i].inGame && !Screen.mobsss[i].isDead() && range.intersects(Screen.mobsss[i])) {
+					double dist = distanceCheck(Screen.mobsss[i]);
+					if (nearestDist > dist){
+						nearestDist = dist;
+						bestIndex = i;
+						bestType = 3;
+					}
+				}
+			}
+			if (bestType != 0){
+				targetType = bestType;
+				shotMob = bestIndex;
+				if (bestType == 1) shotingMob1 = true;
+				else if(bestType == 2) shotingMob2 = true;
+				else if(bestType == 3) shotingMob3 = true;
+			}
+		}
+
+		// 3. Tiến hành bắn và trừ máu mục tiêu đã khóa
+		if (targetType != 0 && shotMob != -1) {
+			Mob target = null;
+			if (targetType == 1 && shotMob < Screen.mobs.length) target = Screen.mobs[shotMob];
+			else if (targetType == 2 && shotMob < Screen.mobss.length) target = Screen.mobss[shotMob];
+			else if (targetType == 3 && shotMob < Screen.mobsss.length) target = Screen.mobsss[shotMob];
+
+			if (loseFrame >= loseTime) {
+				double damage = 2 * (1-target.dmgReduction);
+				if (airID == Value.airTowerLaser2) damage = 4 * (1-target.dmgReduction);
+				else if (airID == Value.airTowerLaser3) damage = 10 * (1-target.dmgReduction);
+
+				if (target != null) {
+					target.loseHealth(damage);
+					if (target.isDead()) {
+						targetType = 0;
+						shotMob = -1;
+						shotingMob1 = false;
+						shotingMob2 = false;
+						shotingMob3 = false;
+						Screen.hasWon();
+					}
+				}
+				loseFrame = 0;
+			} else {
+				loseFrame++;
 			}
 		}
 	}
 	
 	void getMoney(int mobID) {
-		if (mobID >= 0 && mobID < Value.deathReward.length) // avoid ArrayOutOfBounds exception
-			Screen.coinage += Value.deathReward[mobID]; // get money when killing mobs
+		if (mobID >= 0 && mobID < Value.deathReward.length)
+			Screen.coinage += Value.deathReward[mobID];
 	}
 	
 	void fight(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g;
 
-		Graphics2D g2d = (Graphics2D) g; // Ép kiểu sang Graphics2D để dùng được các tính năng vẽ nâng cao
-		float[] dashPattern = {10.0f, 10.0f}; // Định nghĩa độ dài của nét gạch và khoảng trống (ví dụ: 10 pixel mực, 10 pixel trống)
-		BasicStroke dashed = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dashPattern, 0.0f); // Tạo cấu hình nét đứt (độ dày 2.0f)
-		// g2d.setStroke(dashed);
-
-		if(Screen.isDebug) {
-			if(airID == Value.airTowerLaser) {
+		if (Screen.isDebug) {
+			if (airID == Value.airTowerLaser) {
 				g2d.drawRect(towerSquare.x, towerSquare.y, towerSquare.width, towerSquare.height);
 			}
-			
-			if(airID == Value.airTowerLaser2) { // 2.kule menzil
+			if (airID == Value.airTowerLaser2) {
 				g2d.drawRect(towerSquare2.x, towerSquare2.y, towerSquare2.width, towerSquare2.height);
 			}
-			
-			if(airID == Value.airTowerLaser3) { // 3.kule menzil
+			if (airID == Value.airTowerLaser3) {
 				g2d.drawRect(towerSquare3.x, towerSquare3.y, towerSquare3.width, towerSquare3.height);
 			}
 		}
 
-		//MOB1
-		if(shotingMob1&&airID == Value.airTowerLaser) {    // kulenin lazeri
-			g2d.setColor((new Color(255,255,0)));  //lazerin rengi
-			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobs[shotMob].x + (Screen.mobs[shotMob].width/2), Screen.mobs[shotMob].y+ (Screen.mobs[shotMob].height/2));
-		}
-		else if(shotingMob1&&airID == Value.airTowerLaser2) {    // kulenin lazeri
-			g2d.setColor((new Color(0,153,0)));  //lazerin rengi
-			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobs[shotMob].x + (Screen.mobs[shotMob].width/2), Screen.mobs[shotMob].y+ (Screen.mobs[shotMob].height/2));
-		}
-		else if(shotingMob1&&airID == Value.airTowerLaser3) {    // kulenin lazeri
-			g2d.setColor((new Color(51,153,255)));  //lazerin rengi
-			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobs[shotMob].x + (Screen.mobs[shotMob].width/2), Screen.mobs[shotMob].y+ (Screen.mobs[shotMob].height/2));
-		}
-		
-		//MOB2
-		if(shotingMob2 && airID == Value.airTowerLaser) {    // kulenin lazeri
-			g2d.setColor((new Color(255,255,0)));  //lazerin rengi
-			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobss[shotMob].x + (Screen.mobss[shotMob].width/2), Screen.mobss[shotMob].y+ (Screen.mobss[shotMob].height/2));
-		}
-		else if(shotingMob2 && airID == Value.airTowerLaser2) {    // kulenin lazeri
-			g2d.setColor((new Color(0,153,0)));  //lazerin rengi
-			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobss[shotMob].x + (Screen.mobss[shotMob].width/2), Screen.mobss[shotMob].y+ (Screen.mobss[shotMob].height/2));
-		}
-		else if(shotingMob2 && airID == Value.airTowerLaser3) {    // kulenin lazeri
-			g2d.setColor((new Color(51,153,255)));  //lazerin rengi
-			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobss[shotMob].x + (Screen.mobss[shotMob].width/2), Screen.mobss[shotMob].y+ (Screen.mobss[shotMob].height/2));
+		if (shotMob == -1) return;
+
+		// MOB1
+		if (shotingMob1 && shotMob < Screen.mobs.length) {
+			if (airID == Value.airTowerLaser) g2d.setColor(new Color(255, 255, 0));
+			else if (airID == Value.airTowerLaser2) g2d.setColor(new Color(0, 153, 0));
+			else if (airID == Value.airTowerLaser3) g2d.setColor(new Color(51, 153, 255));
+
+			g2d.drawLine(x + (width / 2), y + (height / 2),
+					Screen.mobs[shotMob].x + (Screen.mobs[shotMob].width / 2),
+					Screen.mobs[shotMob].y + (Screen.mobs[shotMob].height / 2));
 		}
 		
+		// MOB2
+		else if (shotingMob2 && shotMob < Screen.mobss.length) {
+			if (airID == Value.airTowerLaser) g2d.setColor(new Color(255, 255, 0));
+			else if (airID == Value.airTowerLaser2) g2d.setColor(new Color(0, 153, 0));
+			else if (airID == Value.airTowerLaser3) g2d.setColor(new Color(51, 153, 255));
+
+			g2d.drawLine(x + (width / 2), y + (height / 2),
+					Screen.mobss[shotMob].x + (Screen.mobss[shotMob].width / 2),
+					Screen.mobss[shotMob].y + (Screen.mobss[shotMob].height / 2));
+		}
 		
-		//MOB3
-		if(shotingMob3&&airID == Value.airTowerLaser) {    // kulenin lazeri
-			g2d.setColor((new Color(255,255,0)));  //lazerin rengi
-			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobsss[shotMob].x + (Screen.mobsss[shotMob].width/2), Screen.mobsss[shotMob].y+ (Screen.mobsss[shotMob].height/2));
+		// MOB3
+		else if (shotingMob3 && shotMob < Screen.mobsss.length) {
+			if (airID == Value.airTowerLaser) g2d.setColor(new Color(255, 255, 0));
+			else if (airID == Value.airTowerLaser2) g2d.setColor(new Color(0, 153, 0));
+			else if (airID == Value.airTowerLaser3) g2d.setColor(new Color(51, 153, 255));
+
+			g2d.drawLine(x + (width / 2), y + (height / 2),
+					Screen.mobsss[shotMob].x + (Screen.mobsss[shotMob].width / 2),
+					Screen.mobsss[shotMob].y + (Screen.mobsss[shotMob].height / 2));
 		}
-		else if(shotingMob3&&airID == Value.airTowerLaser2) {    // kulenin lazeri
-			g2d.setColor((new Color(0,153,0)));  //lazerin rengi
-			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobsss[shotMob].x + (Screen.mobsss[shotMob].width/2), Screen.mobsss[shotMob].y+ (Screen.mobsss[shotMob].height/2));
-		}
-		else if(shotingMob3&&airID == Value.airTowerLaser3) {    // kulenin lazeri
-			g2d.setColor((new Color(51,153,255)));  //lazerin rengi
-			g2d.drawLine(x + (width/2), y + (height/2), Screen.mobsss[shotMob].x + (Screen.mobsss[shotMob].width/2), Screen.mobsss[shotMob].y+ (Screen.mobsss[shotMob].height/2));
-		}
+	}
+
+	double distanceCheck(Rectangle mob){
+		int towerCenterX = this.x + (this.width/2);
+		int towerCenterY = this.y + (this.height/2);
+		int mobCenterX = mob.x + (mob.width/2);
+		int mobCenterY = mob.y + (mob.height/2);
+
+		int dx = towerCenterX - mobCenterX;
+		int dy = towerCenterY - mobCenterY;
+		return (dx*dx) + (dy*dy);
 	}
 }
