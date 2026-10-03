@@ -13,7 +13,7 @@ public class Block extends Rectangle {
 	int towerSquareSize3 = 200;  //3. kule menzil
 	int towerSquareSize4 = 2000000; // set cho xôm
 	int groundID;
-	int airID;
+	int towerID;
 	int loseTime = 300, loseFrame = 0; // hasar vurma aralığı, kulelerin
 	int animationFrame = 0;
 	
@@ -27,43 +27,43 @@ public class Block extends Rectangle {
 	boolean shotingMob3 = false;
 
 
-	Block(int x, int y, int width, int height, int groundID, int airID) { // kule menzillerinin oyunun içinde tanımlanması
+	Block(int x, int y, int width, int height, int groundID, int towerID) { // kule menzillerinin oyunun içinde tanımlanması
 		setBounds(x, y, width, height);
 		towerSquare = new Rectangle(x - (towerSquareSize / 2), y - (towerSquareSize / 2), width + towerSquareSize, height + towerSquareSize);
 		towerSquare2 = new Rectangle(x - (towerSquareSize2 / 2), y - (towerSquareSize2 / 2), width + towerSquareSize2, height + towerSquareSize2);
 		towerSquare3 = new Rectangle(x - (towerSquareSize3 / 2), y - (towerSquareSize3 / 2), width + towerSquareSize3, height + towerSquareSize3);
 		towerSquare4 = new Rectangle(x - (towerSquareSize4 / 2), y - (towerSquareSize4 / 2), width + towerSquareSize4, height + towerSquareSize4);
 		this.groundID = groundID;
-		this.airID = airID;
+		this.towerID = towerID;
 	} 
 
 	// Lấy phạm vi bắn tương ứng với loại tháp hiện tại
 	Rectangle getTowerRange() {
-		if (airID == Value.airTowerLaser2) return towerSquare2;
-		if (airID == Value.airTowerLaser3) return towerSquare3;
-		if (airID == Value.airTowerLaser4) return towerSquare4;
+		if (towerID == Value.MAGE_TOWER) return towerSquare2;
+		if (towerID == Value.CANNON_TOWER) return towerSquare3;
+		if (towerID == Value.GOLD_MINER) return towerSquare4;
 		return towerSquare;
 	}
 
 	void draw(Graphics g) {
 		g.drawImage(Screen.tileset_ground[groundID], x, y, width, height, null);
 
-		if (airID != Value.airAir) {
+		if (towerID != Value.PLACEHOLDER) {
 			Image[] towerFrames;
-			if (airID == Value.airTowerLaser) {
+			if (towerID == Value.ARCHER_TOWER) {
 				towerFrames = Screen.cacherTower;
 			} 
-			else if (airID == Value.airTowerLaser2) {
+			else if (towerID == Value.MAGE_TOWER) {
 				towerFrames = Screen.mageTower;
 			}
-			else if (airID == Value.airTowerLaser4) {
+			else if (towerID == Value.GOLD_MINER) {
 				towerFrames = Screen.goldMiner;
 			}
-			else if (airID == Value.airTowerLaser3) {
+			else if (towerID == Value.CANNON_TOWER) {
 				towerFrames = Screen.cannon;
 			}
 			else {
-				g.drawImage(Screen.tileset_air[airID], x, y, width, height, null);
+				g.drawImage(Screen.tileset_air[towerID], x, y, width, height, null);
 				return;
 			}
 
@@ -100,7 +100,7 @@ public class Block extends Rectangle {
 	
 	void physic() {
 		// Logic kiếm vàng từ mỏ vàng
-		if (airID == Value.airTowerLaser4) {
+		if (towerID == Value.GOLD_MINER) {
 			goldMineTick++;
 			if (goldMineTick >= 1250) {
 				Screen.coinage += 1;
@@ -110,7 +110,7 @@ public class Block extends Rectangle {
 		}
 
 		// Chỉ các tháp bắn mới xử lý tấn công
-		if (airID != Value.airTowerLaser && airID != Value.airTowerLaser2 && airID != Value.airTowerLaser3) {
+		if (towerID != Value.ARCHER_TOWER && towerID != Value.MAGE_TOWER && towerID != Value.CANNON_TOWER) {
 			return;
 		}
 
@@ -192,13 +192,13 @@ public class Block extends Rectangle {
 
 			if (animationFrame == 6) {
 				double damage = 2 * (1-target.dmgReduction);
-				if (airID == Value.airTowerLaser2) damage = 4 * (1-target.dmgReduction);
-				else if (airID == Value.airTowerLaser3) damage = 10 * (1-target.dmgReduction);
+				if (towerID == Value.MAGE_TOWER) damage = 4 * (1-target.dmgReduction);
+				else if (towerID == Value.CANNON_TOWER) damage = 10 * (1-target.dmgReduction);
 
 				double startX = x + width/2;
 				double startY = y + height/2;
 				if (target != null && !hasDealtDamage) {
-					Screen.pjt.add(new Projectiles(startX, startY, target, damage));
+					Screen.pjt.add(new Projectiles(startX, startY, target, damage, towerID));
 					hasDealtDamage = true;
 					if (target.isDead()) {
 						targetType = 0;
@@ -223,13 +223,13 @@ public class Block extends Rectangle {
 		Graphics2D g2d = (Graphics2D) g;
 
 		if (Screen.isDebug) {
-			if (airID == Value.airTowerLaser) {
+			if (towerID == Value.ARCHER_TOWER) {
 				g2d.drawRect(towerSquare.x, towerSquare.y, towerSquare.width, towerSquare.height);
 			}
-			if (airID == Value.airTowerLaser2) {
+			if (towerID == Value.MAGE_TOWER) {
 				g2d.drawRect(towerSquare2.x, towerSquare2.y, towerSquare2.width, towerSquare2.height);
 			}
-			if (airID == Value.airTowerLaser3) {
+			if (towerID == Value.CANNON_TOWER) {
 				g2d.drawRect(towerSquare3.x, towerSquare3.y, towerSquare3.width, towerSquare3.height);
 			}
 		}

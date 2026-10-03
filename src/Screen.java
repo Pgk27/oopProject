@@ -45,7 +45,7 @@ public class Screen extends JPanel implements Runnable {
 	static Image[] cannon = new Image[8];
 	static Image[] goldMiner = new Image[8];
 
-	static Image arrow;
+	static Image[] projectiles = new Image[3];
 	// sẽ update tiếp sau
 	
 	
@@ -158,8 +158,9 @@ public class Screen extends JPanel implements Runnable {
 			minionDeadAnim[i] = loadFrame("characterSprites/minion/dead00" + i + ".png");
 		}
 
-		arrow = loadFrame("characterSprites/cacherTower/arrow000.png");
-		
+		projectiles[0] = loadFrame("characterSprites/cacherTower/arrow000.png");
+		projectiles[1] = loadFrame("characterSprites/mageTower/energyBall.png");
+		projectiles[2] = loadFrame("characterSprites/cannon/cannonBall.png");		
 		save.loadSave(new File("save/map" + level )); //map ı yüklüyor
 		
 		

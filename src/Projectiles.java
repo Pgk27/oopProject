@@ -8,14 +8,16 @@ public class Projectiles {
     double damage;
     double angle;
     Mob target;
-    int speed = 2; // Tốc độ bay của mũi tên
+    int towerID = -1; // ID của tower
+    double speed = 1.2; // Tốc độ bay của mũi tên
     boolean hasRemoved = false;
     
-    public Projectiles(double startX, double startY, Mob target, double damage) {
+    public Projectiles(double startX, double startY, Mob target, double damage, int towerID) {
         this.x = startX;
         this.y = startY;
         this.target = target;
         this.damage = damage;
+        this.towerID = towerID;
     }
 
     public void physic() {
@@ -49,7 +51,7 @@ public class Projectiles {
     }
 
     public Image getSprite(){
-        return Screen.arrow; 
+        return Screen.projectiles[towerID-2]; // -2 tại vì trong Value thì các tower bắt đầu từ 2 
     }
 
     public void draw(Graphics g) {
