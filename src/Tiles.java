@@ -95,10 +95,6 @@ public class Tiles {
             e.printStackTrace();
         }
 
-
-
-
-
         try (InputStream fontStream = getClass().getClassLoader().getResourceAsStream("font/SVN-Determination Sans.ttf")) {
             if (fontStream == null) {
                 throw new IllegalStateException("Không tìm thấy font trong tileImage");

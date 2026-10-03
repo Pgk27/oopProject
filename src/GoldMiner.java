@@ -7,7 +7,7 @@ public class GoldMiner extends Tower {
 
     public GoldMiner(int x, int y, int width, int height) {
         // Truyền thông số: Tầm bắn 70, Sát thương 2, Thời gian khựng 50, ID tháp
-        super(x, y, width, height, 70, 2, 50, Value.airTowerLaser); //check id
+        super(x, y, width, height, 70, 2, 2, Value.GOLD_MINER); //check id
     }
 
     @Override 

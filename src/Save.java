@@ -19,7 +19,7 @@ public class Save {
 			
 				for(int y=0;y<Screen.room.block.length;y++) {
 					for(int x=0;x<Screen.room.block[0].length;x++) {
-						Screen.room.block[y][x].airID = loadScanner.nextInt();
+						Screen.room.block[y][x].towerID = loadScanner.nextInt();
 					}
 				}
 			}

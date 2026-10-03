@@ -2,34 +2,43 @@ import java.awt.*;
 
 public class Block extends Rectangle {
 	int groundID;
-	int airID;
+	int towerID;
 	
-    // Thêm biến chốt để theo dõi thay đổi ID
+	boolean hasDealtDamage = false;
+	
+	int shotMob = -1; // -1: chưa khóa mục tiêu nào (tránh lỗi quái ở vị trí số 0)
+	int targetType = 0; // 0: không có mục tiêu, 1: mobs, 2: mobss, 3: mobsss
 	private int lastAirID = -1; 
 	public Tower currentTower = null;
-	
-	Block(int x, int y, int width, int height, int groundID, int airID) { 
+
+	boolean shotingMob1 = false;
+	boolean shotingMob2 = false;
+	boolean shotingMob3 = false;
+
+
+	Block(int x, int y, int width, int height, int groundID, int towerID) { // kule menzillerinin oyunun içinde tanımlanması
+    // Thêm biến chốt để theo dõi thay đổi ID
+
 		setBounds(x, y, width, height);
 		this.groundID = groundID;
-		this.airID = airID;
 		SetTower();
 	} 
 
 	void SetTower() {
         // Chỉ tạo tháp mới khi ID thực sự thay đổi
-		if (airID != lastAirID) {
-			lastAirID = airID;
+		if (towerID != lastAirID) {
+			lastAirID = towerID;
 			
-			if(airID == Value.airTowerLaser){
+			if(towerID == Value.ARCHER_TOWER){
 				currentTower = new CacherTower(x, y, width, height);
 			}
-			else if(airID == Value.airTowerLaser2){
+			else if(towerID == Value.MAGE_TOWER){
 				currentTower = new MageTower(x, y, width, height);
 			}
-			else if(airID == Value.airTowerLaser3){
+			else if(towerID == Value.CANNON_TOWER){
 				currentTower = new Canon(x, y, width, height);
 			}
-			else if(airID == Value.airTowerLaser4){
+			else if(towerID == Value.GOLD_MINER){
 				currentTower = new GoldMiner(x, y, width, height);
 			} 
             else {
@@ -45,8 +54,8 @@ public class Block extends Rectangle {
         if (currentTower != null) {
             currentTower.draw(g); 
         } 
-		else if (airID != Value.airAir) {
-            g.drawImage(Screen.tileset_air[airID], x, y, width, height, null);
+		else if (towerID != Value.PLACEHOLDER) {
+            g.drawImage(Screen.tileset_air[towerID], x, y, width, height, null);
         }
 	}
 	

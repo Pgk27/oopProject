@@ -3,8 +3,8 @@ import java.awt.*;
 public class Canon extends Tower {
 
     public Canon(int x, int y, int width, int height) {
-        // Truyền thông số: Tầm bắn 70, Sát thương 2, Thời gian khựng 50, ID tháp
-        super(x, y, width, height, 70, 2, 50, Value.airTowerLaser3); //check id
+        // Truyền thông số: Tầm bắn 70, Sát thương 2, Thời gian khựng 50, frame bắn: 2, ID tháp
+        super(x, y, width, height, 70, 2, 2, Value.CANNON_TOWER); //check id
     }
 
     @Override
@@ -14,7 +14,7 @@ public class Canon extends Tower {
             return; 
         }
 
-        int animationFrame = 0;
+        animationFrame = 0;
         
         // Chỉ chạy hoạt ảnh khi đang khóa mục tiêu, nếu không thì đứng im ở frame 0
         if (shotingMob1 || shotingMob2 || shotingMob3) {
@@ -46,27 +46,5 @@ public class Canon extends Tower {
 
     @Override
     public void fight(Graphics g) {
-        // Chỉ vẽ tia laser khi đã khóa được mục tiêu
-        if (shotMob == -1) return;
-        g.setColor(new Color(51, 153, 92));
-
-        int startX = x + (width / 2);
-        int startY = y + (height / 2);
-        
-        if (shotingMob1 && shotMob < Screen.mobs.length && Screen.mobs[shotMob] != null) {
-            int targetX = Screen.mobs[shotMob].x + (Screen.mobs[shotMob].width / 2);
-            int targetY = Screen.mobs[shotMob].y + (Screen.mobs[shotMob].height / 2);
-            g.drawLine(startX, startY, targetX, targetY);
-        }
-        else if (shotingMob2 && shotMob < Screen.mobss.length && Screen.mobss[shotMob] != null) {
-            int targetX = Screen.mobss[shotMob].x + (Screen.mobss[shotMob].width / 2);
-            int targetY = Screen.mobss[shotMob].y + (Screen.mobss[shotMob].height / 2);
-            g.drawLine(startX, startY, targetX, targetY);
-        }
-        else if (shotingMob3 && shotMob < Screen.mobsss.length && Screen.mobsss[shotMob] != null) {
-            int targetX = Screen.mobsss[shotMob].x + (Screen.mobsss[shotMob].width / 2);
-            int targetY = Screen.mobsss[shotMob].y + (Screen.mobsss[shotMob].height / 2);
-            g.drawLine(startX, startY, targetX, targetY);
-        }
     }
 }
