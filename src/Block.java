@@ -14,13 +14,18 @@ public class Block extends Rectangle {
 	int towerSquareSize4 = 2000000; // set cho xôm
 	int groundID;
 	int airID;
-	int loseTime = 100, loseFrame = 0; // hasar vurma aralığı, kulelerin
+	int loseTime = 300, loseFrame = 0; // hasar vurma aralığı, kulelerin
+	int animationFrame = 0;
+	
+	boolean hasDealtDamage = false;
 	
 	int shotMob = -1; // -1: chưa khóa mục tiêu nào (tránh lỗi quái ở vị trí số 0)
 	int targetType = 0; // 0: không có mục tiêu, 1: mobs, 2: mobss, 3: mobsss
+
 	boolean shotingMob1 = false;
 	boolean shotingMob2 = false;
 	boolean shotingMob3 = false;
+
 
 	Block(int x, int y, int width, int height, int groundID, int airID) { // kule menzillerinin oyunun içinde tanımlanması
 		setBounds(x, y, width, height);
@@ -45,11 +50,11 @@ public class Block extends Rectangle {
 
 		if (airID != Value.airAir) {
 			Image[] towerFrames;
-			if (airID == Value.airTowerLaser2) {
-				towerFrames = Screen.mageTower;
-			} 
-			else if (airID == Value.airTowerLaser) {
+			if (airID == Value.airTowerLaser) {
 				towerFrames = Screen.cacherTower;
+			} 
+			else if (airID == Value.airTowerLaser2) {
+				towerFrames = Screen.mageTower;
 			}
 			else if (airID == Value.airTowerLaser4) {
 				towerFrames = Screen.goldMiner;
@@ -62,7 +67,7 @@ public class Block extends Rectangle {
 				return;
 			}
 
-			int animationFrame = 0;
+			animationFrame = 0;
 			if (shotingMob1 || shotingMob2 || shotingMob3) {
 				animationFrame = Screen.AnimFrame % towerFrames.length;
 			}
@@ -185,13 +190,16 @@ public class Block extends Rectangle {
 			else if (targetType == 2 && shotMob < Screen.mobss.length) target = Screen.mobss[shotMob];
 			else if (targetType == 3 && shotMob < Screen.mobsss.length) target = Screen.mobsss[shotMob];
 
-			if (loseFrame >= loseTime) {
+			if (animationFrame == 6) {
 				double damage = 2 * (1-target.dmgReduction);
 				if (airID == Value.airTowerLaser2) damage = 4 * (1-target.dmgReduction);
 				else if (airID == Value.airTowerLaser3) damage = 10 * (1-target.dmgReduction);
 
-				if (target != null) {
-					target.loseHealth(damage);
+				double startX = x + width/2;
+				double startY = y + height/2;
+				if (target != null && !hasDealtDamage) {
+					Screen.pjt.add(new Projectiles(startX, startY, target, damage));
+					hasDealtDamage = true;
 					if (target.isDead()) {
 						targetType = 0;
 						shotMob = -1;
@@ -201,10 +209,8 @@ public class Block extends Rectangle {
 						Screen.hasWon();
 					}
 				}
-				loseFrame = 0;
-			} else {
-				loseFrame++;
 			}
+			else hasDealtDamage = false;
 		}
 	}
 	
@@ -229,39 +235,6 @@ public class Block extends Rectangle {
 		}
 
 		if (shotMob == -1) return;
-
-		// MOB1
-		if (shotingMob1 && shotMob < Screen.mobs.length) {
-			if (airID == Value.airTowerLaser) g2d.setColor(new Color(255, 255, 0));
-			else if (airID == Value.airTowerLaser2) g2d.setColor(new Color(0, 153, 0));
-			else if (airID == Value.airTowerLaser3) g2d.setColor(new Color(51, 153, 255));
-
-			g2d.drawLine(x + (width / 2), y + (height / 2),
-					Screen.mobs[shotMob].x + (Screen.mobs[shotMob].width / 2),
-					Screen.mobs[shotMob].y + (Screen.mobs[shotMob].height / 2));
-		}
-		
-		// MOB2
-		else if (shotingMob2 && shotMob < Screen.mobss.length) {
-			if (airID == Value.airTowerLaser) g2d.setColor(new Color(255, 255, 0));
-			else if (airID == Value.airTowerLaser2) g2d.setColor(new Color(0, 153, 0));
-			else if (airID == Value.airTowerLaser3) g2d.setColor(new Color(51, 153, 255));
-
-			g2d.drawLine(x + (width / 2), y + (height / 2),
-					Screen.mobss[shotMob].x + (Screen.mobss[shotMob].width / 2),
-					Screen.mobss[shotMob].y + (Screen.mobss[shotMob].height / 2));
-		}
-		
-		// MOB3
-		else if (shotingMob3 && shotMob < Screen.mobsss.length) {
-			if (airID == Value.airTowerLaser) g2d.setColor(new Color(255, 255, 0));
-			else if (airID == Value.airTowerLaser2) g2d.setColor(new Color(0, 153, 0));
-			else if (airID == Value.airTowerLaser3) g2d.setColor(new Color(51, 153, 255));
-
-			g2d.drawLine(x + (width / 2), y + (height / 2),
-					Screen.mobsss[shotMob].x + (Screen.mobsss[shotMob].width / 2),
-					Screen.mobsss[shotMob].y + (Screen.mobsss[shotMob].height / 2));
-		}
 	}
 
 	double distanceCheck(Rectangle mob){
