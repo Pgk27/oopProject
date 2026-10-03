@@ -7,9 +7,9 @@ public class Value { // CẤM ĐƯỢC THAY ĐỔI
 	static protected final int airTrashCan = 1;
 
 
-	static protected final int airTowerLaser = 2;
-	static protected final int airTowerLaser2 = 3;  // tower 2
-	static protected final int airTowerLaser3 = 4;  // tower 3
+	static protected final int airTowerLaser = 2; // cung
+	static protected final int airTowerLaser2 = 3;  // mage
+	static protected final int airTowerLaser3 = 4;  //  canon
 	static protected final int airTowerLaser4 = 5;  // goldminer
 
 

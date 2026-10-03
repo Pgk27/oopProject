@@ -109,7 +109,7 @@ public abstract class Tower {
             }
         }
 
-        // C. LOGIC TRỪ MÁU THEO THỜI GIAN KHỰNG
+        // LOGIC TRỪ MÁU THEO THỜI GIAN KHỰNG
         if (shotingMob1 || shotingMob2 || shotingMob3) {
             if (loseFrame >= loseTime) {
                 if (shotingMob1 && Screen.mobs[shotMob] != null) {
@@ -131,7 +131,7 @@ public abstract class Tower {
         }
     }
 
-    // Các hàm hiển thị bắt buộc tháp con phải tự định nghĩa
+    
     public abstract void draw(Graphics g);
     public abstract void fight(Graphics g);
 }

@@ -48,7 +48,7 @@ public class MageTower extends Tower {
     public void fight(Graphics g) {
         // Chỉ vẽ tia laser khi đã khóa được mục tiêu
         if (shotMob == -1) return;
-        g.setColor(new Color(2255, 255, 0));
+        g.setColor(new Color(255, 255, 0));
 
         int startX = x + (width / 2);
         int startY = y + (height / 2);
