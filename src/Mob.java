@@ -246,7 +246,7 @@ public class Mob extends Rectangle{
 		
 		this.coinTick = 0;
 		Screen.killed++;
-		Screen.room.block[0][0].getMoney(mobID);
+		// Screen.room.block[0][0].getMoney(mobID);
 	}
 
 	Image getSprite(){
