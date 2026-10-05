@@ -3,9 +3,10 @@ import java.awt.*;
 public abstract class Tower {
     protected int x, y, width, height;
     protected int rangeSize;
-    protected int damage;
-    protected int loseTime;
-    protected int loseFrame = 0;
+    protected int animationFrame = 0; // animFrame ở đây để kiểm soát khi nào mũi tên bắn~ ra
+    protected int shootFrame; // frame bắn của từng tháp
+    protected double damage;
+
     public int id; // ID của tháp để Block nhận diện
 
     // Quản lý mục tiêu
@@ -13,16 +14,16 @@ public abstract class Tower {
     protected boolean shotingMob1 = false;
     protected boolean shotingMob2 = false;
     protected boolean shotingMob3 = false;
+    protected boolean hasDealtDamage = false;
     protected Rectangle towerSquare;
 
-    public Tower(int x, int y, int width, int height, int rangeSize, int damage, int loseTime, int id) {
+    public Tower(int x, int y, int width, int height, int rangeSize, int damage, int shootFrame, int id) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.rangeSize = rangeSize;
         this.damage = damage;
-        this.loseTime = loseTime;
         this.id = id;
         
         // Khởi tạo tầm bắn ngay khi xây tháp
@@ -111,23 +112,29 @@ public abstract class Tower {
 
         // LOGIC TRỪ MÁU THEO THỜI GIAN KHỰNG
         if (shotingMob1 || shotingMob2 || shotingMob3) {
-            if (loseFrame >= loseTime) {
-                if (shotingMob1 && Screen.mobs[shotMob] != null) {
-                    Screen.mobs[shotMob].loseHealth(this.damage);
-                    if (Screen.mobs[shotMob].isDead()) { shotingMob1 = false; shotMob = -1; Screen.hasWon(); }
-                } else if (shotingMob2 && Screen.mobss[shotMob] != null) {
-                    Screen.mobss[shotMob].loseHealth(this.damage);
-                    if (Screen.mobss[shotMob].isDead()) { shotingMob2 = false; shotMob = -1; Screen.hasWon(); }
-                } else if (shotingMob3 && Screen.mobsss[shotMob] != null) {
-                    Screen.mobsss[shotMob].loseHealth(this.damage);
-                    if (Screen.mobsss[shotMob].isDead()) { shotingMob3 = false; shotMob = -1; Screen.hasWon(); }
+            Mob target = null;
+            if (shotingMob1 && Screen.mobs[shotMob] != null) target = Screen.mobs[shotMob];
+            else if (shotingMob2 && Screen.mobss[shotMob] != null) target = Screen.mobss[shotMob];
+            else if (shotingMob3 && Screen.mobsss[shotMob] != null) target = Screen.mobsss[shotMob];
+            if (animationFrame == shootFrame) {
+                double finalDamage = damage * (1-target.dmgReduction);
+
+                double startX = x + width/2;
+				double startY = y + height/2;
+                if (target != null && !hasDealtDamage){
+                    Screen.pjt.add(new Projectiles(startX, startY, target, finalDamage, id));
+					hasDealtDamage = true;
+					if (target.isDead()) {
+						shotMob = -1;
+						shotingMob1 = false;
+						shotingMob2 = false;
+						shotingMob3 = false;
+						Screen.hasWon();
+					}
                 }
-                loseFrame = 0; // Đưa thời gian khựng về 0
             } else {
-                loseFrame++;
+                hasDealtDamage = false;
             }
-        } else {
-            loseFrame = 0; // Không có mục tiêu thì không tích nạp đạn
         }
     }
 
