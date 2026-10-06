@@ -4,7 +4,7 @@ public class Canon extends Tower {
 
     public Canon(int x, int y, int width, int height) {
         // Truyền thông số: Tầm bắn 70, Sát thương 2, Thời gian khựng 50, frame bắn: 2, ID tháp
-        super(x, y, width, height, 5000, 2000, 2, Value.CANNON_TOWER); //check id
+        super(x, y, width, height, 70000000, 77700000, 1, Value.CANNON_TOWER); //check id
     }
 
     @Override

@@ -45,6 +45,51 @@ public class GameRender {
         }
     }
 
+    private void drawPlayGame(Graphics g, int width, int height) {
+        
+        g.setColor(new Color(70, 70, 70)); 
+        g.fillRect(0, 0, width, height);
+        
+        Screen.room.draw(g); 
+        
+        ArrayList<Mob> renderMobs = new ArrayList<>();
+        
+        for (int i = 0; i < Screen.mobs.length; i++) { 
+            if (Screen.mobs[i] != null && Screen.mobs[i].inGame) {
+                renderMobs.add(Screen.mobs[i]);
+            }
+        }
+        for (int i = 0; i < Screen.mobss.length; i++) { 
+            if (Screen.mobss[i] != null && Screen.mobss[i].inGame) {
+                renderMobs.add(Screen.mobss[i]);
+            }
+        }
+        for (int i = 0; i < Screen.mobsss.length; i++) { 
+            if (Screen.mobsss[i] != null && Screen.mobsss[i].inGame) {
+                renderMobs.add(Screen.mobsss[i]);
+            }
+        }
+        for (int i = 0; i < Screen.mini.length; i++){
+            if (Screen.mini[i] != null && Screen.mini[i].inGame){
+                renderMobs.add(Screen.mini[i]);
+            }
+        }
+
+        // sắp xếp quái theo tọa độ y --> con nào có tọa độ y nhỏ hơn thì được vẽ trước
+        // tránh trường hợp con ở trên đè lên con ở dưới
+        renderMobs.sort(Comparator.comparingInt(m -> m.y));
+        // thực hiện vẽ
+        for (Mob m : renderMobs) {
+            m.draw(g);
+        }
+        
+        Screen.store.draw(g); 
+
+        for (Projectiles a : Screen.pjt) {
+            a.draw(g);
+        }
+        
+    }
 
     private void drawTileScreen(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.tileScreen, 0, 0, width, height, null);
@@ -90,12 +135,6 @@ public class GameRender {
         g.setColor(darkSilver);
         g.drawString(": " + Screen.coinage, 35, 550);
     }
-
-
-
-
-
-
 
     private void drawGachaRateScreen(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.gachaTile, 0, 0, width, height, null);
@@ -272,7 +311,6 @@ public class GameRender {
 
 
     }
-
 
     private void drawThongBao(Graphics g, int width, int height) {
 
@@ -463,6 +501,7 @@ public class GameRender {
         
 
     }
+   
     private void drawButtTraoDoi(Graphics g, int x, int y, int dx, int dy, int checkingObject, boolean checkingValue) {
         if(checkingValue == true) {
             g.drawImage(Screen.tiles.awaButtV1, x, y, dx, dy, null);
@@ -497,50 +536,4 @@ public class GameRender {
         
     }
 
-    private void drawPlayGame(Graphics g, int width, int height) {
-        
-        g.setColor(new Color(70, 70, 70)); 
-        g.fillRect(0, 0, width, height);
-        
-        Screen.room.draw(g); 
-        
-        ArrayList<Mob> renderMobs = new ArrayList<>();
-        
-        for (int i = 0; i < Screen.mobs.length; i++) { 
-            if (Screen.mobs[i] != null && Screen.mobs[i].inGame) {
-                renderMobs.add(Screen.mobs[i]);
-            }
-        }
-        for (int i = 0; i < Screen.mobss.length; i++) { 
-            if (Screen.mobss[i] != null && Screen.mobss[i].inGame) {
-                renderMobs.add(Screen.mobss[i]);
-            }
-        }
-        for (int i = 0; i < Screen.mobsss.length; i++) { 
-            if (Screen.mobsss[i] != null && Screen.mobsss[i].inGame) {
-                renderMobs.add(Screen.mobsss[i]);
-            }
-        }
-        for (int i = 0; i < Screen.mini.length; i++){
-            if (Screen.mini[i] != null && Screen.mini[i].inGame){
-                renderMobs.add(Screen.mini[i]);
-            }
-        }
-
-        // sắp xếp quái theo tọa độ y --> con nào có tọa độ y nhỏ hơn thì được vẽ trước
-        // tránh trường hợp con ở trên đè lên con ở dưới
-        renderMobs.sort(Comparator.comparingInt(m -> m.y));
-        // thực hiện vẽ
-        for (Mob m : renderMobs) {
-            m.draw(g);
-        }
-
-        for (Projectiles p : Screen.pjt) {
-            if (p != null) {
-                p.draw(g);
-            }
-        }
-        
-        Screen.store.draw(g); 
-    }
 }

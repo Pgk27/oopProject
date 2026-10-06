@@ -6,6 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.*;
 
 
+
 public class Screen extends JPanel implements Runnable {
 	Thread thread = new Thread(this);
 
@@ -49,7 +50,7 @@ public class Screen extends JPanel implements Runnable {
 	
 	
 	static int myWidth, myHeight;
-	static int health = 1;
+	static int health = 10;
 	static int killed = 0, killsToWin = 0, level = 1, rielLevel =1;
 	static boolean isFirst = true;
 	static boolean isDebug = false;
