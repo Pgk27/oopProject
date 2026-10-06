@@ -2,10 +2,15 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.Random;
+
 import javax.swing.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 
 public class Screen extends JPanel implements Runnable {
 	Thread thread = new Thread(this);
+
+	static CopyOnWriteArrayList<Projectiles> pjt = new CopyOnWriteArrayList<>();
 	
 	static Image[] tileset_ground = new Image[100];
 	static Image[] tileset_air = new Image[100];
@@ -39,6 +44,8 @@ public class Screen extends JPanel implements Runnable {
 	static Image[] mageTower = new Image[8];
 	static Image[] cannon = new Image[8];
 	static Image[] goldMiner = new Image[8];
+
+	static Image[] projectiles = new Image[3];
 	// sẽ update tiếp sau
 	
 	
@@ -150,8 +157,10 @@ public class Screen extends JPanel implements Runnable {
 		for (int i = 0; i < minionDeadAnim.length; i++){
 			minionDeadAnim[i] = loadFrame("characterSprites/minion/dead00" + i + ".png");
 		}
-		
-		
+
+		projectiles[0] = loadFrame("characterSprites/cacherTower/arrow000.png");
+		projectiles[1] = loadFrame("characterSprites/mageTower/energyBall.png");
+		projectiles[2] = loadFrame("characterSprites/cannon/cannonBall.png");		
 		save.loadSave(new File("save/map" + level )); //map ı yüklüyor
 		
 		
@@ -259,6 +268,7 @@ public class Screen extends JPanel implements Runnable {
 							mobss[i].physic();
 						}
 					}
+					
 					for(int i = 0; i < mobsss.length; i++) { 
 						if(mobsss[i].inGame) {
 							mobsss[i].physic();
@@ -270,6 +280,14 @@ public class Screen extends JPanel implements Runnable {
 							mini[i].physic();
 						}
 					}
+
+					for (Projectiles a : pjt) {
+						a.physic();
+						if (a.hasRemoved) {
+							pjt.remove(a);
+						}
+					}
+
 				}
 				else {
 					if(isWin) {
