@@ -13,7 +13,7 @@ public class Mob extends Rectangle{
 	protected int spawnTime;
 	protected int mobWalk = 0;
 	protected int direction = right;
-	protected int mobID = Value.mobAir;
+	protected int mobID = Value.MOB_PLACEHOLDER;
 	protected int increPos = 0;
 	protected int rand = 0;
 	protected double attackDmg;
@@ -169,7 +169,7 @@ public class Mob extends Rectangle{
 						catch(Exception e) {}
 					}
 					
-					if(Screen.room.block[yC][xC].airID == Value.airblackHole) {// mob disappears when walking to the end point
+					if(Screen.room.block[yC][xC].towerID == Value.BLACK_HOLE) {// mob disappears when walking to the end point
 						deleteMob();
 						playerLoseHealth();
 					}
@@ -246,7 +246,7 @@ public class Mob extends Rectangle{
 		
 		this.coinTick = 0;
 		Screen.killed++;
-		Screen.room.block[0][0].getMoney(mobID);
+		// Screen.room.block[0][0].getMoney(mobID);
 	}
 
 	Image getSprite(){

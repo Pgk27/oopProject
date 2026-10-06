@@ -30,13 +30,18 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 	Rectangle doiGiantOrcButt = new Rectangle(450, 340, 70, 25);
 
 
+	Rectangle TKWtoMenu = new Rectangle(210, 357, 125, 30);
+	Rectangle TKWtoPlay = new Rectangle(352, 357, 125, 30);
+	Rectangle TKLtoMenu = new Rectangle(210, 352, 125, 30);
+	Rectangle TKLtoPlay = new Rectangle(352, 352, 125, 30);
+
 
 	public void mouseClicked(MouseEvent e) {
 		if(Screen.gameState == Screen.tileScreen) {
 			int mouseX = e.getX();
         	int mouseY = e.getY();
 			if(startGame.contains(mouseX, mouseY)) {
-				Screen.gameState = Screen.playGame;
+				Screen.startGame();
 				e.getComponent().repaint();
 			}
 			else if(settings.contains(mouseX, mouseY)) {
@@ -90,153 +95,26 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 				Screen.gameState = Screen.thongBao;
 				Screen.gachaType = Screen.gachaTornado;
 				
-				if(Screen.coinage >=11) {
-					Screen.coinage = Screen.coinage - 1;
-					Screen.ok=true;
-					Screen.randomNum = Screen.rand.nextInt(100) + 1;
-					
-					if (Screen.randomNum <=2) {
-						Screen.unlockTornado = true;
-					}
-					else if(Screen.randomNum <=5) {
-						Screen.shard = Screen.shard + 50;
-					}
-					else if(Screen.randomNum <=10) {
-						Screen.shard = Screen.shard + 20;
-					}
-					else if(Screen.randomNum <=20) {
-						Screen.shard = Screen.shard + 10;
-					}
-					else if(Screen.randomNum <=30) {
-						Screen.shard = Screen.shard + 5;
-					}
-					else if(Screen.randomNum <=45) {
-						Screen.shard = Screen.shard + 3;
-					}
-					else if(Screen.randomNum <=65) {
-						Screen.shard = Screen.shard + 2;
-					}
-					else {
-						Screen.shard = Screen.shard + 1;
-					}
-				}
-				else{
-					Screen.ok=false;
-				}
+				logicGachaTornado();
+				
 				e.getComponent().repaint();
 			}
 			else if( gachaEnhanceButt.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.thongBao;
 				Screen.gachaType = Screen.gachaEnhance;
-				if(Screen.coinage >=11) {
-					Screen.coinage = Screen.coinage - 1;
-					Screen.ok=true;
-					Screen.randomNum = Screen.rand.nextInt(100) + 1;
-					
-					if (Screen.randomNum <=2) {
-						Screen.unlockEnhance = true;
-					}
-					else if(Screen.randomNum <=5) {
-						Screen.shard = Screen.shard + 50;
-					}
-					else if(Screen.randomNum <=10) {
-						Screen.shard = Screen.shard + 20;
-					}
-					else if(Screen.randomNum <=20) {
-						Screen.shard = Screen.shard + 10;
-					}
-					else if(Screen.randomNum <=30) {
-						Screen.shard = Screen.shard + 5;
-					}
-					else if(Screen.randomNum <=45) {
-						Screen.shard = Screen.shard + 3;
-					}
-					else if(Screen.randomNum <=65) {
-						Screen.shard = Screen.shard + 2;
-					}
-					else {
-						Screen.shard = Screen.shard + 1;
-					}
-				}
-				else{
-					Screen.ok=false;
-				}
+				logicGachaEnhance();
 				e.getComponent().repaint();
 			}
 			else if( gachaMercenaryButt.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.thongBao;
 				Screen.gachaType = Screen.gachaMercenary;
-				if(Screen.coinage >=11) {
-					Screen.coinage = Screen.coinage - 1;
-					Screen.ok=true;
-					Screen.randomNum = Screen.rand.nextInt(100) + 1;
-					
-					if (Screen.randomNum <=2) {
-						Screen.unlockMercenary = true;
-					}
-					else if(Screen.randomNum <=5) {
-						Screen.shard = Screen.shard + 50;
-					}
-					else if(Screen.randomNum <=10) {
-						Screen.shard = Screen.shard + 20;
-					}
-					else if(Screen.randomNum <=20) {
-						Screen.shard = Screen.shard + 10;
-					}
-					else if(Screen.randomNum <=30) {
-						Screen.shard = Screen.shard + 5;
-					}
-					else if(Screen.randomNum <=45) {
-						Screen.shard = Screen.shard + 3;
-					}
-					else if(Screen.randomNum <=65) {
-						Screen.shard = Screen.shard + 2;
-					}
-					else {
-						Screen.shard = Screen.shard + 1;
-					}
-				}
-				else{
-					Screen.ok=false;
-				}
+				logicGachaMercenary();
 				e.getComponent().repaint();
 			}
 			else if( summonHeroButt.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.thongBao;
 				Screen.gachaType = Screen.summonHero;
-				if(Screen.coinage >=12) {
-					Screen.coinage = Screen.coinage - 2;
-					Screen.ok=true;
-					Screen.randomNum = Screen.rand.nextInt(100) + 1;
-					
-					if (Screen.randomNum ==1) {
-						Screen.unlockGiantOrc = true;
-					}
-					else if(Screen.randomNum ==2) {
-						Screen.shard = Screen.shard + 100;
-					}
-					else if(Screen.randomNum <=5) {
-						Screen.shard = Screen.shard + 50;
-					}
-					else if(Screen.randomNum <=20) {
-						Screen.shard = Screen.shard + 35;
-					}
-					else if(Screen.randomNum <=40) {
-						Screen.shard = Screen.shard + 20;
-					}
-					else if(Screen.randomNum <=60) {
-						Screen.shard = Screen.shard + 10;
-					}
-					else if(Screen.randomNum <=80) {
-						Screen.shard = Screen.shard + 5;
-					}
-					else {
-						Screen.shard = Screen.shard + 3;
-					}
-				}
-				else{
-					Screen.ok=false;
-				}
+				logicSummonHero();
 				e.getComponent().repaint();
 			}
 
@@ -304,6 +182,32 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 				e.getComponent().repaint();
 			}
 		}
+		else if(Screen.gameState == Screen.tongKetWin) {
+			int mouseX = e.getX();
+			int mouseY = e.getY();
+			if(TKWtoMenu.contains(mouseX, mouseY)) {
+				Screen.gameState = Screen.tileScreen;
+				e.getComponent().repaint();
+			}
+			else if(TKWtoPlay.contains(mouseX, mouseY)) {
+				Screen.startGame();
+				e.getComponent().repaint();
+			}
+		}
+		else if(Screen.gameState == Screen.tongKetLose) {
+			int mouseX = e.getX();
+			int mouseY = e.getY();
+			if(TKLtoMenu.contains(mouseX, mouseY)) {
+				Screen.gameState = Screen.tileScreen;
+				
+				e.getComponent().repaint();
+			}
+			else if(TKLtoPlay.contains(mouseX, mouseY)) {
+				Screen.startGame();
+				
+				e.getComponent().repaint();
+			}
+		}
 
 
 
@@ -324,17 +228,173 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 	}
 	
 	
+	//thằng code gốc cực ngu
+	//Hàm thì gọi lung tung hết file này đến file kia, phân bố như cứt
+	//tính tọa độ thì lúc gọi frame, lúc gọi screen, loạn hết cụ lên, đọc chỉ khổ ng bảo trì
+
+
 	public void mouseDragged(MouseEvent e) { // kuleleri sürükleme
 		if(Screen.gameState == Screen.playGame) {
 			Screen.mse = new Point((e.getX()) + ((Frame.size.width - Screen.myWidth)/2), (e.getY()) + ((Frame.size.height - (Screen.myHeight))-(Frame.size.width - Screen.myWidth)/2));
 		}
 	}
 	
-
 	public void mouseMoved(MouseEvent e) { // kuleleri ve shoptaki slotları seçme ve görme
 		if (Screen.gameState == Screen.playGame) {
-			Screen.mse = new Point((e.getX()) - ((Frame.size.width - Screen.myWidth)/2), (e.getY()) - ((Frame.size.height - (Screen.myHeight))-(Frame.size.width - Screen.myWidth)/2));
+			Screen.mse = new Point((e.getX()) - ((Frame.size.width - Screen.myWidth)/2), (e.getY()) - ((Frame.size.height - (Screen.myHeight))-(Frame.size.width - Screen.myWidth)/2)+50);
 		}
 	}
+
+
+
+
+
+	//Hàm phụ xử lí logic, thằng nào đụng vào bố chặt tay
+
+	private void logicGachaTornado() {
+		if(Screen.coinage >=11) {
+			Screen.coinage = Screen.coinage - 1;
+			Screen.ok=true;
+			Screen.randomNum = Screen.rand.nextInt(100) + 1;
+					
+			if (Screen.randomNum <=2) {
+				Screen.unlockTornado = true;
+			}
+			else if(Screen.randomNum <=5) {
+				Screen.shard = Screen.shard + 50;
+			}
+			else if(Screen.randomNum <=10) {
+				Screen.shard = Screen.shard + 20;
+			}
+			else if(Screen.randomNum <=20) {
+				Screen.shard = Screen.shard + 10;
+			}
+			else if(Screen.randomNum <=30) {
+				Screen.shard = Screen.shard + 5;
+			}
+			else if(Screen.randomNum <=45) {
+				Screen.shard = Screen.shard + 3;
+			}
+			else if(Screen.randomNum <=65) {
+				Screen.shard = Screen.shard + 2;
+			}
+			else {
+				Screen.shard = Screen.shard + 1;
+			}
+		}
+		else{
+			Screen.ok=false;
+		}
+	}
+
+	private void logicGachaEnhance() {
+		if(Screen.coinage >=11) {
+			Screen.coinage = Screen.coinage - 1;
+			Screen.ok=true;
+			Screen.randomNum = Screen.rand.nextInt(100) + 1;
+					
+			if (Screen.randomNum <=2) {
+				Screen.unlockEnhance = true;
+			}
+			else if(Screen.randomNum <=5) {
+				Screen.shard = Screen.shard + 50;
+			}
+			else if(Screen.randomNum <=10) {
+				Screen.shard = Screen.shard + 20;
+			}
+			else if(Screen.randomNum <=20) {
+				Screen.shard = Screen.shard + 10;
+			}
+			else if(Screen.randomNum <=30) {
+				Screen.shard = Screen.shard + 5;
+			}
+			else if(Screen.randomNum <=45) {
+				Screen.shard = Screen.shard + 3;
+			}
+			else if(Screen.randomNum <=65) {
+				Screen.shard = Screen.shard + 2;
+			}
+			else {
+				Screen.shard = Screen.shard + 1;
+			}
+		}
+		else{
+			Screen.ok=false;
+		}
+	}
+
+	private void logicGachaMercenary() {
+		if(Screen.coinage >=11) {
+			Screen.coinage = Screen.coinage - 1;
+			Screen.ok=true;
+			Screen.randomNum = Screen.rand.nextInt(100) + 1;
+					
+			if (Screen.randomNum <=2) {
+				Screen.unlockMercenary = true;
+			}
+			else if(Screen.randomNum <=5) {
+				Screen.shard = Screen.shard + 50;
+			}
+			else if(Screen.randomNum <=10) {
+				Screen.shard = Screen.shard + 20;
+			}
+			else if(Screen.randomNum <=20) {
+				Screen.shard = Screen.shard + 10;
+			}
+			else if(Screen.randomNum <=30) {
+				Screen.shard = Screen.shard + 5;
+			}
+			else if(Screen.randomNum <=45) {
+				Screen.shard = Screen.shard + 3;
+			}
+			else if(Screen.randomNum <=65) {
+				Screen.shard = Screen.shard + 2;
+			}
+			else {
+				Screen.shard = Screen.shard + 1;
+			}
+		}
+		else{
+			Screen.ok=false;
+		}
+	}
+
+	private void logicSummonHero() {
+		if(Screen.coinage >=12) {
+			Screen.coinage = Screen.coinage - 2;
+			Screen.ok=true;
+			Screen.randomNum = Screen.rand.nextInt(100) + 1;
+					
+			if (Screen.randomNum ==1) {
+				Screen.unlockGiantOrc = true;
+			}
+			else if(Screen.randomNum ==2) {
+				Screen.shard = Screen.shard + 100;
+			}
+			else if(Screen.randomNum <=5) {
+				Screen.shard = Screen.shard + 50;
+			}
+			else if(Screen.randomNum <=20) {
+				Screen.shard = Screen.shard + 35;
+			}
+			else if(Screen.randomNum <=40) {
+				Screen.shard = Screen.shard + 20;
+			}
+			else if(Screen.randomNum <=60) {
+				Screen.shard = Screen.shard + 10;
+			}
+			else if(Screen.randomNum <=80) {
+				Screen.shard = Screen.shard + 5;
+			}
+			else {
+				Screen.shard = Screen.shard + 3;
+			}
+		}
+		else{
+			Screen.ok=false;
+		}
+	}
+
+
 	
 }

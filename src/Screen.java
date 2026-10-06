@@ -2,10 +2,14 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.*;
+
 
 public class Screen extends JPanel implements Runnable {
 	Thread thread = new Thread(this);
+
+	static CopyOnWriteArrayList<Projectiles> pjt = new CopyOnWriteArrayList<>();
 	
 	static Image[] tileset_ground = new Image[100];
 	static Image[] tileset_air = new Image[100];
@@ -39,13 +43,14 @@ public class Screen extends JPanel implements Runnable {
 	static Image[] mageTower = new Image[8];
 	static Image[] cannon = new Image[8];
 	static Image[] goldMiner = new Image[8];
+
+	static Image[] projectiles = new Image[3];
 	// sẽ update tiếp sau
 	
 	
 	static int myWidth, myHeight;
-	static int health = 100;
-	static int killed = 0, killsToWin = 0, level = 1, maxlevel = 3;
-	static int winTime = 2000, winFrame = 0;
+	static int health = 1;
+	static int killed = 0, killsToWin = 0, level = 1, rielLevel =1;
 	static boolean isFirst = true;
 	static boolean isDebug = false;
 	static boolean isWin = false;
@@ -79,15 +84,21 @@ public class Screen extends JPanel implements Runnable {
 			// coinage = 0; 
 		}
 	}
+
+	static void startGame() {
+		level = (int) ((rielLevel - 1) % 3) + 1;
+		loadLevel();
+		gameState = playGame;
+	}
+	
+	
+
 	
 	void define() {
-		room = new Room();
 		save = new Save();
-		store = new Store();
 		Screen.tiles = new Tiles();
-		
-		health = 10; // starting health
-		
+		loadLevel();
+		store = new Store();
 		
 		for(int i = 0; i < tileset_ground.length; i++) {
 			tileset_ground[i] = new ImageIcon("res/tileset_ground.png").getImage();
@@ -150,9 +161,20 @@ public class Screen extends JPanel implements Runnable {
 		for (int i = 0; i < minionDeadAnim.length; i++){
 			minionDeadAnim[i] = loadFrame("characterSprites/minion/dead00" + i + ".png");
 		}
+
+		projectiles[0] = loadFrame("characterSprites/cacherTower/arrow000.png");
+		projectiles[1] = loadFrame("characterSprites/mageTower/energyBall.png");
+		projectiles[2] = loadFrame("characterSprites/cannon/cannonBall.png");		
 		
-		
-		save.loadSave(new File("save/map" + level )); //map ı yüklüyor
+		loadLevel();
+	}
+
+	private static void loadLevel() {
+		room = new Room();
+		killed = 0;
+		isWin = false;
+
+		save.loadSave(new File("save/map" + level)); //map ı yüklüyor
 		
 		
 		for( int i = 0 ; i < mobs.length;i++) { // mob class ındaki özellikleri moblara atıyor
@@ -186,6 +208,8 @@ public class Screen extends JPanel implements Runnable {
 	public static final int gachaRate=7;
 	public static final int shardShop=8;
 	public static final int thongBao=9;
+	public static final int tongKetWin=10;
+	public static final int tongKetLose=11;
 
 
 	public static Random rand = new Random();
@@ -259,6 +283,7 @@ public class Screen extends JPanel implements Runnable {
 							mobss[i].physic();
 						}
 					}
+					
 					for(int i = 0; i < mobsss.length; i++) { 
 						if(mobsss[i].inGame) {
 							mobsss[i].physic();
@@ -270,23 +295,21 @@ public class Screen extends JPanel implements Runnable {
 							mini[i].physic();
 						}
 					}
-				}
-				else {
-					if(isWin) {
-							if(winFrame>=winTime) {
-								level++;
-								if(level > maxlevel) {
-									System.exit(0);
-								}else {
-									define();
-									isWin = false;
-								}
-								winFrame = 0;
-							}
-							else {
-								winFrame +=1;
-							}
+
+					for (Projectiles a : pjt) {
+						a.physic();
+						if (a.hasRemoved) {
+							pjt.remove(a);
+						}
 					}
+
+				}
+				if (health <= 0) {
+					gameState = tongKetLose;
+					health = rand.nextInt(3) + 2; // reset health random ;))
+				} else if (isWin) {
+					rielLevel++;
+					gameState = tongKetWin;
 				}
 			}
 			repaint();
