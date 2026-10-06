@@ -3,13 +3,8 @@ import java.awt.*;
 public class Canon extends Tower {
 
     public Canon(int x, int y, int width, int height) {
-<<<<<<< HEAD
-        // Truyền thông số: Tầm bắn 70, Sát thương 2, Thời gian khựng 50, ID tháp
-        super(x, y, width, height, 70, 1, 50, Value.airTowerLaser3); //check id
-=======
         // Truyền thông số: Tầm bắn 70, Sát thương 2, Thời gian khựng 50, frame bắn: 2, ID tháp
         super(x, y, width, height, 70, 2, 2, Value.CANNON_TOWER); //check id
->>>>>>> d8017384b55e8c19f4dd818236daf0182db3dc07
     }
 
     @Override
