@@ -48,14 +48,43 @@ public class Minion extends Mob {
 
 
 	void spawnMob(int mobID) {
-		 //determines that the mob will start at coordinate 0 a 0
-		for(int y= 0; y<Screen.room.block.length; y++ ) { // loop through the left edge to check if there's a ground tile to spawn mob
-			if(Screen.room.block[y][0].groundID == Value.groundRoad) {
-				setBounds(Screen.room.block[y][6].x, Screen.room.block[y][6].y, mobSize, mobSize);
-				xC = 0;
-				yC = y;
+		int guardX = -1;
+		int guardY = -1;
+		int[] deltaX = {0, 0, -1, 1};
+		int[] deltaY = {-1, 1, 0, 0};
+
+		for (int y = 0; y < Screen.room.block.length; y++) {
+			for (int x = 0; x < Screen.room.block[y].length; x++) {
+				if (Screen.room.block[y][x].towerID != Value.BLACK_HOLE) {
+					continue;
+				}
+
+				for (int direction = 0; direction < deltaX.length; direction++) {
+					int roadX = x + deltaX[direction];
+					int roadY = y + deltaY[direction];
+					if (roadY < 0 || roadY >= Screen.room.block.length
+							|| roadX < 0 || roadX >= Screen.room.block[roadY].length
+							|| Screen.room.block[roadY][roadX].groundID != Value.groundRoad) {
+						continue;
+					}
+
+					if (guardX != -1 && (guardX != roadX || guardY != roadY)) {
+						throw new IllegalStateException("The gate has more than one adjacent road block.");
+					}
+					guardX = roadX;
+					guardY = roadY;
+				}
 			}
 		}
+
+		if (guardX == -1) {
+			throw new IllegalStateException("Could not find a road block next to the gate for the Minion.");
+		}
+
+		Block guardBlock = Screen.room.block[guardY][guardX];
+		setBounds(guardBlock.x, guardBlock.y, mobSize, mobSize);
+		xC = guardX;
+		yC = guardY;
 
 		this.mobID = mobID;
 		this.health = mobSize;

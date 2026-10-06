@@ -1,6 +1,7 @@
 import java.awt.Font;
 import java.awt.image.BufferedImage;
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import javax.imageio.ImageIO;
 
 public class Tiles {
@@ -42,6 +43,9 @@ public class Tiles {
     public BufferedImage awaButtV2;
     public BufferedImage awaButtV3;
 
+    public BufferedImage tongKetWin;
+    public BufferedImage tongKetLose;
+
     public Font pixelFontv1;
     public Font pixelFontv2;
     public Font pixelFontvSmall;
@@ -49,58 +53,72 @@ public class Tiles {
     public Font pixelFontMedi;
 
 
+    private BufferedImage readImage(String relativePath) throws Exception {
+        File file = new File("src/" + relativePath);
+        if (!file.exists()) {
+            file = new File(relativePath);
+        }
+        if (!file.exists()) {
+            throw new FileNotFoundException("Missing asset: " + relativePath);
+        }
+        return ImageIO.read(file);
+    }
+
     public Tiles() {
         try {
-            tileScreen = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/game_tilee.png"));
-            newGameButton = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/playGame2.png"));
-            backButton = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/backk3.png"));
-            quitGameButton = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/quitgame2.png"));
-            settingsButton = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/setting_icon2.png")); 
-            storeButton = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/store2.png"));
-            storeTile = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/storeTile.png"));
-            storeOptions = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/storeOptionVip2.png"));
-            gachaButton = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/GachaButtonV2_3.png"));
-            gachaTile = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/GachaScreen1.png")); 
+            tileScreen = readImage("tileImage/game_tilee.png");
+            newGameButton = readImage("tileImage/playGame2.png");
+            backButton = readImage("tileImage/backk3.png");
+            quitGameButton = readImage("tileImage/quitgame2.png");
+            settingsButton = readImage("tileImage/setting_icon2.png");
+            storeButton = readImage("tileImage/store2.png");
+            storeTile = readImage("tileImage/storeTile.png");
+            storeOptions = readImage("tileImage/storeOptionVip2.png");
+            gachaButton = readImage("tileImage/GachaButtonV2_3.png");
+            gachaTile = readImage("tileImage/GachaScreen1.png");
 
+            gachaButt = readImage("tileImage/GachaButt3.png");
+            TornadoC = readImage("tileImage/TornadoC3.png");
+            MercenaryC = readImage("tileImage/MercenaryC3.png");
+            EnhanceC = readImage("tileImage/EnhanceC3.png");
+            summonHeroButt = readImage("tileImage/SummonH3.png");
+            in4Butt = readImage("tileImage/infoButt3.png");
+            gachaInfoFrame = readImage("tileImage/gachaInfoFrame3.png");
+            gachaRateText = readImage("tileImage/GachaRateText2.png");
+            iconShardShop = readImage("tileImage/iconShardShop3.png");
+            mysteryShard = readImage("tileImage/mysteryShard3.png");
+            shardShopBigFrame = readImage("tileImage/shardShopBigFrame3.png");
+            awakeningText = readImage("tileImage/awakeText4.png");
 
+            iconTornado = readImage("tileImage/iconTornado1.png");
+            iconEnhance = readImage("tileImage/iconEnhance1.png");
+            iconMercenary = readImage("tileImage/iconMercenary1.png");
+            iconFrame = readImage("tileImage/iconFrame4.png");
+            dauCong = readImage("tileImage/daucong2.png");
+            muiTen = readImage("tileImage/muiten2.png");
+            iconCoin = readImage("tileImage/iconCoin.png");
+            iconGiantOrc = readImage("tileImage/iconGiantOrc2.png");
+            congra = readImage("tileImage/congra3.png");
+            oopss = readImage("tileImage/oopss3.png");
 
-            gachaButt = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/GachaButt3.png"));
-            TornadoC = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/TornadoC3.png"));
-            MercenaryC = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/MercenaryC3.png"));
-            EnhanceC = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/EnhanceC3.png"));
-            summonHeroButt= ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/SummonH3.png"));
-            in4Butt = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/infoButt3.png"));
-            gachaInfoFrame = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/gachaInfoFrame3.png"));
-            gachaRateText = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/GachaRateText2.png"));
-            iconShardShop = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/iconShardShop3.png"));
-            mysteryShard = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/mysteryShard3.png"));
-            shardShopBigFrame = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/shardShopBigFrame3.png"));
-            awakeningText = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/awakeText4.png"));
+            awaButtV1 = readImage("tileImage/awaButtV1.png");
+            awaButtV2 = readImage("tileImage/awaButtV2.png");
+            awaButtV3 = readImage("tileImage/awaButtV3.png");
 
-            iconTornado = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/iconTornado1.png"));
-            iconEnhance = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/iconEnhance1.png"));
-            iconMercenary = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/iconMercenary1.png"));
-            iconFrame = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/iconFrame4.png"));
-            dauCong = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/daucong2.png"));
-            muiTen = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/muiten2.png"));
-            iconCoin = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/iconCoin.png"));
-            iconGiantOrc = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/iconGiantOrc2.png"));
-            congra = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/congra3.png"));
-            oopss = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/oopss3.png"));
-
-            awaButtV1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/awaButtV1.png"));
-            awaButtV2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/awaButtV2.png"));
-            awaButtV3 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileImage/awaButtV3.png"));
+            tongKetWin = readImage("tileImage/tongKetWin4.png");
+            tongKetLose = readImage("tileImage/tongKetLose2.png");
         } catch (Exception e) {
             e.printStackTrace();
         }
+    
 
-        try (InputStream fontStream = getClass().getClassLoader().getResourceAsStream("font/SVN-Determination Sans.ttf")) {
-            if (fontStream == null) {
-                throw new IllegalStateException("Không tìm thấy font trong tileImage");
+        try {
+            File fontFile = new File("src/font/SVN-Determination Sans.ttf");
+            if (!fontFile.exists()) {
+                throw new FileNotFoundException("Missing font: src/font/SVN-Determination Sans.ttf");
             }
 
-            Font baseFont = Font.createFont(Font.TRUETYPE_FONT, fontStream);
+            Font baseFont = Font.createFont(Font.TRUETYPE_FONT, new java.io.FileInputStream(fontFile));
             pixelFontv1 = baseFont.deriveFont(13f);
             pixelFontv2 = baseFont.deriveFont(20f);
             pixelFontvSmall = baseFont.deriveFont(10f);

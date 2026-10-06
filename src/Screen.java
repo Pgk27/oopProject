@@ -2,9 +2,9 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.Random;
-
-import javax.swing.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import javax.swing.*;
+
 
 
 public class Screen extends JPanel implements Runnable {
@@ -50,9 +50,8 @@ public class Screen extends JPanel implements Runnable {
 	
 	
 	static int myWidth, myHeight;
-	static int health = 100;
-	static int killed = 0, killsToWin = 0, level = 1, maxlevel = 3;
-	static int winTime = 2000, winFrame = 0;
+	static int health = 10;
+	static int killed = 0, killsToWin = 0, level = 1, rielLevel =1;
 	static boolean isFirst = true;
 	static boolean isDebug = false;
 	static boolean isWin = false;
@@ -86,15 +85,21 @@ public class Screen extends JPanel implements Runnable {
 			// coinage = 0; 
 		}
 	}
+
+	static void startGame() {
+		level = (int) ((rielLevel - 1) % 3) + 1;
+		loadLevel();
+		gameState = playGame;
+	}
+	
+	
+
 	
 	void define() {
-		room = new Room();
 		save = new Save();
-		store = new Store();
 		Screen.tiles = new Tiles();
-		
-		health = 10; // starting health
-		
+		loadLevel();
+		store = new Store();
 		
 		for(int i = 0; i < tileset_ground.length; i++) {
 			tileset_ground[i] = new ImageIcon("res/tileset_ground.png").getImage();
@@ -161,7 +166,16 @@ public class Screen extends JPanel implements Runnable {
 		projectiles[0] = loadFrame("characterSprites/cacherTower/arrow000.png");
 		projectiles[1] = loadFrame("characterSprites/mageTower/energyBall.png");
 		projectiles[2] = loadFrame("characterSprites/cannon/cannonBall.png");		
-		save.loadSave(new File("save/map" + level )); //map ı yüklüyor
+		
+		loadLevel();
+	}
+
+	private static void loadLevel() {
+		room = new Room();
+		killed = 0;
+		isWin = false;
+
+		save.loadSave(new File("save/map" + level)); //map ı yüklüyor
 		
 		
 		for( int i = 0 ; i < mobs.length;i++) { // mob class ındaki özellikleri moblara atıyor
@@ -195,6 +209,8 @@ public class Screen extends JPanel implements Runnable {
 	public static final int gachaRate=7;
 	public static final int shardShop=8;
 	public static final int thongBao=9;
+	public static final int tongKetWin=10;
+	public static final int tongKetLose=11;
 
 
 	public static Random rand = new Random();
@@ -289,22 +305,12 @@ public class Screen extends JPanel implements Runnable {
 					}
 
 				}
-				else {
-					if(isWin) {
-							if(winFrame>=winTime) {
-								level++;
-								if(level > maxlevel) {
-									System.exit(0);
-								}else {
-									define();
-									isWin = false;
-								}
-								winFrame = 0;
-							}
-							else {
-								winFrame +=1;
-							}
-					}
+				if (health <= 0) {
+					gameState = tongKetLose;
+					health = rand.nextInt(3) + 2; // reset health random ;))
+				} else if (isWin) {
+					rielLevel++;
+					gameState = tongKetWin;
 				}
 			}
 			repaint();

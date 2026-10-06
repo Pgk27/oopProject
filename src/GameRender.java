@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,10 +17,11 @@ public class GameRender {
                 drawStore(g, width, height);
                 break;
             case Screen.settings:
+                
                 break;
             case Screen.selectSkill:
+                
                 break;
-            
             case Screen.buyItem:
                 break;
             case Screen.gacha:
@@ -35,6 +35,12 @@ public class GameRender {
                 break;
             case Screen.thongBao:
                 drawThongBao(g, width, height);
+                break;
+            case Screen.tongKetWin:
+                drawTongKetWin(g, width, height);
+                break;
+            case Screen.tongKetLose:
+                drawTongKetLose(g, width, height);
                 break;
         }
     }
@@ -83,25 +89,6 @@ public class GameRender {
             a.draw(g);
         }
         
-        if(Screen.health < 1) {
-            g.setColor(new Color(240,20,20));
-            g.fillRect(0, 0, Screen.myWidth, Screen.myHeight);
-            g.setColor(new Color(225,255,255));
-            g.setFont(new Font("Courier New",Font.BOLD,14));
-            g.drawString("Game Over, Unlucky...:(", 10, 20);
-        }
-        
-        if(Screen.isWin) {
-            g.setColor(new Color(255,255,255)); 
-            g.fillRect(0, 0, Screen.myWidth, Screen.myHeight);  // Đổi thành width, height
-            g.setColor(new Color(0,0,0));  
-            g.setFont(new Font("Courier New",Font.BOLD,14));                    
-            if(Screen.level  >   Screen.maxlevel) {           
-                g.drawString("You won the whole game! Please wait and the window will close...", 10, 20);
-            }else {
-                g.drawString("You won! Congratulations! Please wait for the next level...", 10, 20);
-            }
-        }
     }
 
     private void drawTileScreen(Graphics g, int width, int height) {
@@ -538,4 +525,15 @@ public class GameRender {
             }
         }
     }   
+
+
+    private void drawTongKetWin(Graphics g, int width, int height) {
+        g.drawImage(Screen.tiles.tongKetWin, 0, 0, width, height, null);
+
+    }
+    private void drawTongKetLose(Graphics g, int width, int height) {
+        g.drawImage(Screen.tiles.tongKetLose, 0, 0, width, height, null);
+        
+    }
+
 }
