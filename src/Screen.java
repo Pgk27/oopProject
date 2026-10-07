@@ -5,8 +5,6 @@ import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.*;
 
-
-
 public class Screen extends JPanel implements Runnable {
 	Thread thread = new Thread(this);
 
@@ -34,6 +32,8 @@ public class Screen extends JPanel implements Runnable {
 
 	static Image[] minionIdleAnim = new Image[6];
 	static Image[] minionDeadAnim = new Image[4];
+	static Image[] minionAttack1Anim = new Image[6];
+	static Image[] minionAttack2Anim = new Image[6];
 
 	static int AnimFrame = 0;
 	static int AnimTime = 40; // ANIMATION FRAME DELAY
@@ -95,7 +95,7 @@ public class Screen extends JPanel implements Runnable {
 	
 
 	
-	void define() {
+	public void define() {
 		save = new Save();
 		Screen.tiles = new Tiles();
 		loadLevel();
@@ -159,6 +159,11 @@ public class Screen extends JPanel implements Runnable {
 			mobSlimeAttack2Anim[i] = loadFrame("characterSprites/slime/attack200" + i + ".png");
 		}
 
+		for (int i = 0; i  < minionAttack1Anim.length; i++){
+			minionAttack1Anim[i] = loadFrame("characterSprites/minion/attack100" + i + ".png");
+			minionAttack2Anim[i] = loadFrame("characterSprites/minion/attack200" + i + ".png");
+		}
+		
 		for (int i = 0; i < minionDeadAnim.length; i++){
 			minionDeadAnim[i] = loadFrame("characterSprites/minion/dead00" + i + ".png");
 		}
@@ -170,7 +175,7 @@ public class Screen extends JPanel implements Runnable {
 		loadLevel();
 	}
 
-	private static void loadLevel() {
+	public static void loadLevel() {
 		room = new Room();
 		killed = 0;
 		isWin = false;
@@ -321,7 +326,7 @@ public class Screen extends JPanel implements Runnable {
 	}
 
 	// crop frame by frame
-	static Image loadFrame(String path) {
+	public static Image loadFrame(String path) {
 		try {
 			BufferedImage raw = javax.imageio.ImageIO.read(new File(path));
 			if (raw == null) return null;

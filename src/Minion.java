@@ -1,14 +1,18 @@
 import java.awt.*;
 
 public class Minion extends Mob {
+	private long lastHealTime = 0;
+	private final long healCoolDown = 1000;
+	private int healAmount = 5;
 
     Minion(){    
-		this.renderScale = 2.0;
-		this.dmgReduction = 0;     
+		this.renderScale = 1.8;
+		this.dmgReduction = 0; 
+		this.attackDmg = 20;    
 	}
 	
 	@Override
-	void physic(){
+	public void physic(){
 		if (isDying){ // tính toán frame cho animation mob chết
 			if (Screen.mobOrcDeadAnim != null && Screen.mobOrcDeadAnim.length > 0){
 				if (deadFrame < Screen.mobOrcDeadAnim.length - 1){
@@ -30,10 +34,36 @@ public class Minion extends Mob {
 			}
 			return;
 		}
+		
+		if (!checkMatching(Screen.mobs) && !checkMatching(Screen.mobss) && !checkMatching(Screen.mobsss)){
+			isMatching = false;
+		}
+		else isMatching = true;
+
+		if(isMatching){
+			int currentAttackFrame = Screen.AnimFrame % 6; 
+
+			// Khi animation chạm frame thứ 5 và chưa gây sát thương trong lượt chém này
+			if (currentAttackFrame == 5) {
+				if (!hasDealtDamage) {
+					attack();
+					hasDealtDamage = true; // Đánh dấu đã chém trúng, không chém thêm trong frame này nữa
+				}
+			} else {
+				// Khi animation chuyển sang frame khác (0, 1, 2, 3, 4), reset cờ để chuẩn bị cho đòn kế tiếp
+				hasDealtDamage = false;
+			}
+		}
+		long currentTime = System.currentTimeMillis();
+		if (currentTime - lastGotDamagedTime >= 2000 && gotDamage) gotDamage = false; 
+		if (currentTime - lastHealTime >= healCoolDown && !gotDamage){
+			selfHeal();
+			lastHealTime = currentTime;
+		}
 	}
 
 	@Override
-	void mobDead(){
+	public void mobDead(){
 		isDying = true;
 		deadFrame = 0;
 		deadTick = 0;
@@ -41,13 +71,20 @@ public class Minion extends Mob {
 	}
 
 	@Override
-	void deleteMob() {
+	public void deleteMob() {
 		isDying = false;
 		inGame = false;
 	}
 
+	public void selfHeal(){
+		if (health + healAmount >= maxHealth){
+			health = maxHealth;
+		}
+		else health += healAmount;
+	}
 
-	void spawnMob(int mobID) {
+
+	public void spawnMob(int mobID) {
 		int guardX = -1;
 		int guardY = -1;
 		int[] deltaX = {0, 0, -1, 1};
@@ -94,18 +131,39 @@ public class Minion extends Mob {
 		this.deadFrame = 0;
 		this.deadTick = 0;
 		this.deadDelay = 0;
+		this.lastHealTime = System.currentTimeMillis();
 		
 		inGame = true;
 	}
 
 	@Override
-	void checkMatching(Minion[] mob){
+	boolean checkMatching(Mob[] mob){
+		for (int i = 0; i < mob.length; i++){
+			if (this.intersects(mob[i]) && mob[i] != null && mob[i].inGame && !mob[i].isDead()){
+				this.isMatching = true;
+				this.target = mob[i];
+				this.target.gotDamage = true;
+				this.target.lastGotDamagedTime = System.currentTimeMillis();
+				return true;
+			}
+		}
+		return false;
 	}
 
-	Image getSprite(){
+	public Image getSprite(){
 		if (isDying){ // dying mob animation
 			if (Screen.minionDeadAnim != null && Screen.minionDeadAnim.length > 0){
 				return Screen.minionDeadAnim[deadFrame];
+			}
+		}
+		// fighting
+		if (isMatching){
+			if (Screen.minionAttack1Anim != null && Screen.minionAttack1Anim.length > 0
+			&& Screen.minionAttack2Anim != null && Screen.minionAttack2Anim.length > 0){
+				if (Screen.AnimFrame % Screen.minionAttack1Anim.length == 0) this.rand = (int) (Math.random()*2);
+				if (rand == 0)
+					return Screen.minionAttack1Anim[Screen.AnimFrame % Screen.minionAttack1Anim.length];
+				return Screen.minionAttack2Anim[Screen.AnimFrame % Screen.minionAttack2Anim.length];
 			}
 		}
 		// mob's normal walking animation
@@ -115,7 +173,7 @@ public class Minion extends Mob {
 		return Screen.minionIdleAnim[0];
 	}
 
-	void draw(Graphics g) {
+	public void draw(Graphics g) {
 		if (!inGame) return;
         // Draws the current animation frame scaled to the tile/mob size
 
