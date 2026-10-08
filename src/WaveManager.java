@@ -6,6 +6,8 @@
 public class WaveManager {
     public LevelConfig config;
     public int globalTick = 0;
+    boolean isCohort = true;
+    int cohortNum = 3;
     
     public WaveManager(int level) {
         this.config = LevelConfig.getLevelConfig(level);
@@ -46,10 +48,20 @@ public class WaveManager {
                         allMobsSpawnedInThisWave = false;
                         
                         info.frameCounter++;
-                        if (info.frameCounter >= info.spawnInterval) {
+                        // randomize interval between each mobs
+                        if(!isCohort){
+                            if (info.frameCounter >= info.spawnInterval + 1500){
+                                isCohort = true;
+                                info.frameCounter = 0;
+                            }
+                        }
+                        if (isCohort && info.frameCounter >= (info.spawnInterval - info.spawnInterval*(0.7+ (int) (Math.random() * (0.9 - 0.7))))) {
                             spawnMob(info);
                             info.spawnedCount++;
                             info.frameCounter = 0;
+                            if(info.spawnedCount % cohortNum == 0 || info.spawnedCount == info.totalCount){
+                                isCohort = false;
+                            }
                         }
                     }
                 }
@@ -74,7 +86,7 @@ public class WaveManager {
     }
     
     private void spawnMob(MobSpawnInfo info) {
-        if (info.mobType == Value.mobMonster3) { // Slime
+        if (info.mobType == Value.SLIME_MONSTER) { // Slime
             for(int i = 0; i < Screen.mobsss.length; i++) {
                 if(!Screen.mobsss[i].inGame) {
                     Screen.mobsss[i].spawnMob(info.mobType);
@@ -82,7 +94,7 @@ public class WaveManager {
                     break;
                 }
             }
-        } else if (info.mobType == Value.mobMonster1) { // Orc
+        } else if (info.mobType == Value.ORC_MONSTER) { // Orc
             for(int i = 0; i < Screen.mobs.length; i++) {
                 if(!Screen.mobs[i].inGame) {
                     Screen.mobs[i].spawnMob(info.mobType);
@@ -90,7 +102,7 @@ public class WaveManager {
                     break;
                 }
             }
-        } else if (info.mobType == Value.mobMonster2) { // Demon
+        } else if (info.mobType == Value.BLOOD_DEMON_MONSTER) { // Demon
             for(int i = 0; i < Screen.mobss.length; i++) {
                 if(!Screen.mobss[i].inGame) {
                     Screen.mobss[i].spawnMob(info.mobType);
@@ -98,6 +110,9 @@ public class WaveManager {
                     break;
                 }
             }
+        }
+        if (!Screen.mini[0].inGame){
+            Screen.mini[0].spawnMob(Value.MINION_SOLDIER);
         }
     }
     

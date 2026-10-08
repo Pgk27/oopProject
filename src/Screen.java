@@ -1,26 +1,39 @@
 import java.awt.*;
-import javax.swing.*;
-import java.io.*;
 import java.awt.image.*;
+import java.io.*;
+import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
+import javax.swing.*;
+
+
 
 public class Screen extends JPanel implements Runnable {
 	Thread thread = new Thread(this);
+
+	static CopyOnWriteArrayList<Projectiles> pjt = new CopyOnWriteArrayList<>();
 	
 	static Image[] tileset_ground = new Image[100];
 	static Image[] tileset_air = new Image[100];
-	static Image[] tileset_res = new Image[100];
-	static Image[] tileset_mob = new Image[100];
-	static Image[] tileset_mobb = new Image[100];        
-	static Image[] tileset_mobbb = new Image[100];      
+	static Image[] tileset_res = new Image[100];    
 	
 	// initilizers for animations
-	static Image[] mobOrcWalk = new Image[8]; // 8 walking frames
-	static Image[] mobDemonWalk = new Image[8];
-	static Image[] mobSlimeWalk = new Image[8]; // cat has 10 running frames
+	static Image[] mobOrcWalkAnim = new Image[8]; // 8 walking frames
+	static Image[] mobOrcDeadAnim = new Image[4];
+	static Image[] mobOrcAttack1Anim = new Image[6];
+	static Image[] mobOrcAttack2Anim = new Image[6];
 
-	static Image[] mobOrcDead = new Image[4];
-	static Image[] mobDemonDead = new Image[4];
-	static Image[] mobSlimeDead = new Image[7];
+	static Image[] mobDemonWalkAnim = new Image[8];
+	static Image[] mobDemonDeadAnim = new Image[4];
+	static Image[] mobDemonAttack1Anim = new Image[8];
+	static Image[] mobDemonAttack2Anim = new Image[8];
+
+	static Image[] mobSlimeWalkAnim = new Image[8]; // cat has 10 running frames
+	static Image[] mobSlimeDeadAnim = new Image[7];
+	static Image[] mobSlimeAttack1Anim = new Image[8];
+	static Image[] mobSlimeAttack2Anim = new Image[8];
+
+	static Image[] minionIdleAnim = new Image[6];
+	static Image[] minionDeadAnim = new Image[4];
 
 	static int AnimFrame = 0;
 	static int AnimTime = 40; // ANIMATION FRAME DELAY
@@ -31,19 +44,20 @@ public class Screen extends JPanel implements Runnable {
 	static Image[] mageTower = new Image[8];
 	static Image[] cannon = new Image[8];
 	static Image[] goldMiner = new Image[8];
+
+	static Image[] projectiles = new Image[3];
 	// sẽ update tiếp sau
 	
 	
 	static int myWidth, myHeight;
-	static int coinage = 10, health = 100; //başlangıç parası, canı
-	static int killed = 0, killsToWin = 0, level = 1, maxlevel = 3;
-	static int winTime = 2000, winFrame = 0;
+	static int health = 999999;
+	static int killed = 0, killsToWin = 0, level = 1, rielLevel =1;
 	static boolean isFirst = true;
-	static boolean isDebug = false; // çerçeve modu
+	static boolean isDebug = false;
 	static boolean isWin = false;
 	
 	
-	static Point mse = new Point();//imlecin ekrandaki yerini belirlememize yarayacak
+	static Point mse = new Point();
 	
 	static Room room;
 	static Save save;
@@ -52,13 +66,14 @@ public class Screen extends JPanel implements Runnable {
 	public static WaveManager waveManager;
 	
 
-	static Mob[] mobs = new Mob[100]; // gelen mob sayısı
+	static Mob[] mobs = new Mob[100];
 	static Mob2[] mobss = new Mob2[100];
 	static Mob3[] mobsss = new Mob3[100];
+	static Minion[] mini = new Minion[10];
 	
 	Screen(Frame frame) {
-		frame.addMouseListener(new KeyHandel());
-		frame.addMouseMotionListener(new KeyHandel());
+		addMouseListener(new KeyHandel());
+		addMouseMotionListener(new KeyHandel());
 		
 		thread.start();
 	}
@@ -67,19 +82,23 @@ public class Screen extends JPanel implements Runnable {
 		if(waveManager != null && waveManager.isAllWavesFinished() && !waveManager.isAnyMobAlive()) {
 			isWin = true;
 			killed = 0;		
-			// coinage = 0; 
 		}
 	}
+
+	static void startGame() {
+		level = (int) ((rielLevel - 1) % 3) + 1;
+		loadLevel();
+		gameState = playGame;
+	}
+	
+	
+
 	
 	void define() {
-		room = new Room();
 		save = new Save();
-		store = new Store();
 		Screen.tiles = new Tiles();
-		
-		coinage = 100; // starting coin
-		health = 10; // starting health
-		
+		loadLevel();
+		store = new Store();
 		
 		for(int i = 0; i < tileset_ground.length; i++) {
 			tileset_ground[i] = new ImageIcon("res/tileset_ground.png").getImage();
@@ -107,25 +126,55 @@ public class Screen extends JPanel implements Runnable {
 		tileset_res[1] = new ImageIcon("res/heart.png").getImage();
 		tileset_res[2] = new ImageIcon("res/coin.png").getImage();
 		
-		for (int i = 0; i < mobOrcWalk.length; i++){
-			mobOrcWalk[i] = loadFrame("characterSprites/orc/walk00" + i + ".png");
-			mobDemonWalk[i] = loadFrame("characterSprites/demon/walk00" + i + ".png");
-			mobSlimeWalk[i] = loadFrame("characterSprites/slime/walk00" + i + ".png");
+		for (int i = 0; i < mobOrcWalkAnim.length; i++){
+			mobOrcWalkAnim[i] = loadFrame("characterSprites/orc/walk00" + i + ".png");
+			mobDemonWalkAnim[i] = loadFrame("characterSprites/demon/walk00" + i + ".png");
+			mobSlimeWalkAnim[i] = loadFrame("characterSprites/slime/walk00" + i + ".png");
 		}
-		for (int i = 0; i < mobOrcDead.length; i++){
-			mobOrcDead[i] = loadFrame("characterSprites/orc/dead00" + i + ".png");
-			mobDemonDead[i] = loadFrame("characterSprites/demon/dead00" + i + ".png");
+		for (int i = 0; i < mobOrcDeadAnim.length; i++){
+			mobOrcDeadAnim[i] = loadFrame("characterSprites/orc/dead00" + i + ".png");
+			mobDemonDeadAnim[i] = loadFrame("characterSprites/demon/dead00" + i + ".png");
 		}
-		for(int i = 0; i < mobSlimeDead.length; i++){
-			mobSlimeDead[i] = loadFrame("characterSprites/slime/dead00" + i + ".png");
+		for(int i = 0; i < mobSlimeDeadAnim.length; i++){
+			mobSlimeDeadAnim[i] = loadFrame("characterSprites/slime/dead00" + i + ".png");
 		}
 
-		tileset_mob[0] = mobOrcWalk[0];
-		tileset_mobb[0] = mobDemonWalk[0];
-		tileset_mobbb[0] = mobSlimeWalk[0];
+		for (int i = 0; i < minionIdleAnim.length; i++){
+			minionIdleAnim[i] = loadFrame("characterSprites/minion/idle00" + i + ".png");
+		}
+
+		for (int i = 0; i < mobOrcAttack1Anim.length; i++){
+			mobOrcAttack1Anim[i] = loadFrame("characterSprites/orc/attack100" + i + ".png");
+			mobOrcAttack2Anim[i] = loadFrame("characterSprites/orc/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < mobDemonAttack1Anim.length; i++){
+			mobDemonAttack1Anim[i] = loadFrame("characterSprites/demon/attack100" + i + ".png");
+			mobDemonAttack2Anim[i] = loadFrame("characterSprites/demon/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < mobSlimeAttack1Anim.length; i++){
+			mobSlimeAttack1Anim[i] = loadFrame("characterSprites/slime/attack100" + i + ".png");
+			mobSlimeAttack2Anim[i] = loadFrame("characterSprites/slime/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < minionDeadAnim.length; i++){
+			minionDeadAnim[i] = loadFrame("characterSprites/minion/dead00" + i + ".png");
+		}
+
+		projectiles[0] = loadFrame("characterSprites/cacherTower/arrow000.png");
+		projectiles[1] = loadFrame("characterSprites/mageTower/energyBall.png");
+		projectiles[2] = loadFrame("characterSprites/cannon/cannonBall.png");		
 		
-		
-		save.loadSave(new File("save/map" + level )); //map ı yüklüyor
+		loadLevel();
+	}
+
+	private static void loadLevel() {
+		room = new Room();
+		killed = 0;
+		isWin = false;
+
+		save.loadSave(new File("save/map" + level)); //map ı yüklüyor
 		
 		
 		for( int i = 0 ; i < mobs.length;i++) { // mob class ındaki özellikleri moblara atıyor
@@ -139,18 +188,53 @@ public class Screen extends JPanel implements Runnable {
 		for( int i = 0 ; i < mobsss.length;i++) { 
 			mobsss[i] = new Mob3();
 		}
+
+		for (int i = 0; i < mini.length; i++){
+			mini[i] = new Minion();
+		}
 		
 		waveManager = new WaveManager(level);
 	}
 
-	public static int gameState=0;
-	public static  final int tileScreen=0;
+	public static int gameState = 0;
+
+	public static final int tileScreen=0;
 	public static final int playGame=1;
 	public static final int settings=2;
 	public static final int selectSkill=3;
 	public static final int gameShop=4;
 	public static final int buyItem=5;
-	public static final int gachaHero=6;
+	public static final int gacha=6;
+	public static final int gachaRate=7;
+	public static final int shardShop=8;
+	public static final int thongBao=9;
+	public static final int tongKetWin=10;
+	public static final int tongKetLose=11;
+
+
+	public static Random rand = new Random();
+	public static int randomNum;
+
+	
+	public static int gachaType;
+	public static final int gachaTornado=1;
+	public static final int gachaEnhance=2;
+	public static final int gachaMercenary=3;
+	public static final int summonHero=4;
+
+
+	public static boolean unlockTornado = false;
+	public static boolean unlockEnhance = false;
+	public static boolean unlockMercenary = false;
+	public static boolean unlockGiantOrc = false;
+
+	public static int coinage = 2000;
+	public static int shard =0;
+
+	public static boolean ok; 	//Đcm tluc thông minh vclll
+	//Con này fix bug đoạn coin sát mép số 10, đề phòng bọn nghẹo gacha ko có tiền mua tháp
+	//Nếu cứ so sánh thì bên keyhandle trừ tiền trước, sau đó sang bên render check coin thấy =10
+	//thì nó lại hiện tb cảnh cáo, bị lệch render với logic.
 
 	private GameRender gameRender = new GameRender();
 	
@@ -168,56 +252,7 @@ public class Screen extends JPanel implements Runnable {
 		gameRender.render(g, getWidth(), getHeight());
 	
 	}
-		
-	int spawnTime = 1600, spawnFrame = 0;   // oluşma aralıkları
-	void mobSpawner() {
-		if(spawnFrame >= spawnTime) {
-			for(int i = 0; i < mobs.length; i++) {
-				if(!mobs[i].inGame) {
-					mobs[i].spawnMob(Value.mobMonster1);
-					break;
-				}
-			}
-			spawnFrame = 0;
-		}
-		else {
-			spawnFrame +=1;
-		}
-	}
 
-	int spawnTime2 = 1400, spawnFrame2 = 0;   
-	void mobSpawner2() {
-		if(spawnFrame2 >= spawnTime2) {
-			for(int i = 0; i < mobss.length;i++) {
-				if(!mobss[i].inGame) {
-					mobss[i].spawnMob(Value.mobMonster2);
-					break;
-				}
-			}
-			spawnFrame2 = 0;
-		}
-		else {
-			spawnFrame2 +=1;
-		}
-	}
-	
-	int spawnTime3 = 1200, spawnFrame3 = 0;    
-	void mobSpawner3() {
-		if(spawnFrame3 >= spawnTime3) {
-			for(int i = 0; i<mobsss.length;i++) {
-				if(!mobsss[i].inGame) {
-					mobsss[i].spawnMob(Value.mobMonster3);
-					break;
-				}
-			}
-			spawnFrame3 = 0;
-		}
-		else {
-			spawnFrame3 +=1;
-		}	
-	}
-
-	
 	public void run() {
 		while(true) {
 			if(!isFirst && gameState == playGame) {
@@ -231,10 +266,9 @@ public class Screen extends JPanel implements Runnable {
 					AnimTick++;
 					if (AnimTick >= AnimTime) {
 						AnimFrame++;
-						if (AnimFrame >= mobOrcWalk.length){
+						if (AnimFrame >= mobOrcWalkAnim.length){
 							AnimFrame = 0;
 						}
-						// if (AnimFrame % 10 == 0) coinage++; 
 						AnimTick = 0;
 					}
 
@@ -242,38 +276,40 @@ public class Screen extends JPanel implements Runnable {
 						if(mobs[i].inGame) {
 							mobs[i].physic();
 						}
-						
 					}
 					
-					for(int i = 0; i <mobss.length; i++) { //////////////*******************
+					for(int i = 0; i <mobss.length; i++) { 
 						if(mobss[i].inGame) {
 							mobss[i].physic();
 						}
-						
 					}
-					for(int i = 0; i < mobsss.length; i++) { ////////////////////**************************
+					
+					for(int i = 0; i < mobsss.length; i++) { 
 						if(mobsss[i].inGame) {
 							mobsss[i].physic();
 						}
-						
 					}	
-				}
-				else {
-					if(isWin) {
-							if(winFrame>=winTime) {
-								level++;
-								if(level > maxlevel) {
-									System.exit(0);
-								}else {
-									define();
-									isWin = false;
-								}
-								winFrame = 0;
-							}
-							else {
-								winFrame +=1;
-							}
+
+					for (int i = 0; i < mini.length; i++){
+						if(mini[i].inGame){
+							mini[i].physic();
+						}
 					}
+
+					for (Projectiles a : pjt) {
+						a.physic();
+						if (a.hasRemoved) {
+							pjt.remove(a);
+						}
+					}
+
+				}
+				if (health <= 0) {
+					gameState = tongKetLose;
+					health = rand.nextInt(3) + 2; // reset health random ;))
+				} else if (isWin) {
+					rielLevel++;
+					gameState = tongKetWin;
 				}
 			}
 			repaint();

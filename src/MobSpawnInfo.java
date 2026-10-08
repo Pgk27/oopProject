@@ -3,7 +3,7 @@
  * Hệ thống Data-Driven sử dụng lớp này để không phải hard-code logic sinh quái.
  */
 public class MobSpawnInfo {
-    public int mobType; // ID của quái vật: Value.mobMonster1 (Orc), Value.mobMonster2 (Demon), Value.mobMonster3 (Slime)
+    public int mobType; // ID của quái vật: Value.ORC_MONSTER (Orc), Value.BLOOD_DEMON_MONSTER (Demon), Value.SLIME_MONSTER (Slime)
     public int totalCount;
     public int spawnInterval; // in frames (each frame is ~1ms sleep in Screen.java)
     public double hpMultiplier;

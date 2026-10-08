@@ -11,7 +11,7 @@ public class Store {
 	public static int itemIn = 4;   // khi vào trong game thì mỗi cạnh được ép xuống 4 pixel
 	public static int heldID = -1;
 	public static int realID = -1;
-	public static int[] buttonID = {Value.airTowerLaser, Value.airTowerLaser2 ,Value.airTowerLaser3 ,Value.airTowerLaser4 ,Value.airAir ,Value.airAir ,Value.airAir ,Value.airTrashCan  };  //thứ tự hiển thị trong shop
+	public static int[] buttonID = {Value.ARCHER_TOWER, Value.MAGE_TOWER ,Value.CANNON_TOWER ,Value.GOLD_MINER ,Value.PLACEHOLDER ,Value.PLACEHOLDER ,Value.PLACEHOLDER ,Value.TRASH_CAN  };  //thứ tự hiển thị trong shop
 	public static int[] buttonPrice = {10,30,75,40,0,0,0,0};
 	
 	public Rectangle[] button = new Rectangle[shopWidth]; // chắc là dùng cho eventListener
@@ -33,8 +33,8 @@ public class Store {
 		if(mouseButton == 1) {
 			for(int i = 0;i < button.length; i++) {
 				if(button[i].contains(Screen.mse)) { // nghe tọa độ xem cái nào juan	
-					if(buttonID[i] != Value.airAir) {
-						if(buttonID[i] == Value.airTrashCan) { // if touch TrashCan, stop holding item
+					if(buttonID[i] != Value.PLACEHOLDER) {
+						if(buttonID[i] == Value.TRASH_CAN) { // if touch TrashCan, stop holding item
 							holdsItem = false;
 						}
 						else {
@@ -51,8 +51,8 @@ public class Store {
 					for(int y= 0; y < Screen.room.block.length; y++) {
 						for(int x = 0; x < Screen.room.block[0].length; x++) {
 							if(Screen.room.block[y][x].contains(Screen.mse)) {
-								if(Screen.room.block[y][x].groundID != Value.groundRoad && Screen.room.block[y][x].airID == Value.airAir) {
-									Screen.room.block[y][x].airID = heldID;
+								if(!Screen.room.block[y][x].isRoad() && Screen.room.block[y][x].towerID == Value.PLACEHOLDER) {
+									Screen.room.block[y][x].towerID = heldID;
 									Screen.coinage -= buttonPrice[realID];  
 									// delete sprite if current coin is less than the held item
 									if (Screen.coinage < buttonPrice[realID]){
@@ -96,7 +96,7 @@ public class Store {
 			);
 
 			// Chỉ vẽ tháp ở các ô chứa tháp
-			if (buttonID[i] == Value.airTowerLaser) {
+			if (buttonID[i] == Value.ARCHER_TOWER) {
 				g.drawImage(
 					Screen.cacherTower[0],
 					button[i].x + itemIn,
@@ -107,7 +107,7 @@ public class Store {
 				);
 			}
 
-			else if (buttonID[i] == Value.airTowerLaser2) {
+			else if (buttonID[i] == Value.MAGE_TOWER) {
 				g.drawImage(
 					Screen.mageTower[0],
 					button[i].x + itemIn,
@@ -118,7 +118,7 @@ public class Store {
 				);
 			}
 
-			else if (buttonID[i] == Value.airTowerLaser3) {
+			else if (buttonID[i] == Value.CANNON_TOWER) {
 				g.drawImage(
 					Screen.cannon[0],
 					button[i].x + itemIn,
@@ -129,7 +129,7 @@ public class Store {
 				);
 			}
 
-			else if (buttonID[i] == Value.airTowerLaser4) {
+			else if (buttonID[i] == Value.GOLD_MINER) {
 				g.drawImage(
 					Screen.goldMiner[0],
 					button[i].x + itemIn,
@@ -140,7 +140,7 @@ public class Store {
 				);
 			}
 
-			if (buttonID[i] != Value.airAir && i > 3) {
+			if (buttonID[i] != Value.PLACEHOLDER && i > 3) {
 				g.drawImage(
 					Screen.tileset_air[buttonID[i]],
 					button[i].x + itemIn,
@@ -167,23 +167,23 @@ public class Store {
 		g.drawString(""+ Screen.coinage, buttonCoins.x + buttonCoins.width + iconSpace, buttonCoins.y + iconTextY); //kac coin kaldığını coinin yanına yazıyor
 		
 		
-		g.drawString("Killed = "+ Screen.killed, 570,460); // killed / show
+		g.drawString("Killed = "+ Screen.killed, 870,640); // killed / show
 		
 		if (Screen.waveManager != null) {
-			g.drawString("Wave: " + Screen.waveManager.getCurrentWave() + " / " + Screen.waveManager.getTotalWaves(), 570,490);
+			g.drawString("Wave: " + Screen.waveManager.getCurrentWave() + " / " + Screen.waveManager.getTotalWaves(), 870,670);
 		}
 		
 		
 		if(holdsItem) {// store dan elimize aldığımız kule vs. mouseda çiziyor(durmasını sağlıyor)
 			//g.drawImage(Screen.tileset_air[heldID], Screen.mse.x - ((button[0].width- (itemIn*2) )/2) + itemIn, Screen.mse.y -((button[0].width- (itemIn*2) )/2)+ itemIn, button[0].width- (itemIn*2), button[0].height-(itemIn*2),null);
 			Image holdingItem;
-			if (heldID == Value.airTowerLaser2) {
+			if (heldID == Value.MAGE_TOWER) {
 				holdingItem = Screen.mageTower[0];
 			} 
-			else if (heldID == Value.airTowerLaser) {
+			else if (heldID == Value.ARCHER_TOWER) {
 				holdingItem = Screen.cacherTower[0];
 			}
-			else if(heldID == Value.airTowerLaser4) {
+			else if(heldID == Value.GOLD_MINER) {
 				holdingItem = Screen.goldMiner[0];
 			}
 			else {
