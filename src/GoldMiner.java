@@ -14,7 +14,7 @@ public class GoldMiner extends Tower {
     public void physic(){
         goldMineTick++;
         if (goldMineTick >= 1250) {
-            Screen.coinage += 10;
+            Screen.coinage += 4;
             goldMineTick = 0;
         }        
     }

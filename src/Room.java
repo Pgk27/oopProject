@@ -1,9 +1,9 @@
 import java.awt.Graphics;
 
 public class Room {
-	public int worldWidth = 12;//mapimizin büyüklüğü (en)
-	public int worldHeight = 8;  //mapimizin büyüklüğü (boy)
-	public int blockSize = 52;//oyun alanımızın büyüklüğü ama sadece oyun alanı içindeki ufoların ya da marketin değil
+	public int worldWidth = 40; 	//số cột
+	public int worldHeight = 20;  	//số hàng
+	public int blockSize = 30;		//độ dài cạnh tính theo pixel
 	
 	public Block[][] block;
 	

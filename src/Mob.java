@@ -6,7 +6,7 @@ public class Mob extends Rectangle{
 	protected int health;
 	protected int maxHealth;
 	protected int healthSpace = 3, healthHeight = 6;
-	protected int mobSize = 52;
+	protected int mobSize = 32;
 	protected int upward = 0, downward = 1, right = 2, left = 3;
 	protected int walkFrame = 0;
 	protected int walkSpeed;
@@ -14,6 +14,7 @@ public class Mob extends Rectangle{
 	protected int mobWalk = 0;
 	protected int direction = right;
 	protected int mobID = Value.MOB_PLACEHOLDER;
+	protected int laneID = Value.MOB_PLACEHOLDER;
 	protected int increPos = 0;
 	protected int rand = 0;
 	protected double attackDmg;
@@ -25,10 +26,6 @@ public class Mob extends Rectangle{
 	
 
 	protected boolean inGame = false;
-	protected boolean hasUpward = false;
-	protected boolean hasDownward = false;
-	protected boolean hasLeft = false;
-	protected boolean hasRight = false;
 	protected boolean isMatching = false;
 	protected boolean hasDealtDamage = false;
 
@@ -50,20 +47,48 @@ public class Mob extends Rectangle{
 		this.attackDmg = 1;
 	}
     
-	void spawnMob(int mobID) { // 0,0 da başlıyacağını belirliyor
-		 //determines that the mob will start at coordinate 0 a 0
-		for(int y= 0; y<Screen.room.block.length; y++ ) { // loop through the left edge to check if there's a ground tile to spawn mob
-			if(Screen.room.block[y][0].groundID == Value.groundRoad) {
-				setBounds(Screen.room.block[y][0].x, Screen.room.block[y][0].y, mobSize, mobSize);
-				xC = 0;
-				yC = y;
+	void spawnMob(int mobID) { //full con này đơn giản chỉ spawn mob ở 1 trong 3 ô 1,2,3 tại cột đầu tiên
+		int[] spawnYByLane = {-1, -1, -1, -1};
+		int laneCount = 0;
+		for (int y = 0; y < Screen.room.block.length; y++) {
+			int lane = Screen.room.block[y][0].groundID;
+			if (lane >= 1 && lane <= 3 && spawnYByLane[lane] == -1) {
+				spawnYByLane[lane] = y;
+				laneCount++;
 			}
 		}
+		if (laneCount == 0) {
+			throw new IllegalStateException("Could not find a spawn lane in the first map column.");
+		}
+
+		int selectedLane = Screen.rand.nextInt(laneCount); 	
+		//random đây nàyyyy
+		// chỗ còn lại cơ bản thì nó đi đúng làn như trc thôi
+		// tluc vip vl :>
+		for (int lane = 1; lane <= 3; lane++) {
+			if (spawnYByLane[lane] != -1 && selectedLane-- == 0) {
+				laneID = lane;
+				break;
+			}
+		}
+
+		int spawnY = spawnYByLane[laneID];
+		if (spawnY == -1) {
+			throw new IllegalStateException("Could not find a spawn tile for lane " + laneID + ".");
+		}
+
+		Block spawnBlock = Screen.room.block[spawnY][0];
+		setBounds(spawnBlock.x, spawnBlock.y, mobSize, mobSize);
+		xC = 0;
+		yC = spawnY;
 
 		this.mobID = mobID;
 		this.health = mobSize;
 		this.maxHealth = health;
 
+		direction = right;
+		mobWalk = 0;
+		walkFrame = 0;
 		this.isDying = false;
 		this.deadFrame = 0;
 		this.deadTick = 0;
@@ -123,61 +148,22 @@ public class Mob extends Rectangle{
 				if(mobWalk == Screen.room.blockSize) { // sağ yönüne gitmesini sağlıyor
 					if(direction==right) {
 						xC+=1;
-						hasRight = true;
-						}else if(direction ==upward){
+					}else if(direction ==upward){
 							yC-=1;
-							hasUpward = true;
-						}
-						else if(direction == downward) {
+					}else if(direction == downward) {
 							yC+=1;
-							hasDownward = true;
-						}else if(direction ==left) {
+					}else if(direction ==left) {
 							xC -=1;
-							hasLeft = true;
-						}
-					
-					if(!hasUpward) {  // yolu izlemesini sağlıyor
-					try {
-						if(Screen.room.block[yC+1][xC].groundID == Value.groundRoad) {
-							direction = downward;
-							}
-						}catch(Exception e) {}
-					}  
-				
-					if(!hasDownward) {
-						try {
-							if(Screen.room.block[yC-1][xC].groundID == Value.groundRoad) {
-								direction = upward;
-							}
-						}catch(Exception e) {}
 					}
 					
-					if(!hasLeft) {
-						try {
-							if(Screen.room.block[yC][xC+1].groundID == Value.groundRoad) {
-								direction = right;
-							}
-						}catch(Exception e) {}
-					}
-
-					if(!hasRight) {
-						try {
-							if(Screen.room.block[yC][xC-1].groundID == Value.groundRoad) {
-								direction = left;
-							}
-						}
-						catch(Exception e) {}
-					}
-					
-					if(Screen.room.block[yC][xC].towerID == Value.BLACK_HOLE) {// mob disappears when walking to the end point
+					Block currentBlock = Screen.room.block[yC][xC];
+					if (currentBlock.groundID == 4 || currentBlock.towerID == Value.BLACK_HOLE) {
 						deleteMob();
 						playerLoseHealth();
+						return;
 					}
 
-					hasUpward= false;
-					hasDownward = false;
-					hasLeft = false;
-					hasRight = false;
+					direction = findNextDirection();
 					mobWalk = 0;
 				}
 				walkFrame=0;
@@ -186,6 +172,7 @@ public class Mob extends Rectangle{
 				walkFrame+=1;
 			}
 		}
+
 		else{
 			// Lấy chỉ số frame đánh hiện tại (chu kỳ animation đánh có 6 frame: 0 -> 5)
 			int currentAttackFrame = Screen.AnimFrame % 6; 
@@ -201,6 +188,34 @@ public class Mob extends Rectangle{
 				hasDealtDamage = false;
 			}
 		}
+	}
+
+	private int findNextDirection() {
+		int[] directions = {right, upward, downward, left};
+		int[] deltaX = {1, 0, 0, -1};
+		int[] deltaY = {0, -1, 1, 0};
+		// Avoid immediately reversing into the tile the mob just came from.
+		int reverseDirection = direction == right ? left
+				: direction == left ? right
+				: direction == upward ? downward : upward;
+
+		for (int i = 0; i < directions.length; i++) {
+			if (directions[i] == reverseDirection) {
+				continue;
+			}
+			int nextX = xC + deltaX[i];
+			int nextY = yC + deltaY[i];
+			if (nextY >= 0 && nextY < Screen.room.block.length
+					&& nextX >= 0 && nextX < Screen.room.block[nextY].length) {
+				int nextLane = Screen.room.block[nextY][nextX].groundID;
+				if (nextLane == laneID || nextLane == 4) {
+					return directions[i];
+				}
+			}
+		}
+
+		throw new IllegalStateException("Mob on lane " + laneID + " at (" + xC + ", " + yC
+				+ ") has no valid next tile.");
 	}
 	   
 	void loseHealth(double amo) {

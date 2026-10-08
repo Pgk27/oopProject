@@ -51,7 +51,7 @@ public class Store {
 					for(int y= 0; y < Screen.room.block.length; y++) {
 						for(int x = 0; x < Screen.room.block[0].length; x++) {
 							if(Screen.room.block[y][x].contains(Screen.mse)) {
-								if(Screen.room.block[y][x].groundID != Value.groundRoad && Screen.room.block[y][x].towerID == Value.PLACEHOLDER) {
+								if(!Screen.room.block[y][x].isRoad() && Screen.room.block[y][x].towerID == Value.PLACEHOLDER) {
 									Screen.room.block[y][x].towerID = heldID;
 									Screen.coinage -= buttonPrice[realID];  
 									// delete sprite if current coin is less than the held item
@@ -167,10 +167,10 @@ public class Store {
 		g.drawString(""+ Screen.coinage, buttonCoins.x + buttonCoins.width + iconSpace, buttonCoins.y + iconTextY); //kac coin kaldığını coinin yanına yazıyor
 		
 		
-		g.drawString("Killed = "+ Screen.killed, 570,460); // killed / show
+		g.drawString("Killed = "+ Screen.killed, 870,640); // killed / show
 		
 		if (Screen.waveManager != null) {
-			g.drawString("Wave: " + Screen.waveManager.getCurrentWave() + " / " + Screen.waveManager.getTotalWaves(), 570,490);
+			g.drawString("Wave: " + Screen.waveManager.getCurrentWave() + " / " + Screen.waveManager.getTotalWaves(), 870,670);
 		}
 		
 		
