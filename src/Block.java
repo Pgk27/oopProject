@@ -24,6 +24,10 @@ public class Block extends Rectangle {
 		SetTower();
 	} 
 
+	boolean isRoad() {
+		return groundID >= Value.groundRoad && groundID <= 4;
+	}
+
 	void SetTower() {
         // Chỉ tạo tháp mới khi ID thực sự thay đổi
 		if (towerID != lastAirID) {
@@ -50,7 +54,8 @@ public class Block extends Rectangle {
 	void draw(Graphics g) {
         SetTower(); // Cập nhật liên tục trong vòng lặp
 		
-		g.drawImage(Screen.tileset_ground[groundID], x, y, width, height, null);
+		int groundTile = groundID >= 1 && groundID <= 4 ? Value.groundRoad : groundID;
+		g.drawImage(Screen.tileset_ground[groundTile], x, y, width, height, null);
         if (currentTower != null) {
             currentTower.draw(g); 
         } 

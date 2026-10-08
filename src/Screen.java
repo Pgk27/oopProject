@@ -50,7 +50,7 @@ public class Screen extends JPanel implements Runnable {
 	
 	
 	static int myWidth, myHeight;
-	static int health = 10;
+	static int health = 999999;
 	static int killed = 0, killsToWin = 0, level = 1, rielLevel =1;
 	static boolean isFirst = true;
 	static boolean isDebug = false;
@@ -82,7 +82,6 @@ public class Screen extends JPanel implements Runnable {
 		if(waveManager != null && waveManager.isAllWavesFinished() && !waveManager.isAnyMobAlive()) {
 			isWin = true;
 			killed = 0;		
-			// coinage = 0; 
 		}
 	}
 
