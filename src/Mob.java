@@ -13,7 +13,7 @@ public class Mob extends Rectangle{
 	protected int spawnTime;
 	protected int mobWalk = 0;
 	protected int direction = right;
-	protected int mobID = Value.MOB_PLACEHOLDER;
+	protected int mobID = Value.PLACEHOLDER;
 	protected int increPos = 0;
 	protected int rand = 0;
 	protected double attackDmg;
@@ -50,7 +50,7 @@ public class Mob extends Rectangle{
 		this.attackDmg = 1;
 	}
     
-	void spawnMob(int mobID) { // 0,0 da başlıyacağını belirliyor
+	void spawnMob(int mobID) {
 		 //determines that the mob will start at coordinate 0 a 0
 		for(int y= 0; y<Screen.room.block.length; y++ ) { // loop through the left edge to check if there's a ground tile to spawn mob
 			if(Screen.room.block[y][0].groundID == Value.groundRoad) {
@@ -79,10 +79,6 @@ public class Mob extends Rectangle{
 
 	void physic() {
 		if (isDying){ // tính toán frame cho animation mob chết
-			if (coinTick < coinDuration){
-				coinTick++;
-			}
-
 			if (Screen.mobOrcDeadAnim != null && Screen.mobOrcDeadAnim.length > 0){
 				if (deadFrame < Screen.mobOrcDeadAnim.length - 1){
 					deadTick++;
@@ -120,6 +116,7 @@ public class Mob extends Rectangle{
 
 				mobWalk +=1;
 				
+				//🦛
 				if(mobWalk == Screen.room.blockSize) { // sağ yönüne gitmesini sağlıyor
 					if(direction==right) {
 						xC+=1;
@@ -246,7 +243,6 @@ public class Mob extends Rectangle{
 		
 		this.coinTick = 0;
 		Screen.killed++;
-		// Screen.room.block[0][0].getMoney(mobID);
 	}
 
 	Image getSprite(){
