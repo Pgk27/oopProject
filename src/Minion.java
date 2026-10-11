@@ -48,37 +48,46 @@ public class Minion extends Mob {
 
 
 	void spawnMob(int mobID) {
-		int guardX = -1;
-		int guardY = -1;
-		int[] deltaX = {0, 0, -1, 1};
-		int[] deltaY = {-1, 1, 0, 0};
-
+		Block destination = null;
+		int destinationX = -1;
+		int destinationY = -1;
 		for (int y = 0; y < Screen.room.block.length; y++) {
 			for (int x = 0; x < Screen.room.block[y].length; x++) {
-				if (Screen.room.block[y][x].towerID != Value.BLACK_HOLE) {
-					continue;
-				}
-
-				for (int direction = 0; direction < deltaX.length; direction++) {
-					int roadX = x + deltaX[direction];
-					int roadY = y + deltaY[direction];
-					if (roadY < 0 || roadY >= Screen.room.block.length
-							|| roadX < 0 || roadX >= Screen.room.block[roadY].length
-							|| Screen.room.block[roadY][roadX].groundID != Value.groundRoad) {
-						continue;
+				Block block = Screen.room.block[y][x];
+				if (block.groundID == 4) {
+					if (destination != null) {
+						throw new IllegalStateException("The map has more than one destination tile.");
 					}
-
-					if (guardX != -1 && (guardX != roadX || guardY != roadY)) {
-						throw new IllegalStateException("The gate has more than one adjacent road block.");
-					}
-					guardX = roadX;
-					guardY = roadY;
+					destination = block;
+					destinationX = x;
+					destinationY = y;
 				}
 			}
 		}
 
-		if (guardX == -1) {
-			throw new IllegalStateException("Could not find a road block next to the gate for the Minion.");
+		if (destination == null) {
+			for (int y = 0; y < Screen.room.block.length; y++) {
+				for (int x = 0; x < Screen.room.block[y].length; x++) {
+					Block block = Screen.room.block[y][x];
+					if (block.towerID == Value.BLACK_HOLE) {
+						if (destination != null) {
+							throw new IllegalStateException("The map has more than one gate tile.");
+						}
+						destination = block;
+						destinationX = x;
+						destinationY = y;
+					}
+				}
+			}
+		}
+
+		if (destination == null) {
+			throw new IllegalStateException("Could not find the destination tile for the Minion.");
+		}
+		int guardX = destinationX - 1;
+		int guardY = destinationY;
+		if (guardX < 0 || !Screen.room.block[guardY][guardX].isRoad()) {
+			throw new IllegalStateException("Could not find a road tile immediately left of the destination for the Minion.");
 		}
 
 		Block guardBlock = Screen.room.block[guardY][guardX];

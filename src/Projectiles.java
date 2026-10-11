@@ -9,7 +9,7 @@ public class Projectiles {
     double angle;
     Mob target;
     int towerID = -1; // ID của tower
-    double speed = 1.2; // Tốc độ bay của mũi tên
+    double speed = 1.5; // Tốc độ bay của mũi tên
     boolean hasRemoved = false;
     
     public Projectiles(double startX, double startY, Mob target, double damage, int towerID) {
@@ -60,13 +60,19 @@ public class Projectiles {
 
         Graphics2D g2d = (Graphics2D) g.create(); // tạo bản sao context vẽ để không ảnh hưởng tới các vật thể khác
 
-        int imgW = img.getWidth(null);
-        int imgH = img.getHeight(null);
+        int imgW = (int)img.getWidth(null);
+        int imgH = (int)img.getHeight(null);
 
         // dùng AffineTransform để dịch chuỷen tới tọa độ (x,y) và xoay quanh tâm mũi tên
         AffineTransform tx = new AffineTransform();
         tx.translate(x,y);
         tx.rotate(angle);
+
+        //update kích thước do mở rộng map, tăng số lượng, giảm kích thước block
+        double scale=0.8;
+        tx.scale(scale, scale);
+
+
         tx.translate(-imgW / 2.0, -imgH/ 2.0); // căn tâm ảnh trùng đúng vị trí (x,y)
 
         g2d.drawImage(img, tx, null);

@@ -1,9 +1,9 @@
 import java.awt.Graphics;
 
 public class Room {
-	public int worldWidth = 12;//mapimizin büyüklüğü (en)
-	public int worldHeight = 8;  //mapimizin büyüklüğü (boy)
-	public int blockSize = 52;//oyun alanımızın büyüklüğü ama sadece oyun alanı içindeki ufoların ya da marketin değil
+	public int worldWidth = 40; 	//số cột
+	public int worldHeight = 20;  	//số hàng
+	public int blockSize = 30;		//độ dài cạnh tính theo pixel
 	
 	public Block[][] block;
 	
@@ -33,7 +33,12 @@ public class Room {
 	public void draw(Graphics g) { // kuleler ve groundları çiziyor.
 		for(int y=0;y<block.length;y++) {
 			for(int x=0;x<block[0].length;x++) {
-				block[y][x].draw(g);
+				block[y][x].drawGround(g);
+			}
+		}
+		for(int y=0;y<block.length;y++) {
+			for(int x=0;x<block[0].length;x++) {
+				block[y][x].drawTower(g);
 			}
 		}
 		for(int y=0;y<block.length;y++) { // lazerlerin görünmesini sağlıyor, çiziyor
