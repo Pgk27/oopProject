@@ -104,10 +104,6 @@ public class Mob extends Rectangle{
 
 	void physic() {
 		if (isDying){ // tính toán frame cho animation mob chết
-			if (coinTick < coinDuration){
-				coinTick++;
-			}
-
 			if (Screen.mobOrcDeadAnim != null && Screen.mobOrcDeadAnim.length > 0){
 				if (deadFrame < Screen.mobOrcDeadAnim.length - 1){
 					deadTick++;
@@ -145,6 +141,7 @@ public class Mob extends Rectangle{
 
 				mobWalk +=1;
 				
+				//🦛
 				if(mobWalk == Screen.room.blockSize) { // sağ yönüne gitmesini sağlıyor
 					if(direction==right) {
 						xC+=1;
@@ -261,7 +258,6 @@ public class Mob extends Rectangle{
 		
 		this.coinTick = 0;
 		Screen.killed++;
-		// Screen.room.block[0][0].getMoney(mobID);
 	}
 
 	Image getSprite(){

@@ -31,33 +31,118 @@ public class Store {
 	
 	public void click(int mouseButton) {
 		if(mouseButton == 1) {
+			boolean clickedShop = false;
 			for(int i = 0;i < button.length; i++) {
-				if(button[i].contains(Screen.mse)) { // nghe tọa độ xem cái nào juan	
+				if(button[i].contains(Screen.mse)) { // Screen.mse = new Point(e.getX(), e.getY());	
 					if(buttonID[i] != Value.PLACEHOLDER) {
-						if(buttonID[i] == Value.TRASH_CAN) { // if touch TrashCan, stop holding item
-							holdsItem = false;
+						clickedShop = true;
+						// Bấm vào THÙNG RÁC
+						if(buttonID[i] == Value.TRASH_CAN) {
+							// 1. Nếu đang cầm bất kỳ vật phẩm nào (tháp hoặc thùng rác) -> Vứt đi
+							if(holdsItem) {
+								holdsItem = false;
+								heldID = -1;
+								realID = -1;
+							}
+							// 2. Nếu chưa cầm gì -> Cầm thùng rác lên
+							else {
+								heldID = Value.TRASH_CAN;
+								realID = i;
+								holdsItem = true;
+							}
 						}
+						// Bấm vào THÁP
 						else {
-							heldID = buttonID[i];
-							realID = i;
-							holdsItem = true;
+							// Nếu đang cầm đúng tháp này -> Bấm lại lần nữa thì hủy cầm
+							if(holdsItem && heldID == buttonID[i]) {
+								holdsItem = false;
+								heldID = -1;
+								realID = -1;
+							}
+							// Nếu chưa cầm hoặc đang cầm tháp khác/thùng rác -> Cầm tháp này lên
+							else {
+								heldID = buttonID[i];
+								realID = i;
+								holdsItem = true;
+							}
 						}
 					} 
 				}
 			}
 			
-			if(holdsItem) { // logic for holding item
-				if(Screen.coinage >=buttonPrice[realID]) {
+			if(holdsItem && !clickedShop) { // logic for holding item
+				if (heldID == Value.TRASH_CAN) {
+					// Xóa tháp 2x2 bằng thùng rác
+					for(int y = 0; y < Screen.room.block.length; y++) {
+						for(int x = 0; x < Screen.room.block[0].length; x++) {
+							if(Screen.room.block[y][x].contains(Screen.mse)) {
+								int rx = Screen.room.block[y][x].rootX;
+								int ry = Screen.room.block[y][x].rootY;
+								if (rx != -1 && ry != -1) {
+									for(int dy = 0; dy < 2; dy++) {
+										for(int dx = 0; dx < 2; dx++) {
+											int ny = ry + dy;
+											int nx = rx + dx;
+											if(ny >= 0 && ny < Screen.room.worldHeight && nx >= 0 && nx < Screen.room.worldWidth) {
+												Screen.room.block[ny][nx].towerID = Value.PLACEHOLDER;
+												Screen.room.block[ny][nx].rootX = -1;
+												Screen.room.block[ny][nx].rootY = -1;
+												Screen.room.block[ny][nx].currentTower = null;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				else if(Screen.coinage >= buttonPrice[realID]) {
 					for(int y= 0; y < Screen.room.block.length; y++) {
 						for(int x = 0; x < Screen.room.block[0].length; x++) {
 							if(Screen.room.block[y][x].contains(Screen.mse)) {
-								if(!Screen.room.block[y][x].isRoad() && Screen.room.block[y][x].towerID == Value.PLACEHOLDER) {
-									Screen.room.block[y][x].towerID = heldID;
-									Screen.coinage -= buttonPrice[realID];  
-									// delete sprite if current coin is less than the held item
-									if (Screen.coinage < buttonPrice[realID]){
-										holdsItem = false;
-										realID = -1;
+								// Ô (y, x) là Ô DƯỚI - BÊN PHẢI của tháp 2x2
+								// Cụm 2x2 gồm: (y - 1, x - 1), (y - 1, x), (y, x - 1), (y, x)
+								if(y >= 1 && y < Screen.room.worldHeight && x >= 1 && x < Screen.room.worldWidth) {
+									boolean canPlace = true;
+									for(int dy = 0; dy < 2; dy++) {
+										for(int dx = 0; dx < 2; dx++) {
+											Block b = Screen.room.block[y - 1 + dy][x - 1 + dx];
+											if(b.isRoad() || b.towerID != Value.PLACEHOLDER) {
+												canPlace = false;
+												break;
+											}
+										}
+										if(!canPlace) break;
+									}
+
+									if(canPlace) {
+										int rootY = y - 1;
+										int rootX = x - 1;
+
+										// Ô Trên - Bên Trái [rootY][rootX] lưu towerID để khởi tạo tháp
+										Screen.room.block[rootY][rootX].rootX = rootX;
+										Screen.room.block[rootY][rootX].rootY = rootY;
+										Screen.room.block[rootY][rootX].towerID = heldID;
+
+										// 3 ô còn lại nhận TOWER_OCCUPIED
+										for(int dy = 0; dy < 2; dy++) {
+											for(int dx = 0; dx < 2; dx++) {
+												if(dy == 0 && dx == 0) continue;
+												int ny = rootY + dy;
+												int nx = rootX + dx;
+												Screen.room.block[ny][nx].rootX = rootX;
+												Screen.room.block[ny][nx].rootY = rootY;
+												Screen.room.block[ny][nx].towerID = Value.TOWER_OCCUPIED;
+											}
+										}
+
+										Screen.coinage -= buttonPrice[realID];  
+										// delete sprite if current coin is less than the held item
+										if (Screen.coinage < buttonPrice[realID]){
+											holdsItem = false;
+											realID = -1;
+											heldID = -1;
+										}
 									}
 								}
 							}
@@ -71,6 +156,7 @@ public class Store {
 		else if (mouseButton == 3){
 			holdsItem = false;
 			realID = -1;
+			heldID = -1;
 		}
 	}
 	
@@ -156,6 +242,15 @@ public class Store {
 				g.setFont(new Font("Courier New", Font.BOLD, 14));
 				g.drawString("$"+	buttonPrice[i] ,button[i].x + itemIn,  button[i].y+ itemIn+10);
 			}
+
+			// Highlight ô đang được cầm trên tay (viền vàng phát sáng)
+			if (holdsItem && (heldID == buttonID[i])) {
+				g.setColor(new Color(255, 215, 0, 70));
+				g.fillRect(button[i].x, button[i].y, button[i].width, button[i].height);
+				g.setColor(Color.YELLOW);
+				g.drawRect(button[i].x, button[i].y, button[i].width, button[i].height);
+				g.drawRect(button[i].x + 1, button[i].y + 1, button[i].width - 2, button[i].height - 2);
+			}
 		}
 		
 		g.drawImage(Screen.tileset_res[1], buttonHealth.x, buttonHealth.y, buttonHealth.width, buttonHealth.height,null);//kalp resmini koyuyor
@@ -174,35 +269,79 @@ public class Store {
 		}
 		
 		
-		if(holdsItem) {// store dan elimize aldığımız kule vs. mouseda çiziyor(durmasını sağlıyor)
-			//g.drawImage(Screen.tileset_air[heldID], Screen.mse.x - ((button[0].width- (itemIn*2) )/2) + itemIn, Screen.mse.y -((button[0].width- (itemIn*2) )/2)+ itemIn, button[0].width- (itemIn*2), button[0].height-(itemIn*2),null);
-			Image holdingItem;
-			if (heldID == Value.MAGE_TOWER) {
-				holdingItem = Screen.mageTower[0];
-			} 
-			else if (heldID == Value.ARCHER_TOWER) {
-				holdingItem = Screen.cacherTower[0];
-			}
-			else if(heldID == Value.GOLD_MINER) {
-				holdingItem = Screen.goldMiner[0];
+		if(holdsItem) {// store dan elimize aldığımız kule vs.
+			if (heldID == Value.TRASH_CAN) {
+				// Highlight tháp 2x2 khi rê thùng rác vào
+				for(int y = 0; y < Screen.room.block.length; y++) {
+					for(int x = 0; x < Screen.room.block[0].length; x++) {
+						if(Screen.room.block[y][x].contains(Screen.mse)) {
+							int rx = Screen.room.block[y][x].rootX;
+							int ry = Screen.room.block[y][x].rootY;
+							if(rx != -1 && ry != -1 && ry >= 0 && ry + 1 < Screen.room.worldHeight && rx >= 0 && rx + 1 < Screen.room.worldWidth) {
+								Block topLeft = Screen.room.block[ry][rx];
+								int pw = Screen.room.blockSize * 2;
+								int ph = Screen.room.blockSize * 2;
+								g.setColor(new Color(255, 0, 0, 100));
+								g.fillRect(topLeft.x, topLeft.y, pw, ph);
+								g.setColor(Color.RED);
+								g.drawRect(topLeft.x, topLeft.y, pw, ph);
+							}
+						}
+					}
+				}
 			}
 			else {
-				holdingItem = Screen.cannon[0];
+				Image holdingItem = null;
+				if (heldID == Value.MAGE_TOWER) {
+					holdingItem = Screen.mageTower[0];
+				} 
+				else if (heldID == Value.ARCHER_TOWER) {
+					holdingItem = Screen.cacherTower[0];
+				}
+				else if(heldID == Value.GOLD_MINER) {
+					holdingItem = Screen.goldMiner[0];
+				}
+				else if(heldID == Value.CANNON_TOWER) {
+					holdingItem = Screen.cannon[0];
+				}
+
+				for(int y = 0; y < Screen.room.block.length; y++) {
+					for(int x = 0; x < Screen.room.block[0].length; x++) {
+						if(Screen.room.block[y][x].contains(Screen.mse)) {
+							// Ô (y, x) là ô Dưới - Bên Phải của cụm 2x2
+							if(y >= 1 && y < Screen.room.worldHeight && x >= 1 && x < Screen.room.worldWidth) {
+								boolean canPlace = true;
+								for(int dy = 0; dy < 2; dy++) {
+									for(int dx = 0; dx < 2; dx++) {
+										Block b = Screen.room.block[y - 1 + dy][x - 1 + dx];
+										if(b.isRoad() || b.towerID != Value.PLACEHOLDER) {
+											canPlace = false;
+											break;
+										}
+									}
+									if(!canPlace) break;
+								}
+								Block topLeft = Screen.room.block[y - 1][x - 1];
+								int pw = Screen.room.blockSize * 2;
+								int ph = Screen.room.blockSize * 2;
+
+								if(canPlace) {
+									g.setColor(new Color(0, 255, 0, 80));
+								} else {
+									g.setColor(new Color(255, 0, 0, 80));
+								}
+								g.fillRect(topLeft.x, topLeft.y, pw, ph);
+								g.setColor(canPlace ? Color.GREEN : Color.RED);
+								g.drawRect(topLeft.x, topLeft.y, pw, ph);
+
+								if(holdingItem != null) {
+									g.drawImage(holdingItem, topLeft.x, topLeft.y, pw, ph, null);
+								}
+							}
+						}
+					}
+				}
 			}
-
-			g.drawImage(
-				holdingItem,
-				Screen.mse.x - ((button[0].width - itemIn * 2) / 2) + itemIn,
-				Screen.mse.y - ((button[0].width - itemIn * 2) / 2) + itemIn,
-				button[0].width - itemIn * 2,
-				button[0].height - itemIn * 2,
-				null
-			);
-
-
-
-			// update lại hình ảnh của các tháp thành tháp cung tên hết
-			
 		}
 	}
 }

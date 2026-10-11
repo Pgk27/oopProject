@@ -4,7 +4,7 @@ public class Canon extends Tower {
 
     public Canon(int x, int y, int width, int height) {
         // Truyền thông số: Tầm bắn 70, Sát thương 2, Thời gian khựng 50, frame bắn: 2, ID tháp
-        super(x, y, width, height, 70, 5, 2, Value.CANNON_TOWER); //check id
+        super(x, y, width, height, 70000000, 5000000, 2, Value.CANNON_TOWER); //check id
     }
 
     @Override
@@ -24,7 +24,7 @@ public class Canon extends Tower {
         Image currentFrame = Screen.cannon[animationFrame];
         
         // Tìm tọa độ mục tiêu để lật ảnh
-        int targetX = this.x; 
+        int targetX = this.x + width / 2; 
         if (shotMob != -1) {
             if (shotingMob1 && shotMob < Screen.mobs.length && Screen.mobs[shotMob] != null) 
                 targetX = Screen.mobs[shotMob].x;
@@ -35,7 +35,7 @@ public class Canon extends Tower {
         }
         
         // Vẽ và lật ảnh dựa vào vị trí quái vật
-        if (targetX < this.x) {
+        if (targetX < this.x + width / 2) {
             // lật bên trái
             g.drawImage(currentFrame, x + width, y, -width, height, null);
         } else {

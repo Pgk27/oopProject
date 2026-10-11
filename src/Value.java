@@ -3,6 +3,7 @@ public class Value { // CẤM ĐƯỢC THAY ĐỔI
 	static protected final int groundRoad = 1; 
 	
 	static protected final int PLACEHOLDER = -1;
+	static protected final int TOWER_OCCUPIED = -2;
 	static protected final int BLACK_HOLE = 0;
 	static protected final int TRASH_CAN = 1;
 
