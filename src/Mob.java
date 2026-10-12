@@ -131,8 +131,9 @@ public class Mob extends Rectangle{
 		// if not fighting
 		if (!isMatching){
 			if(walkFrame >= walkSpeed) {
-				if(direction == right) 
+				if(direction == right){
 					x+=1;
+				}
 				else if(direction == upward)
 					y-=1;
 				else if(direction == downward) 
@@ -308,6 +309,17 @@ public class Mob extends Rectangle{
 		// 2. Căn giữa theo trục X, và giữ đáy chân quái chạm sàn (không bị bay lơ lửng)
 		int drawX = x - (drawW - width) / 2;
 		int drawY = y - (drawH - height);
+
+		if (direction == right){
+			drawW = (int) (width * renderScale);
+			drawX = x - (drawW - width) / 2;
+		}
+		// đảo ảnh sang trái khi di chuyển sang trái
+		// khi lên trên/xuống dưới thì vẫn hướng sang phải
+		else if(direction == left){
+			drawX = x - (drawW - width) / 2 + drawW;
+			drawW = (int) -(width * renderScale);
+		}
 
 		Image Sprite = getSprite();
 		if (Sprite != null){

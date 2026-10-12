@@ -1,14 +1,88 @@
 import java.awt.*;
 
 public class Minion extends Mob {
-	private long lastHealTime = 0;
-	private final long healCoolDown = 1000;
+	private final long HEAL_COOL_DOWN = 1000; // bỏ final nếu sau này muốn chỉnh cooldown xuống bằng gacha!?
 	private int healAmount = 5;
+	private long lastHealTime = 0;
+
+	private boolean isShooting = false;
+	private boolean hasShotArrow = false;
+	private Mob shootTarget = null;
+	private double arrowDmg = 10;
+	private int shootRange = 300;
+	private Rectangle rangeBox = new Rectangle();
 
     Minion(){    
 		this.renderScale = 1.8;
 		this.dmgReduction = 0; 
-		this.attackDmg = 20;    
+		this.attackDmg = 20;
+		this.mobSize = 80;
+	}
+
+	void spawnMob(int mobID) {
+		Block destination = null;
+		int destinationX = -1;
+		int destinationY = -1;
+		// check destination tile
+		for (int y = 0; y < Screen.room.block.length; y++) {
+			for (int x = 0; x < Screen.room.block[y].length; x++) {
+				Block block = Screen.room.block[y][x];
+				if (block.groundID == 4) {
+					if (destination != null) {
+						throw new IllegalStateException("The map has more than one destination tile.");
+					}
+					destination = block;
+					destinationX = x;
+					destinationY = y;
+				}
+			}
+		}
+		// check gate tile location
+		if (destination == null) {
+			for (int y = 0; y < Screen.room.block.length; y++) {
+				for (int x = 0; x < Screen.room.block[y].length; x++) {
+					Block block = Screen.room.block[y][x];
+					if (block.towerID == Value.BLACK_HOLE) {
+						if (destination != null) {
+							throw new IllegalStateException("The map has more than one gate tile.");
+						}
+						destination = block;
+						destinationX = x;
+						destinationY = y;
+					}
+				}
+			}
+		}
+
+		if (destination == null) {
+			throw new IllegalStateException("Could not find the destination tile for the Minion.");
+		}
+		int guardX = destinationX - 1;
+		int guardY = destinationY;
+		if (guardX < 0 || !Screen.room.block[guardY][guardX].isRoad()) {
+			throw new IllegalStateException("Could not find a road tile immediately left of the destination for the Minion.");
+		}
+
+		// chỉnh vị trí sao cho NHÌN ở giữa nhất
+		Block guardBlock = Screen.room.block[guardY-1][guardX-1];
+		setBounds(guardBlock.x, guardBlock.y, mobSize, mobSize);
+		xC = guardX;
+		yC = guardY;
+
+		// set tầm bắn
+		this.rangeBox.setBounds(x - shootRange, y - shootRange/ 2, width + shootRange * 2, height + shootRange);
+
+		this.mobID = mobID;
+		this.health = mobSize;
+		this.maxHealth = health;
+
+		this.isDying = false;
+		this.deadFrame = 0;
+		this.deadTick = 0;
+		this.deadDelay = 0;
+		this.lastHealTime = System.currentTimeMillis();
+		
+		inGame = true;
 	}
 	
 	@Override
@@ -37,11 +111,13 @@ public class Minion extends Mob {
 		
 		if (!checkMatching(Screen.mobs) && !checkMatching(Screen.mobss) && !checkMatching(Screen.mobsss)){
 			isMatching = false;
+		} else{
+			isMatching = true;
+			isShooting = false; // ngừng bắn khi vào tầm đánh cận chiến
 		}
-		else isMatching = true;
 
 		if(isMatching){
-			int currentAttackFrame = Screen.AnimFrame % 6; 
+			int currentAttackFrame = Screen.AnimFrame % 6;
 
 			// Khi animation chạm frame thứ 5 và chưa gây sát thương trong lượt chém này
 			if (currentAttackFrame == 5) {
@@ -53,13 +129,58 @@ public class Minion extends Mob {
 				// Khi animation chuyển sang frame khác (0, 1, 2, 3, 4), reset cờ để chuẩn bị cho đòn kế tiếp
 				hasDealtDamage = false;
 			}
+		} else{
+			shootTarget = findTargetInRange(Screen.mobs, Screen.mobss, Screen.mobsss);
+			isShooting = (shootTarget != null); // nếu target chết thì isShooting = false
 		}
+		
+		if (isShooting){
+			int currentShootFrame = Screen.AnimFrame % 8;
+			if (currentShootFrame == 7){
+				shootArrow();
+				hasShotArrow = true;
+			}
+			else hasShotArrow = false;
+		}
+
 		long currentTime = System.currentTimeMillis();
 		if (currentTime - lastGotDamagedTime >= 2000 && gotDamage) gotDamage = false; 
-		if (currentTime - lastHealTime >= healCoolDown && !gotDamage){
+		if (currentTime - lastHealTime >= HEAL_COOL_DOWN && !gotDamage){
 			selfHeal();
 			lastHealTime = currentTime;
 		}
+	}
+
+	private void shootArrow(){
+		double finalDamage = arrowDmg * (1 - shootTarget.dmgReduction);
+		double startX = x + width / 2;
+		double startY = y + height / 2;
+		if (shootTarget != null && !hasShotArrow){
+			Screen.pjt.add(new Projectiles(startX, startY, shootTarget, finalDamage, Value.MINION_SOLDIER));
+		}
+	}
+
+	private Mob findTargetInRange(Mob[]... mobGroups){
+		Mob closest = null;
+		double minDist = Integer.MAX_VALUE;
+
+		for (Mob[] group : mobGroups){
+			for (int i = 0; i < group.length; i++){
+				Mob m = group[i];
+				if (m != null && m.inGame && !m.isDead()){
+					if (rangeBox.intersects(m)){
+						double dx = (this.x + this.width / 2.0);
+						double dy = (this.y - this.height / 2.0);
+						double distSq = dx * dx + dy *dy;
+						if (distSq < minDist){
+							minDist = distSq;
+							closest = m;
+						}
+					}
+				}
+			}
+		}
+		return closest;
 	}
 
 	@Override
@@ -81,67 +202,6 @@ public class Minion extends Mob {
 			health = maxHealth;
 		}
 		else health += healAmount;
-	}
-
-	void spawnMob(int mobID) {
-		Block destination = null;
-		int destinationX = -1;
-		int destinationY = -1;
-		for (int y = 0; y < Screen.room.block.length; y++) {
-			for (int x = 0; x < Screen.room.block[y].length; x++) {
-				Block block = Screen.room.block[y][x];
-				if (block.groundID == 4) {
-					if (destination != null) {
-						throw new IllegalStateException("The map has more than one destination tile.");
-					}
-					destination = block;
-					destinationX = x;
-					destinationY = y;
-				}
-			}
-		}
-
-		if (destination == null) {
-			for (int y = 0; y < Screen.room.block.length; y++) {
-				for (int x = 0; x < Screen.room.block[y].length; x++) {
-					Block block = Screen.room.block[y][x];
-					if (block.towerID == Value.BLACK_HOLE) {
-						if (destination != null) {
-							throw new IllegalStateException("The map has more than one gate tile.");
-						}
-						destination = block;
-						destinationX = x;
-						destinationY = y;
-					}
-				}
-			}
-		}
-
-		if (destination == null) {
-			throw new IllegalStateException("Could not find the destination tile for the Minion.");
-		}
-		int guardX = destinationX - 1;
-		int guardY = destinationY;
-		if (guardX < 0 || !Screen.room.block[guardY][guardX].isRoad()) {
-			throw new IllegalStateException("Could not find a road tile immediately left of the destination for the Minion.");
-		}
-
-		Block guardBlock = Screen.room.block[guardY][guardX];
-		setBounds(guardBlock.x, guardBlock.y, mobSize, mobSize);
-		xC = guardX;
-		yC = guardY;
-
-		this.mobID = mobID;
-		this.health = mobSize;
-		this.maxHealth = health;
-
-		this.isDying = false;
-		this.deadFrame = 0;
-		this.deadTick = 0;
-		this.deadDelay = 0;
-		this.lastHealTime = System.currentTimeMillis();
-		
-		inGame = true;
 	}
 
 	@Override
@@ -174,6 +234,11 @@ public class Minion extends Mob {
 				return Screen.minionAttack2Anim[Screen.AnimFrame % Screen.minionAttack2Anim.length];
 			}
 		}
+		if (isShooting){
+			if (Screen.minionShootingAnim != null && Screen.minionShootingAnim.length > 0){
+				return Screen.minionShootingAnim[Screen.AnimFrame % Screen.minionShootingAnim.length];
+			}
+		}
 		// mob's normal walking animation
 		if (Screen.minionIdleAnim != null && Screen.minionIdleAnim.length > 0){
 			return Screen.minionIdleAnim[Screen.AnimFrame % Screen.minionIdleAnim.length];
@@ -195,7 +260,8 @@ public class Minion extends Mob {
             int drawX = x - (drawW - width) / 2;
             int drawY = y - (drawH - height);
 
-            g.drawImage(Sprite, drawX, drawY, drawW, drawH, null);
+			// quay sang trái
+            g.drawImage(Sprite, drawX + drawW, drawY, -drawW, drawH, null);
 		}
 
 		if (isDying) return;
