@@ -3,7 +3,7 @@ import java.awt.*;
 public class CacherTower extends Tower {
 
     public CacherTower(int x, int y, int width, int height) {
-        // Truyền thông số: Tầm bắn 100, Sát thương 2, Thời gian khựng 50, frame bắn 6, ID tháp
+        // Truyền thông số: Tầm bắn 100, Sát thương 2, frame bắn 6, ID tháp
         super(x, y, width, height, 100, 2, 5, Value.ARCHER_TOWER); //check id
     }
 
