@@ -223,6 +223,7 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 	public void mousePressed(MouseEvent e) {
 		if(Screen.gameState == Screen.playGame) {
+			Screen.mse = new Point(e.getX(), e.getY());
 			Screen.store.click(e.getButton());
 		}
 	}
@@ -235,13 +236,13 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 	public void mouseDragged(MouseEvent e) { // kuleleri sürükleme
 		if(Screen.gameState == Screen.playGame) {
-			Screen.mse = new Point((e.getX()) + ((Frame.size.width - Screen.myWidth)/2), (e.getY()) + ((Frame.size.height - (Screen.myHeight))-(Frame.size.width - Screen.myWidth)/2));
+			Screen.mse = new Point(e.getX(), e.getY());
 		}
 	}
 	
 	public void mouseMoved(MouseEvent e) { // kuleleri ve shoptaki slotları seçme ve görme
 		if (Screen.gameState == Screen.playGame) {
-			Screen.mse = new Point((e.getX()) - ((Frame.size.width - Screen.myWidth)/2), (e.getY()) - ((Frame.size.height - (Screen.myHeight))-(Frame.size.width - Screen.myWidth)/2)+50);
+			Screen.mse = new Point(e.getX(), e.getY());
 		}
 	}
 
