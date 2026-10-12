@@ -24,7 +24,7 @@ public class Mob extends Rectangle{
 	protected int coinTick = 0;
 	protected int coinMaxFlyDist = 15; // độ cao đồng xu bay lên
 	
-
+	protected boolean gotDamage = false;
 	protected boolean inGame = false;
 	protected boolean isMatching = false;
 	protected boolean hasDealtDamage = false;
@@ -33,6 +33,7 @@ public class Mob extends Rectangle{
 	protected double renderScale;
 	protected double dmgReduction;
 	protected boolean isDying = false;
+	protected long lastGotDamagedTime;
 	protected int deadFrame = 0;
 	protected int deadSpeed = 35; // Giá trị càng lớn càng chậm
 	protected int deadTick = 0;
@@ -40,7 +41,7 @@ public class Mob extends Rectangle{
 	protected int deadDelayLimit = 1500; // Delay tại frame cuối trước khi biến mất (~1.5 đến 2 giây)
 	
 	Mob() {
-		this.walkSpeed = 20; // lower is faster
+		this.walkSpeed = 3; // lower is faster
 		this.spawnTime = 1600;
 		this.renderScale = 1.5;
 		this.dmgReduction = 0;
@@ -125,13 +126,14 @@ public class Mob extends Rectangle{
 			return;
 		}
 		
-		checkMatching(Screen.mini);
+		isMatching = checkMatching(Screen.mini);
 		
 		// if not fighting
 		if (!isMatching){
 			if(walkFrame >= walkSpeed) {
-				if(direction == right) 
+				if(direction == right){
 					x+=1;
+				}
 				else if(direction == upward)
 					y-=1;
 				else if(direction == downward) 
@@ -227,15 +229,18 @@ public class Mob extends Rectangle{
 		}
 	}
 	  
-	void checkMatching(Minion[] mini){
-		for (int i = 0; i < Screen.mini.length; i++){
+	boolean checkMatching(Mob[] mini){
+		for (int i = 0; i < mini.length; i++){
 			if (this.intersects(mini[i]) && mini[i] != null && mini[i].inGame && !mini[i].isDead()){
 				this.isMatching = true;
 				this.target = mini[i];
-				return;
+				this.target.isMatching = true;
+				this.target.gotDamage = true;
+				this.target.lastGotDamagedTime = System.currentTimeMillis();
+				return true;
 			}
 		}
-		this.isMatching = false;
+		return false;
 	}
 	   
 	boolean isDead() {
@@ -255,7 +260,6 @@ public class Mob extends Rectangle{
 		deadFrame = 0;
 		deadTick = 0;
 		deadDelay = 0;
-		
 		this.coinTick = 0;
 		Screen.killed++;
 	}
@@ -305,6 +309,17 @@ public class Mob extends Rectangle{
 		// 2. Căn giữa theo trục X, và giữ đáy chân quái chạm sàn (không bị bay lơ lửng)
 		int drawX = x - (drawW - width) / 2;
 		int drawY = y - (drawH - height);
+
+		if (direction == right){
+			drawW = (int) (width * renderScale);
+			drawX = x - (drawW - width) / 2;
+		}
+		// đảo ảnh sang trái khi di chuyển sang trái
+		// khi lên trên/xuống dưới thì vẫn hướng sang phải
+		else if(direction == left){
+			drawX = x - (drawW - width) / 2 + drawW;
+			drawW = (int) -(width * renderScale);
+		}
 
 		Image Sprite = getSprite();
 		if (Sprite != null){

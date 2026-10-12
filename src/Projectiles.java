@@ -51,7 +51,7 @@ public class Projectiles {
     }
 
     public Image getSprite(){
-        return Screen.projectiles[towerID-2]; // -2 tại vì trong Value thì các tower bắt đầu từ 2 
+        return Screen.projectiles.get(towerID); // đổi thành hashmap hay hơn
     }
 
     public void draw(Graphics g) {
@@ -70,6 +70,7 @@ public class Projectiles {
 
         //update kích thước do mở rộng map, tăng số lượng, giảm kích thước block
         double scale=0.8;
+        if (towerID == Value.MINION_SOLDIER) scale = 2.0;
         tx.scale(scale, scale);
 
 

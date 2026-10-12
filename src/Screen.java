@@ -1,11 +1,11 @@
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.*;
-
-
 
 public class Screen extends JPanel implements Runnable {
 	Thread thread = new Thread(this);
@@ -34,6 +34,9 @@ public class Screen extends JPanel implements Runnable {
 
 	static Image[] minionIdleAnim = new Image[6];
 	static Image[] minionDeadAnim = new Image[4];
+	static Image[] minionAttack1Anim = new Image[6];
+	static Image[] minionAttack2Anim = new Image[6];
+	static Image[] minionShootingAnim = new Image[9];
 
 	static int AnimFrame = 0;
 	static int AnimTime = 40; // ANIMATION FRAME DELAY
@@ -45,9 +48,48 @@ public class Screen extends JPanel implements Runnable {
 	static Image[] cannon = new Image[8];
 	static Image[] goldMiner = new Image[8];
 
-	static Image[] projectiles = new Image[3];
+	static Map<Integer, Image> projectiles = new HashMap<>(); 
 	// sẽ update tiếp sau
+
+	public static int gameState = 0;
+
+	public static final int tileScreen=0;
+	public static final int playGame=1;
+	public static final int settings=2;
+	public static final int selectSkill=3;
+	public static final int gameShop=4;
+	public static final int buyItem=5;
+	public static final int gacha=6;
+	public static final int gachaRate=7;
+	public static final int shardShop=8;
+	public static final int thongBao=9;
+	public static final int tongKetWin=10;
+	public static final int tongKetLose=11;
+
+
+	public static Random rand = new Random();
+	public static int randomNum;
+
 	
+	public static int gachaType;
+	public static final int gachaTornado=1;
+	public static final int gachaEnhance=2;
+	public static final int gachaMercenary=3;
+	public static final int summonHero=4;
+
+
+	public static boolean unlockTornado = false;
+	public static boolean unlockEnhance = false;
+	public static boolean unlockMercenary = false;
+	public static boolean unlockGiantOrc = false;
+
+	public static int coinage = 2000;
+	public static int shard =0;
+
+	public static boolean ok; 	//Đcm tluc thông minh vclll
+	//Con này fix bug đoạn coin sát mép số 10, đề phòng bọn nghẹo gacha ko có tiền mua tháp
+	//Nếu cứ so sánh thì bên keyhandle trừ tiền trước, sau đó sang bên render check coin thấy =10
+	//thì nó lại hiện tb cảnh cáo, bị lệch render với logic.
 	
 	static int myWidth, myHeight;
 	static int health = 999999;
@@ -70,6 +112,8 @@ public class Screen extends JPanel implements Runnable {
 	static Mob2[] mobss = new Mob2[100];
 	static Mob3[] mobsss = new Mob3[100];
 	static Minion[] mini = new Minion[10];
+
+	private GameRender gameRender = new GameRender();
 	
 	Screen(Frame frame) {
 		addMouseListener(new KeyHandel());
@@ -91,10 +135,7 @@ public class Screen extends JPanel implements Runnable {
 		gameState = playGame;
 	}
 	
-	
-
-	
-	void define() {
+	public void define() {
 		save = new Save();
 		Screen.tiles = new Tiles();
 		loadLevel();
@@ -158,18 +199,28 @@ public class Screen extends JPanel implements Runnable {
 			mobSlimeAttack2Anim[i] = loadFrame("characterSprites/slime/attack200" + i + ".png");
 		}
 
+		for (int i = 0; i < minionAttack1Anim.length; i++){
+			minionAttack1Anim[i] = loadFrame("characterSprites/minion/attack100" + i + ".png");
+			minionAttack2Anim[i] = loadFrame("characterSprites/minion/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < minionShootingAnim.length; i++){
+			minionShootingAnim[i] = loadFrame("characterSprites/minion/bowAttack00" + i + ".png");
+		}
+		
 		for (int i = 0; i < minionDeadAnim.length; i++){
 			minionDeadAnim[i] = loadFrame("characterSprites/minion/dead00" + i + ".png");
 		}
 
-		projectiles[0] = loadFrame("characterSprites/cacherTower/arrow000.png");
-		projectiles[1] = loadFrame("characterSprites/mageTower/energyBall.png");
-		projectiles[2] = loadFrame("characterSprites/cannon/cannonBall.png");		
+		projectiles.put(Value.ARCHER_TOWER, loadFrame("characterSprites/cacherTower/arrow000.png"));
+		projectiles.put(Value.MAGE_TOWER, loadFrame("characterSprites/mageTower/energyBall.png"));
+		projectiles.put(Value.CANNON_TOWER, loadFrame("characterSprites/cannon/cannonBall.png"));
+		projectiles.put(Value.MINION_SOLDIER, loadFrame("characterSprites/cacherTower/arrow002.png"));
 		
 		loadLevel();
 	}
 
-	private static void loadLevel() {
+	public static void loadLevel() {
 		room = new Room();
 		killed = 0;
 		isWin = false;
@@ -196,48 +247,6 @@ public class Screen extends JPanel implements Runnable {
 		waveManager = new WaveManager(level);
 	}
 
-	public static int gameState = 0;
-
-	public static final int tileScreen=0;
-	public static final int playGame=1;
-	public static final int settings=2;
-	public static final int selectSkill=3;
-	public static final int gameShop=4;
-	public static final int buyItem=5;
-	public static final int gacha=6;
-	public static final int gachaRate=7;
-	public static final int shardShop=8;
-	public static final int thongBao=9;
-	public static final int tongKetWin=10;
-	public static final int tongKetLose=11;
-
-
-	public static Random rand = new Random();
-	public static int randomNum;
-
-	
-	public static int gachaType;
-	public static final int gachaTornado=1;
-	public static final int gachaEnhance=2;
-	public static final int gachaMercenary=3;
-	public static final int summonHero=4;
-
-
-	public static boolean unlockTornado = false;
-	public static boolean unlockEnhance = false;
-	public static boolean unlockMercenary = false;
-	public static boolean unlockGiantOrc = false;
-
-	public static int coinage = 2000;
-	public static int shard =0;
-
-	public static boolean ok; 	//Đcm tluc thông minh vclll
-	//Con này fix bug đoạn coin sát mép số 10, đề phòng bọn nghẹo gacha ko có tiền mua tháp
-	//Nếu cứ so sánh thì bên keyhandle trừ tiền trước, sau đó sang bên render check coin thấy =10
-	//thì nó lại hiện tb cảnh cáo, bị lệch render với logic.
-
-	private GameRender gameRender = new GameRender();
-	
 	@Override 
 	public void paintComponent(Graphics g) {  // Hàm vẽ chính --> đẩy sang gamerender.java
 		if(isFirst) { 
@@ -320,7 +329,7 @@ public class Screen extends JPanel implements Runnable {
 	}
 
 	// crop frame by frame
-	static Image loadFrame(String path) {
+	public Image loadFrame(String path) {
 		try {
 			BufferedImage raw = javax.imageio.ImageIO.read(new File(path));
 			if (raw == null) return null;
