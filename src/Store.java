@@ -91,6 +91,7 @@ public class Store {
 											}
 										}
 									}
+									Screen.coinage -= 100; // check lại xem làm sao để tuất hơn
 								}
 							}
 						}
