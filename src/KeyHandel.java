@@ -37,9 +37,11 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 
 	public void mouseClicked(MouseEvent e) {
+		Point vp = Screen.toVirtualPoint(e.getX(), e.getY());
+		int mouseX = vp.x;
+		int mouseY = vp.y;
+
 		if(Screen.gameState == Screen.tileScreen) {
-			int mouseX = e.getX();
-        	int mouseY = e.getY();
 			if(startGame.contains(mouseX, mouseY)) {
 				Screen.startGame();
 				e.getComponent().repaint();
@@ -59,8 +61,6 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 
 		else if(Screen.gameState == Screen.gameShop) {
-			int mouseX = e.getX();
-			int mouseY = e.getY();
 			if(backz.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.tileScreen;
 				e.getComponent().repaint();
@@ -77,8 +77,6 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 
 		else if(Screen.gameState == Screen.gacha) {
-			int mouseX = e.getX();
-			int mouseY = e.getY();
 			if(backz.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.gameShop;
 				e.getComponent().repaint();
@@ -123,8 +121,6 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 		}
 		else if(Screen.gameState == Screen.gachaRate) {
-			int mouseX = e.getX();
-			int mouseY = e.getY();
 			if(!gachaRateFrame.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.gacha;
 				e.getComponent().repaint();
@@ -134,8 +130,6 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 
 		else if  (Screen.gameState ==  Screen.shardShop) {
-			int mouseX = e.getX();
-			int mouseY = e.getY();
 			if(!shardShopBigFramee.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.gacha;
 				e.getComponent().repaint();
@@ -175,16 +169,12 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 
 		else if(Screen.gameState == Screen.thongBao) {
-			int mouseX = e.getX();
-			int mouseY = e.getY();
 			if(!thongBaoFrame.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.gacha;
 				e.getComponent().repaint();
 			}
 		}
 		else if(Screen.gameState == Screen.tongKetWin) {
-			int mouseX = e.getX();
-			int mouseY = e.getY();
 			if(TKWtoMenu.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.tileScreen;
 				e.getComponent().repaint();
@@ -195,8 +185,6 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 			}
 		}
 		else if(Screen.gameState == Screen.tongKetLose) {
-			int mouseX = e.getX();
-			int mouseY = e.getY();
 			if(TKLtoMenu.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.tileScreen;
 				
@@ -223,12 +211,12 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 	public void mousePressed(MouseEvent e) {
 		if(Screen.gameState == Screen.playGame) {
-			Screen.mse = new Point(e.getX(), e.getY());
+			Screen.mse = Screen.toVirtualPoint(e.getX(), e.getY());
 			Screen.store.click(e.getButton());
 		}
 	}
 	
-	
+	//con vợ nào viết dòng này thì lúc nào gần xong nhớ xóa đi nhé:)))
 	//thằng code gốc cực ngu
 	//Hàm thì gọi lung tung hết file này đến file kia, phân bố như cứt
 	//tính tọa độ thì lúc gọi frame, lúc gọi screen, loạn hết cụ lên, đọc chỉ khổ ng bảo trì
@@ -236,13 +224,13 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 	public void mouseDragged(MouseEvent e) { // kuleleri sürükleme
 		if(Screen.gameState == Screen.playGame) {
-			Screen.mse = new Point(e.getX(), e.getY());
+			Screen.mse = Screen.toVirtualPoint(e.getX(), e.getY());
 		}
 	}
 	
 	public void mouseMoved(MouseEvent e) { // kuleleri ve shoptaki slotları seçme ve görme
 		if (Screen.gameState == Screen.playGame) {
-			Screen.mse = new Point(e.getX(), e.getY());
+			Screen.mse = Screen.toVirtualPoint(e.getX(), e.getY());
 		}
 	}
 

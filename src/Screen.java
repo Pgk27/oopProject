@@ -91,7 +91,25 @@ public class Screen extends JPanel implements Runnable {
 	//Nếu cứ so sánh thì bên keyhandle trừ tiền trước, sau đó sang bên render check coin thấy =10
 	//thì nó lại hiện tb cảnh cáo, bị lệch render với logic.
 	
-	static int myWidth, myHeight;
+	public static final int VIRTUAL_WIDTH = 1220;
+	public static final int VIRTUAL_HEIGHT = 780;
+
+	public static double scale = 1.0;
+	public static int offsetX = 0;
+	public static int offsetY = 0;
+
+	public static Point toVirtualPoint(Point p) {
+		return toVirtualPoint(p.x, p.y);
+	}
+
+	public static Point toVirtualPoint(int screenX, int screenY) {
+		if (scale <= 0) return new Point(screenX, screenY);
+		int vx = (int) Math.round((screenX - offsetX) / scale);
+		int vy = (int) Math.round((screenY - offsetY) / scale);
+		return new Point(vx, vy);
+	}
+
+	static int myWidth = VIRTUAL_WIDTH, myHeight = VIRTUAL_HEIGHT;
 	static int health = 999999;
 	static int killed = 0, killsToWin = 0, level = 1, rielLevel =1;
 	static boolean isFirst = true;
@@ -113,9 +131,11 @@ public class Screen extends JPanel implements Runnable {
 	static Mob3[] mobsss = new Mob3[100];
 	static Minion[] mini = new Minion[10];
 
+	public Frame frame;
 	private GameRender gameRender = new GameRender();
 	
 	Screen(Frame frame) {
+		this.frame = frame;
 		addMouseListener(new KeyHandel());
 		addMouseMotionListener(new KeyHandel());
 		
@@ -250,16 +270,44 @@ public class Screen extends JPanel implements Runnable {
 	@Override 
 	public void paintComponent(Graphics g) {  // Hàm vẽ chính --> đẩy sang gamerender.java
 		if(isFirst) { 
-            myWidth = getWidth();  
-            myHeight = getHeight(); 
+            myWidth = VIRTUAL_WIDTH;  
+            myHeight = VIRTUAL_HEIGHT; 
             define();
             
             isFirst = false;
         }
 
 		super.paintComponent(g);
-		gameRender.render(g, getWidth(), getHeight());
-	
+
+		int screenWidth = getWidth();
+		int screenHeight = getHeight();
+
+		// 1. Fill entire screen with black (letterbox/pillarbox bars)
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, screenWidth, screenHeight);
+
+		// 2. Calculate aspect-ratio-preserving scale and center offsets
+		double scaleX = (double) screenWidth / VIRTUAL_WIDTH;
+		double scaleY = (double) screenHeight / VIRTUAL_HEIGHT;
+		scale = Math.min(scaleX, scaleY);
+
+		int drawWidth = (int) Math.round(VIRTUAL_WIDTH * scale);
+		int drawHeight = (int) Math.round(VIRTUAL_HEIGHT * scale);
+		offsetX = (screenWidth - drawWidth) / 2;
+		offsetY = (screenHeight - drawHeight) / 2;
+
+		// 3. Fast scaling without heavy CPU antialiasing on 800+ tiles
+		Graphics2D g2d = (Graphics2D) g.create();
+		g2d.clipRect(offsetX, offsetY, drawWidth, drawHeight);
+		g2d.translate(offsetX, offsetY);
+		g2d.scale(scale, scale);
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+
+		gameRender.render(g2d, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+		g2d.dispose();
+
+		// Flushes graphics buffer to eliminate display queue stutter in fullscreen
+		Toolkit.getDefaultToolkit().sync();
 	}
 
 	public void run() {
