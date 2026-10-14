@@ -52,6 +52,13 @@ public class GameRender {
         
         Screen.room.draw(g); 
         
+        // Vẽ Spell mặt đất (như BlackHole) trước quái
+        for (Spell s : Screen.activeSpells) {
+            if (!(s instanceof BomberPlane)) {
+                s.draw(g);
+            }
+        }
+        
         ArrayList<Mob> renderMobs = new ArrayList<>();
         
         for (int i = 0; i < Screen.mobs.length; i++) { 
@@ -81,6 +88,13 @@ public class GameRender {
         // thực hiện vẽ
         for (Mob m : renderMobs) {
             m.draw(g);
+        }
+
+        // Vẽ Spell trên không / bom nổ (như BomberPlane) phía trên quái
+        for (Spell s : Screen.activeSpells) {
+            if (s instanceof BomberPlane) {
+                s.draw(g);
+            }
         }
         
         Screen.store.draw(g); 

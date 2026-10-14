@@ -42,7 +42,7 @@ public class Minion extends Mob {
 			for (int y = 0; y < Screen.room.block.length; y++) {
 				for (int x = 0; x < Screen.room.block[y].length; x++) {
 					Block block = Screen.room.block[y][x];
-					if (block.towerID == Value.BLACK_HOLE) {
+					if (block.towerID == Value.CASTLE) {
 						if (destination != null) {
 							throw new IllegalStateException("The map has more than one gate tile.");
 						}

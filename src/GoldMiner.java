@@ -31,7 +31,7 @@ public class GoldMiner extends Tower {
         Image currentFrame = Screen.goldMiner[goldMinerAnimFrame];
         
         // Tìm tọa độ mục tiêu để lật ảnh
-        g.drawImage(currentFrame, x + width, y, -width, height, null);
+        g.drawImage(currentFrame, x, y, width, height, null);
         
     }
 
