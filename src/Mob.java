@@ -156,7 +156,7 @@ public class Mob extends Rectangle{
 					}
 					
 					Block currentBlock = Screen.room.block[yC][xC];
-					if (currentBlock.groundID == 4 || currentBlock.towerID == Value.BLACK_HOLE) {
+					if (currentBlock.groundID == 4 || currentBlock.towerID == Value.CASTLE) {
 						deleteMob();
 						playerLoseHealth();
 						return;
@@ -334,7 +334,8 @@ public class Mob extends Rectangle{
 				int coinX = x + (width / 2) - (Store.iconSize / 2);
 				int coinY = (y - coinOffsetY);
 
-				g.drawImage(Screen.tileset_res[2], coinX, coinY, Store.iconSize, Store.iconSize, null);
+				// g.drawImage(Screen.tileset_res[2], coinX, coinY, Store.iconSize, Store.iconSize, null);
+				// xphpe la k ve dong xu bay len nua nhe
 			}
 			return;
 		}

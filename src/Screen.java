@@ -47,6 +47,11 @@ public class Screen extends JPanel implements Runnable {
 	static Image[] mageTower = new Image[8];
 	static Image[] cannon = new Image[8];
 	static Image[] goldMiner = new Image[8];
+	public static Image[] blackHole = new Image[8];
+	public static Image airplane;
+	public static Image[] explosion = new Image[8];
+
+	public static CopyOnWriteArrayList<Spell> activeSpells = new CopyOnWriteArrayList<>();
 
 	static Map<Integer, Image> projectiles = new HashMap<>(); 
 	// sẽ update tiếp sau
@@ -83,7 +88,7 @@ public class Screen extends JPanel implements Runnable {
 	public static boolean unlockMercenary = false;
 	public static boolean unlockGiantOrc = false;
 
-	public static int coinage = 2000;
+	public static int coinage = 200000;
 	public static int shard =0;
 
 	public static boolean ok; 	//Đcm tluc thông minh vclll
@@ -182,6 +187,13 @@ public class Screen extends JPanel implements Runnable {
 		for(int i = 0; i < goldMiner.length; i++){
 			goldMiner[i] = loadFrame("characterSprites/goldMiner/goldMiner" + i + ".png");
 		}
+		for(int i = 0; i < blackHole.length; i++){
+			blackHole[i] = loadFrame("characterSprites/blackHole/blackHole" + i + ".png");
+		}
+		airplane = loadFrame("characterSprites/airplane/airplane.png");
+		for(int i = 0; i < explosion.length; i++){
+			explosion[i] = loadFrame("characterSprites/airplane/explosion" + i + ".png");
+		}
 		
 		tileset_res[0] = new ImageIcon("res/cell.png").getImage();
 		tileset_res[1] = new ImageIcon("res/heart.png").getImage();
@@ -244,6 +256,7 @@ public class Screen extends JPanel implements Runnable {
 		room = new Room();
 		killed = 0;
 		isWin = false;
+		activeSpells.clear();
 
 		save.loadSave(new File("save/map" + level)); //map ı yüklüyor
 		
@@ -357,6 +370,14 @@ public class Screen extends JPanel implements Runnable {
 						a.physic();
 						if (a.hasRemoved) {
 							pjt.remove(a);
+						}
+					}
+
+					for (Spell s : activeSpells) {
+						s.physic();
+						if (s.isFinished()) {
+							s.destroy();
+							activeSpells.remove(s);
 						}
 					}
 

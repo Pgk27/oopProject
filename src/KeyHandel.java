@@ -175,6 +175,9 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 			}
 		}
 		else if(Screen.gameState == Screen.tongKetWin) {
+			updateTongKetRects();
+			mouseX = e.getX();
+			mouseY = e.getY();
 			if(TKWtoMenu.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.tileScreen;
 				e.getComponent().repaint();
@@ -185,6 +188,9 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 			}
 		}
 		else if(Screen.gameState == Screen.tongKetLose) {
+			updateTongKetRects();
+			mouseX = e.getX();
+			mouseY = e.getY();
 			if(TKLtoMenu.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.tileScreen;
 				
@@ -384,6 +390,19 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		}
 	}
 
+	public void updateTongKetRects() {
+		int w = Screen.myWidth > 0 ? Screen.myWidth : 1204;
+		int h = Screen.myHeight > 0 ? Screen.myHeight : 741;
+		int menuX = (int) Math.round(308.0 * w / 1024.0);
+		int menuY = (int) Math.round(537.0 * h / 851.0);
+		int playX = (int) Math.round(525.0 * w / 1024.0);
+		int btnW = (int) Math.round(191.0 * w / 1024.0);
+		int btnH = (int) Math.round(49.0 * h / 851.0);
 
+		TKWtoMenu = new Rectangle(menuX, menuY, btnW, btnH);
+		TKWtoPlay = new Rectangle(playX, menuY, btnW, btnH);
+		TKLtoMenu = new Rectangle(menuX, menuY, btnW, btnH);
+		TKLtoPlay = new Rectangle(playX, menuY, btnW, btnH);
+	}
 	
 }
