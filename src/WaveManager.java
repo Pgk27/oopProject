@@ -6,8 +6,6 @@
 public class WaveManager {
     public LevelConfig config;
     public int globalTick = 0;
-    boolean isCohort = true;
-    int cohortNum = 3;
     
     public WaveManager(int level) {
         this.config = LevelConfig.getLevelConfig(level);
@@ -49,18 +47,19 @@ public class WaveManager {
                         
                         info.frameCounter++;
                         // randomize interval between each mobs
-                        if(!isCohort){
-                            if (info.frameCounter >= info.spawnInterval + 1500){
-                                isCohort = true;
+                        if (!info.isCohort) {
+                            if (info.frameCounter >= info.spawnInterval + 3000) {
+                                info.isCohort = true;
                                 info.frameCounter = 0;
                             }
                         }
-                        if (isCohort && info.frameCounter >= (info.spawnInterval - info.spawnInterval*(0.7+ (int) (Math.random() * (0.9 - 0.7))))) {
+                        if (info.isCohort && info.frameCounter >= info.currentSpawnDelay) {
                             spawnMob(info);
                             info.spawnedCount++;
                             info.frameCounter = 0;
-                            if(info.spawnedCount % cohortNum == 0 || info.spawnedCount == info.totalCount){
-                                isCohort = false;
+                            info.rollNextSpawnDelay();
+                            if (info.spawnedCount % info.cohortNum == 0 || info.spawnedCount == info.totalCount) {
+                                info.isCohort = false;
                             }
                         }
                     }

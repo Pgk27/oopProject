@@ -3,6 +3,8 @@ import java.awt.*;
 public class Block extends Rectangle {
 	int groundID;
 	int towerID;
+	public int rootX = -1;
+	public int rootY = -1;
 	
 	boolean hasDealtDamage = false;
 	
@@ -34,16 +36,16 @@ public class Block extends Rectangle {
 			lastAirID = towerID;
 			
 			if(towerID == Value.ARCHER_TOWER){
-				currentTower = new CacherTower(x, y, width, height);
+				currentTower = new CacherTower(x, y, width * 2, height * 2);
 			}
 			else if(towerID == Value.MAGE_TOWER){
-				currentTower = new MageTower(x, y, width, height);
+				currentTower = new MageTower(x, y, width * 2, height * 2);
 			}
 			else if(towerID == Value.CANNON_TOWER){
-				currentTower = new Canon(x, y, width, height);
+				currentTower = new Canon(x, y, width * 2, height * 2);
 			}
 			else if(towerID == Value.GOLD_MINER){
-				currentTower = new GoldMiner(x, y, width, height);
+				currentTower = new GoldMiner(x, y, width * 2, height * 2);
 			} 
             else {
 				currentTower = null;
@@ -51,17 +53,24 @@ public class Block extends Rectangle {
 		}
 	}
 
-	void draw(Graphics g) {
-        SetTower(); // Cập nhật liên tục trong vòng lặp
-		
+	void drawGround(Graphics g) {
 		int groundTile = groundID >= 1 && groundID <= 4 ? Value.groundRoad : groundID;
 		g.drawImage(Screen.tileset_ground[groundTile], x, y, width, height, null);
+	}
+
+	void drawTower(Graphics g) {
+        SetTower(); // Cập nhật liên tục trong vòng lặp
         if (currentTower != null) {
             currentTower.draw(g); 
         } 
-		else if (towerID != Value.PLACEHOLDER) {
+		else if (towerID != Value.PLACEHOLDER && towerID != Value.TOWER_OCCUPIED && towerID >= 0) {
             g.drawImage(Screen.tileset_air[towerID], x, y, width, height, null);
         }
+	}
+
+	void draw(Graphics g) {
+		drawGround(g);
+		drawTower(g);
 	}
 	
 	void physic() {

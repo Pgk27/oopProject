@@ -33,7 +33,12 @@ public class Room {
 	public void draw(Graphics g) { // kuleler ve groundları çiziyor.
 		for(int y=0;y<block.length;y++) {
 			for(int x=0;x<block[0].length;x++) {
-				block[y][x].draw(g);
+				block[y][x].drawGround(g);
+			}
+		}
+		for(int y=0;y<block.length;y++) {
+			for(int x=0;x<block[0].length;x++) {
+				block[y][x].drawTower(g);
 			}
 		}
 		for(int y=0;y<block.length;y++) { // lazerlerin görünmesini sağlıyor, çiziyor

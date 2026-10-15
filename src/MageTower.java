@@ -3,8 +3,8 @@ import java.awt.*;
 public class MageTower extends Tower {
 
     public MageTower(int x, int y, int width, int height) {
-        // Truyền thông số: Tầm bắn 70, Sát thương 2, Thời gian khựng 50, frame bắn 5, ID tháp
-        super(x, y, width, height, 70, 2, 5, Value.MAGE_TOWER); 
+        // Truyền thông số: Tầm bắn 100, Sát thương 2, frame bắn 5, ID tháp
+        super(x, y, width, height, 100, 2, 5, Value.MAGE_TOWER); 
     }
 
     @Override
@@ -24,7 +24,7 @@ public class MageTower extends Tower {
         Image currentFrame = Screen.mageTower[animationFrame];
         
         // Tìm tọa độ mục tiêu để lật ảnh
-        int targetX = this.x; 
+        int targetX = this.x + width / 2; 
         if (shotMob != -1) {
             if (shotingMob1 && shotMob < Screen.mobs.length && Screen.mobs[shotMob] != null) 
                 targetX = Screen.mobs[shotMob].x;
@@ -35,7 +35,7 @@ public class MageTower extends Tower {
         }
         
         // Vẽ và lật ảnh dựa vào vị trí quái vật
-        if (targetX < this.x) {
+        if (targetX < this.x + width / 2) {
             // lật bên trái
             g.drawImage(currentFrame, x + width, y, -width, height, null);
         } else {

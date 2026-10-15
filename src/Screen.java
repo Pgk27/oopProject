@@ -1,11 +1,11 @@
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.*;
-
-
 
 public class Screen extends JPanel implements Runnable {
 	Thread thread = new Thread(this);
@@ -34,6 +34,9 @@ public class Screen extends JPanel implements Runnable {
 
 	static Image[] minionIdleAnim = new Image[6];
 	static Image[] minionDeadAnim = new Image[4];
+	static Image[] minionAttack1Anim = new Image[6];
+	static Image[] minionAttack2Anim = new Image[6];
+	static Image[] minionShootingAnim = new Image[9];
 
 	static int AnimFrame = 0;
 	static int AnimTime = 40; // ANIMATION FRAME DELAY
@@ -45,11 +48,73 @@ public class Screen extends JPanel implements Runnable {
 	static Image[] cannon = new Image[8];
 	static Image[] goldMiner = new Image[8];
 
-	static Image[] projectiles = new Image[3];
+	static Map<Integer, Image> projectiles = new HashMap<>(); 
 	// sẽ update tiếp sau
+
+	public static int gameState = 8;
+
+	public static final int tileScreen=0;
+	public static final int playGame=1;
+	public static final int settings=2;
+	public static final int selectSkill=3;
+	public static final int gameShop=4;
+	public static final int buyItem=5;
+	public static final int gacha=6;
+	public static final int gachaRate=7;
+	public static final int shardShop=8;
+	public static final int thongBao=9;
+	public static final int tongKetWin=10;
+	public static final int tongKetLose=11;
+
+
+	public static Random rand = new Random();
+	public static int randomNum;
+
 	
+	public static int gachaType;
+	public static final int gachaBH=1;
+	public static final int gachaEnhance=2;
+	public static final int gachaMercenary=3;
+	public static final int summon=4;
+
+
+	public static boolean unlockBH = false;
+	public static boolean unlockEnhance = false;
+	public static boolean unlockMercenary = false;
+
+	public static int coinage = 99999;
+	public static int coinDauTran;
+	public static int healthDauTran;
+	public static int shard =0;
+	public static int eCore =0;
+
+	public static boolean ok; 	//Đcm tluc thông minh vclll
+	//Con này fix bug đoạn coin sát mép số 10, đề phòng bọn nghẹo gacha ko có tiền mua tháp
+	//Nếu cứ so sánh thì bên keyhandle trừ tiền trước, sau đó sang bên render check coin thấy =10
+	//thì nó lại hiện tb cảnh cáo, bị lệch render với logic.
 	
-	static int myWidth, myHeight;
+	public static final int VIRTUAL_WIDTH = 1220;
+	public static final int VIRTUAL_HEIGHT = 780;
+
+	public static double scale = 1.0;
+	public static int offsetX = 0;
+	public static int offsetY = 0;
+
+	// Đôi hàm chuyển tọa độ chuột từ bên Screen... sang tọa độ theo hệ quy chiếu gốc
+	// Cái này chuyển ngược so với hàm vẽ, hay phết :))
+
+	public static Point toVirtualPoint(Point p) {
+		return toVirtualPoint(p.x, p.y);
+	}
+
+	public static Point toVirtualPoint(int screenX, int screenY) {
+		if (scale <= 0) return new Point(screenX, screenY);
+		int vx = (int) Math.round((screenX - offsetX) / scale);
+		int vy = (int) Math.round((screenY - offsetY) / scale);
+		return new Point(vx, vy);
+	}
+
+	static int myWidth = VIRTUAL_WIDTH, myHeight = VIRTUAL_HEIGHT;
 	static int health = 999999;
 	static int killed = 0, killsToWin = 0, level = 1, rielLevel =1;
 	static boolean isFirst = true;
@@ -70,8 +135,12 @@ public class Screen extends JPanel implements Runnable {
 	static Mob2[] mobss = new Mob2[100];
 	static Mob3[] mobsss = new Mob3[100];
 	static Minion[] mini = new Minion[10];
+
+	public Frame frame;
+	private GameRender gameRender = new GameRender();
 	
 	Screen(Frame frame) {
+		this.frame = frame;
 		addMouseListener(new KeyHandel());
 		addMouseMotionListener(new KeyHandel());
 		
@@ -89,12 +158,11 @@ public class Screen extends JPanel implements Runnable {
 		level = (int) ((rielLevel - 1) % 3) + 1;
 		loadLevel();
 		gameState = playGame;
+		Screen.coinDauTran = coinage;
+		Screen.healthDauTran = health;
 	}
 	
-	
-
-	
-	void define() {
+	public void define() {
 		save = new Save();
 		Screen.tiles = new Tiles();
 		loadLevel();
@@ -158,18 +226,28 @@ public class Screen extends JPanel implements Runnable {
 			mobSlimeAttack2Anim[i] = loadFrame("characterSprites/slime/attack200" + i + ".png");
 		}
 
+		for (int i = 0; i < minionAttack1Anim.length; i++){
+			minionAttack1Anim[i] = loadFrame("characterSprites/minion/attack100" + i + ".png");
+			minionAttack2Anim[i] = loadFrame("characterSprites/minion/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < minionShootingAnim.length; i++){
+			minionShootingAnim[i] = loadFrame("characterSprites/minion/bowAttack00" + i + ".png");
+		}
+		
 		for (int i = 0; i < minionDeadAnim.length; i++){
 			minionDeadAnim[i] = loadFrame("characterSprites/minion/dead00" + i + ".png");
 		}
 
-		projectiles[0] = loadFrame("characterSprites/cacherTower/arrow000.png");
-		projectiles[1] = loadFrame("characterSprites/mageTower/energyBall.png");
-		projectiles[2] = loadFrame("characterSprites/cannon/cannonBall.png");		
+		projectiles.put(Value.ARCHER_TOWER, loadFrame("characterSprites/cacherTower/arrow000.png"));
+		projectiles.put(Value.MAGE_TOWER, loadFrame("characterSprites/mageTower/energyBall.png"));
+		projectiles.put(Value.CANNON_TOWER, loadFrame("characterSprites/cannon/cannonBall.png"));
+		projectiles.put(Value.MINION_SOLDIER, loadFrame("characterSprites/cacherTower/arrow002.png"));
 		
 		loadLevel();
 	}
 
-	private static void loadLevel() {
+	public static void loadLevel() {
 		room = new Room();
 		killed = 0;
 		isWin = false;
@@ -196,61 +274,59 @@ public class Screen extends JPanel implements Runnable {
 		waveManager = new WaveManager(level);
 	}
 
-	public static int gameState = 0;
-
-	public static final int tileScreen=0;
-	public static final int playGame=1;
-	public static final int settings=2;
-	public static final int selectSkill=3;
-	public static final int gameShop=4;
-	public static final int buyItem=5;
-	public static final int gacha=6;
-	public static final int gachaRate=7;
-	public static final int shardShop=8;
-	public static final int thongBao=9;
-	public static final int tongKetWin=10;
-	public static final int tongKetLose=11;
-
-
-	public static Random rand = new Random();
-	public static int randomNum;
-
-	
-	public static int gachaType;
-	public static final int gachaTornado=1;
-	public static final int gachaEnhance=2;
-	public static final int gachaMercenary=3;
-	public static final int summonHero=4;
-
-
-	public static boolean unlockTornado = false;
-	public static boolean unlockEnhance = false;
-	public static boolean unlockMercenary = false;
-	public static boolean unlockGiantOrc = false;
-
-	public static int coinage = 2000;
-	public static int shard =0;
-
-	public static boolean ok; 	//Đcm tluc thông minh vclll
-	//Con này fix bug đoạn coin sát mép số 10, đề phòng bọn nghẹo gacha ko có tiền mua tháp
-	//Nếu cứ so sánh thì bên keyhandle trừ tiền trước, sau đó sang bên render check coin thấy =10
-	//thì nó lại hiện tb cảnh cáo, bị lệch render với logic.
-
-	private GameRender gameRender = new GameRender();
-	
 	@Override 
 	public void paintComponent(Graphics g) {  // Hàm vẽ chính --> đẩy sang gamerender.java
 		if(isFirst) { 
-            myWidth = getWidth();  
-            myHeight = getHeight(); 
+            myWidth = VIRTUAL_WIDTH;  
+            myHeight = VIRTUAL_HEIGHT; 
             define();
             
             isFirst = false;
         }
 
 		super.paintComponent(g);
-		gameRender.render(g, getWidth(), getHeight());
-	
+
+		int screenWidth = getWidth();
+		int screenHeight = getHeight();
+
+		// 1. Fill entire screen with black (letterbox/pillarbox bars)
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, screenWidth, screenHeight);
+
+		// 2. Calculate aspect-ratio-preserving scale and center offsets
+		// Đcm hay vcl
+		// Screen... là cái độ dài thực tế của cái Screen(tính cả phần đen)
+		// VIRTUAL... là con độ dài được khai báo bên Frame, là cái size default để tao căn nút với vẽ ấy
+		// ScaleX/Y tính tỉ lệ, xem set theo con X hay Y
+		// draw... là cái độ dài thực tế mình vẽ lên theo tỉ lệ ok nhất(ko tính phần rìa đen)
+		// con offset là độ dài rìa đen nếu có, ko có thì nó bằng 0 nhá :D
+
+		double scaleX = (double) screenWidth / VIRTUAL_WIDTH;
+		double scaleY = (double) screenHeight / VIRTUAL_HEIGHT;
+		scale = Math.min(scaleX, scaleY);
+
+		int drawWidth = (int) Math.round(VIRTUAL_WIDTH * scale);
+		int drawHeight = (int) Math.round(VIRTUAL_HEIGHT * scale);
+		offsetX = (screenWidth - drawWidth) / 2;
+		offsetY = (screenHeight - drawHeight) / 2;
+
+		// 3. Fast scaling without heavy CPU antialiasing on 800+ tiles
+		Graphics2D g2d = (Graphics2D) g.create(); // Tạo ra 1 cái cọ khác để vẽ
+		g2d.clipRect(offsetX, offsetY, drawWidth, drawHeight); //Giới hạn vùng vẽ(x, y, dx, dy), ra ngoài = xóa
+		g2d.translate(offsetX, offsetY); // thay đổi gốc tọa độ(đến đoạn hết viền đen)
+		g2d.scale(scale, scale); //phóng to, ví dụ truyền tọa độ x, y thì auto phóng lên thành x.scale, y.scale
+		//dòng dưới này cực quan trọng
+		//Khi phóng to ảnh, java sẽ làm mờ viền
+		//Game ae mình làm pixel, phải có dòng này thì từng ô nó mới vuông đc
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+		// cái này là gọi sang hàm vẽ chính này, sau khi đã dịch gốc tọa độ và thêm thu phóng scale
+		// thì mình cứ phang cái tọa độ gốc của mình là ok thôi :>
+		gameRender.render(g2d, VIRTUAL_WIDTH, VIRTUAL_HEIGHT); 
+		
+		g2d.dispose();
+
+		// Flushes graphics buffer to eliminate display queue stutter in fullscreen
+		Toolkit.getDefaultToolkit().sync(); //Cái này để đỡ lag, cụ thể ntn t đ.. rõ nữa :))
 	}
 
 	public void run() {
@@ -320,7 +396,7 @@ public class Screen extends JPanel implements Runnable {
 	}
 
 	// crop frame by frame
-	static Image loadFrame(String path) {
+	public Image loadFrame(String path) {
 		try {
 			BufferedImage raw = javax.imageio.ImageIO.read(new File(path));
 			if (raw == null) return null;
