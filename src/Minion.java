@@ -109,6 +109,10 @@ public class Minion extends Mob {
 			return;
 		}
 		
+		if (this.target != null && (this.target.isDead() || !this.target.inGame || !this.intersects(this.target))){
+			this.target = null;
+		}
+
 		if (!checkMatching(Screen.mobs) && !checkMatching(Screen.mobss) && !checkMatching(Screen.mobsss)){
 			isMatching = false;
 		} else{
@@ -130,7 +134,13 @@ public class Minion extends Mob {
 				hasDealtDamage = false;
 			}
 		} else{
-			shootTarget = findTargetInRange(Screen.mobs, Screen.mobss, Screen.mobsss);
+			// check if target is still alive and still inside the rangeBox before finding a new one
+			if (shootTarget != null && (shootTarget.isDead() || !shootTarget.inGame || !rangeBox.intersects(shootTarget))){
+				shootTarget = null;
+			}
+
+			if (shootTarget == null)
+				shootTarget = findTargetInRange(Screen.mobs, Screen.mobss, Screen.mobsss);
 			isShooting = (shootTarget != null); // nếu target chết thì isShooting = false
 		}
 		
@@ -164,13 +174,18 @@ public class Minion extends Mob {
 		Mob closest = null;
 		double minDist = Integer.MAX_VALUE;
 
+		double myCenterX = this.x + this.width / 2.0;
+		double myCenterY = this.y + this.height / 2.0;
+
 		for (Mob[] group : mobGroups){
 			for (int i = 0; i < group.length; i++){
 				Mob m = group[i];
 				if (m != null && m.inGame && !m.isDead()){
 					if (rangeBox.intersects(m)){
-						double dx = (this.x + this.width / 2.0);
-						double dy = (this.y - this.height / 2.0);
+						double targetCenterX = m.x + m.width;
+						double targetCenterY = m.y + m.height;
+						double dx = myCenterX - targetCenterX;
+						double dy = myCenterY - targetCenterY;
 						double distSq = dx * dx + dy *dy;
 						if (distSq < minDist){
 							minDist = distSq;
@@ -203,9 +218,16 @@ public class Minion extends Mob {
 		}
 		else health += healAmount;
 	}
-
+	
 	@Override
 	boolean checkMatching(Mob[] mob){
+		// if the current target is still in Game & in range & not dead, LOCK ON it
+		if (this.target != null && this.target.inGame && this.intersects(this.target) &&  !this.target.isDead()){
+			this.isMatching = true;
+			return true;
+		}
+
+		// otherwise, switch to a new target
 		for (int i = 0; i < mob.length; i++){
 			if (this.intersects(mob[i]) && mob[i] != null && mob[i].inGame && !mob[i].isDead()){
 				this.isMatching = true;

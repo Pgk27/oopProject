@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -16,7 +17,7 @@ public class Tiles {
     public BufferedImage gachaButton;
     public BufferedImage gachaTile;
     public BufferedImage gachaButt;
-    public BufferedImage TornadoC;
+    public BufferedImage BlackHoleC;
     public BufferedImage MercenaryC;
     public BufferedImage EnhanceC;
     public BufferedImage summonHeroButt;
@@ -28,20 +29,22 @@ public class Tiles {
     public BufferedImage shardShopBigFrame;
     public BufferedImage awakeningText;
 
-    public BufferedImage iconTornado;
+    public BufferedImage iconBH;
     public BufferedImage iconEnhance;
     public BufferedImage iconMercenary;
     public BufferedImage iconFrame;
     public BufferedImage dauCong;
     public BufferedImage muiTen;
     public BufferedImage iconCoin;
-    public BufferedImage iconGiantOrc;
+    public BufferedImage iconCore;
 
     public BufferedImage congra;
     public BufferedImage oopss;
     public BufferedImage awaButtV1;
     public BufferedImage awaButtV2;
     public BufferedImage awaButtV3;
+    public BufferedImage purchaseSang;
+    public BufferedImage purchaseToi;
 
     public BufferedImage tongKetWin;
     public BufferedImage tongKetLose;
@@ -51,6 +54,17 @@ public class Tiles {
     public Font pixelFontvSmall;
     public Font pixelFontMini;
     public Font pixelFontMedi;
+
+
+    public Color darkSilver;
+    public Color royalGold;
+    public Color purpleHole;
+    public Color enhanceRed;
+    public Color mercBlue;
+    public Color timMaMi;
+    
+
+
 
 
     private BufferedImage readImage(String relativePath) throws Exception {
@@ -73,12 +87,12 @@ public class Tiles {
             settingsButton = readImage("tileImage/setting_icon2.png");
             storeButton = readImage("tileImage/store2.png");
             storeTile = readImage("tileImage/storeTile.png");
-            storeOptions = readImage("tileImage/storeOptionVip2.png");
+            storeOptions = readImage("tileImage/storeOptionVip4.png");
             gachaButton = readImage("tileImage/GachaButtonV2_3.png");
-            gachaTile = readImage("tileImage/GachaScreen1.png");
+            gachaTile = readImage("tileImage/GachaScreen2.png");
 
             gachaButt = readImage("tileImage/GachaButt3.png");
-            TornadoC = readImage("tileImage/TornadoC3.png");
+            BlackHoleC = readImage("tileImage/BHC4.png");
             MercenaryC = readImage("tileImage/MercenaryC3.png");
             EnhanceC = readImage("tileImage/EnhanceC3.png");
             summonHeroButt = readImage("tileImage/SummonH3.png");
@@ -90,20 +104,21 @@ public class Tiles {
             shardShopBigFrame = readImage("tileImage/shardShopBigFrame3.png");
             awakeningText = readImage("tileImage/awakeText4.png");
 
-            iconTornado = readImage("tileImage/iconTornado1.png");
+            iconBH = readImage("tileImage/iconBH.png");
             iconEnhance = readImage("tileImage/iconEnhance1.png");
             iconMercenary = readImage("tileImage/iconMercenary1.png");
-            iconFrame = readImage("tileImage/iconFrame4.png");
             dauCong = readImage("tileImage/daucong2.png");
             muiTen = readImage("tileImage/muiten2.png");
-            iconCoin = readImage("tileImage/iconCoin.png");
-            iconGiantOrc = readImage("tileImage/iconGiantOrc2.png");
+            iconCoin = readImage("tileImage/coin4.png");
+            iconCore = readImage("tileImage/core1.png");
             congra = readImage("tileImage/congra3.png");
-            oopss = readImage("tileImage/oopss3.png");
+            oopss = readImage("tileImage/oopss6.png");
 
-            awaButtV1 = readImage("tileImage/awaButtV1.png");
+            awaButtV1 = readImage("tileImage/awaken.png");
             awaButtV2 = readImage("tileImage/awaButtV2.png");
             awaButtV3 = readImage("tileImage/awaButtV3.png");
+            purchaseSang = readImage("tileImage/purchaseSang.png");
+            purchaseToi = readImage("tileImage/purchaseToi.png");
 
             tongKetWin = readImage("tileImage/tongKetWin4.png");
             tongKetLose = readImage("tileImage/tongKetLose2.png");
@@ -119,13 +134,19 @@ public class Tiles {
             }
 
             Font baseFont = Font.createFont(Font.TRUETYPE_FONT, new java.io.FileInputStream(fontFile));
-            pixelFontv1 = baseFont.deriveFont(13f);
-            pixelFontv2 = baseFont.deriveFont(20f);
-            pixelFontvSmall = baseFont.deriveFont(10f);
-            pixelFontMini = baseFont.deriveFont(6f);
-            pixelFontMedi = baseFont.deriveFont(16f);
+            pixelFontv1 = baseFont.deriveFont(16f);
+            pixelFontv2 = baseFont.deriveFont(22f);
+            pixelFontvSmall = baseFont.deriveFont(13f);
+            pixelFontMini = baseFont.deriveFont(11f);
+            pixelFontMedi = baseFont.deriveFont(24f);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        darkSilver = Color.decode("#BFC7D5");
+        enhanceRed = Color.decode("#FF4444");
+        mercBlue = Color.decode("#3399FF");
+        royalGold = Color.decode("#FFBF00");
+        timMaMi = Color.decode("#8A2BE2");
     }
 }

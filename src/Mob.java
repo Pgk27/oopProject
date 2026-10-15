@@ -41,7 +41,7 @@ public class Mob extends Rectangle{
 	protected int deadDelayLimit = 1500; // Delay tại frame cuối trước khi biến mất (~1.5 đến 2 giây)
 	
 	Mob() {
-		this.walkSpeed = 3; // lower is faster
+		this.walkSpeed = 2; // lower is faster
 		this.spawnTime = 1600;
 		this.renderScale = 1.5;
 		this.dmgReduction = 0;
