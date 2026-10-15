@@ -51,8 +51,11 @@ public class Screen extends JPanel implements Runnable {
 	public static Image airplane;
 	public static Image[] explosion = new Image[8];
 
+<<<<<<< HEAD
 	public static CopyOnWriteArrayList<Spell> activeSpells = new CopyOnWriteArrayList<>();
 
+=======
+>>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
 	static Map<Integer, Image> projectiles = new HashMap<>(); 
 	// sẽ update tiếp sau
 
@@ -77,6 +80,7 @@ public class Screen extends JPanel implements Runnable {
 
 	
 	public static int gachaType;
+<<<<<<< HEAD
 	public static final int gachaTornado=1;
 	public static final int gachaEnhance=2;
 	public static final int gachaMercenary=3;
@@ -90,6 +94,23 @@ public class Screen extends JPanel implements Runnable {
 
 	public static int coinage = 200000;
 	public static int shard =0;
+=======
+	public static final int gachaBH=1;
+	public static final int gachaEnhance=2;
+	public static final int gachaMercenary=3;
+	public static final int summon=4;
+
+
+	public static boolean unlockBH = false;
+	public static boolean unlockEnhance = false;
+	public static boolean unlockMercenary = false;
+
+	public static int coinage = 99999;
+	public static int coinDauTran;
+	public static int healthDauTran;
+	public static int shard =0;
+	public static int eCore =0;
+>>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
 
 	public static boolean ok; 	//Đcm tluc thông minh vclll
 	//Con này fix bug đoạn coin sát mép số 10, đề phòng bọn nghẹo gacha ko có tiền mua tháp
@@ -103,6 +124,12 @@ public class Screen extends JPanel implements Runnable {
 	public static int offsetX = 0;
 	public static int offsetY = 0;
 
+<<<<<<< HEAD
+=======
+	// Đôi hàm chuyển tọa độ chuột từ bên Screen... sang tọa độ theo hệ quy chiếu gốc
+	// Cái này chuyển ngược so với hàm vẽ, hay phết :))
+
+>>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
 	public static Point toVirtualPoint(Point p) {
 		return toVirtualPoint(p.x, p.y);
 	}
@@ -158,6 +185,8 @@ public class Screen extends JPanel implements Runnable {
 		level = (int) ((rielLevel - 1) % 3) + 1;
 		loadLevel();
 		gameState = playGame;
+		Screen.coinDauTran = coinage;
+		Screen.healthDauTran = health;
 	}
 	
 	public void define() {
@@ -300,6 +329,16 @@ public class Screen extends JPanel implements Runnable {
 		g.fillRect(0, 0, screenWidth, screenHeight);
 
 		// 2. Calculate aspect-ratio-preserving scale and center offsets
+<<<<<<< HEAD
+=======
+		// Đcm hay vcl
+		// Screen... là cái độ dài thực tế của cái Screen(tính cả phần đen)
+		// VIRTUAL... là con độ dài được khai báo bên Frame, là cái size default để tao căn nút với vẽ ấy
+		// ScaleX/Y tính tỉ lệ, xem set theo con X hay Y
+		// draw... là cái độ dài thực tế mình vẽ lên theo tỉ lệ ok nhất(ko tính phần rìa đen)
+		// con offset là độ dài rìa đen nếu có, ko có thì nó bằng 0 nhá :D
+
+>>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
 		double scaleX = (double) screenWidth / VIRTUAL_WIDTH;
 		double scaleY = (double) screenHeight / VIRTUAL_HEIGHT;
 		scale = Math.min(scaleX, scaleY);
@@ -310,6 +349,7 @@ public class Screen extends JPanel implements Runnable {
 		offsetY = (screenHeight - drawHeight) / 2;
 
 		// 3. Fast scaling without heavy CPU antialiasing on 800+ tiles
+<<<<<<< HEAD
 		Graphics2D g2d = (Graphics2D) g.create();
 		g2d.clipRect(offsetX, offsetY, drawWidth, drawHeight);
 		g2d.translate(offsetX, offsetY);
@@ -321,6 +361,24 @@ public class Screen extends JPanel implements Runnable {
 
 		// Flushes graphics buffer to eliminate display queue stutter in fullscreen
 		Toolkit.getDefaultToolkit().sync();
+=======
+		Graphics2D g2d = (Graphics2D) g.create(); // Tạo ra 1 cái cọ khác để vẽ
+		g2d.clipRect(offsetX, offsetY, drawWidth, drawHeight); //Giới hạn vùng vẽ(x, y, dx, dy), ra ngoài = xóa
+		g2d.translate(offsetX, offsetY); // thay đổi gốc tọa độ(đến đoạn hết viền đen)
+		g2d.scale(scale, scale); //phóng to, ví dụ truyền tọa độ x, y thì auto phóng lên thành x.scale, y.scale
+		//dòng dưới này cực quan trọng
+		//Khi phóng to ảnh, java sẽ làm mờ viền
+		//Game ae mình làm pixel, phải có dòng này thì từng ô nó mới vuông đc
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+		// cái này là gọi sang hàm vẽ chính này, sau khi đã dịch gốc tọa độ và thêm thu phóng scale
+		// thì mình cứ phang cái tọa độ gốc của mình là ok thôi :>
+		gameRender.render(g2d, VIRTUAL_WIDTH, VIRTUAL_HEIGHT); 
+		
+		g2d.dispose();
+
+		// Flushes graphics buffer to eliminate display queue stutter in fullscreen
+		Toolkit.getDefaultToolkit().sync(); //Cái này để đỡ lag, cụ thể ntn t đ.. rõ nữa :))
+>>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
 	}
 
 	public void run() {

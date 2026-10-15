@@ -74,6 +74,7 @@ public class Store {
 				if (heldID == Value.TRASH_CAN) {
 					// Xóa tháp 2x2 bằng thùng rác
 					for(int y = 0; y < Screen.room.block.length; y++) {
+<<<<<<< HEAD
 						for(int x = 0; x < Screen.room.block[0].length; x++) {
 							if(Screen.room.block[y][x].contains(Screen.mse)) {
 								int rx = Screen.room.block[y][x].rootX;
@@ -114,6 +115,34 @@ public class Store {
 						for(int y= 0; y < Screen.room.block.length; y++) {
 							for(int x = 0; x < Screen.room.block[0].length; x++) {
 							if(Screen.room.block[y][x].contains(Screen.mse)) {
+=======
+						for(int x = 0; x < Screen.room.block[0].length; x++) {
+							if(Screen.room.block[y][x].contains(Screen.mse)) {
+								int rx = Screen.room.block[y][x].rootX;
+								int ry = Screen.room.block[y][x].rootY;
+								if (rx != -1 && ry != -1) {
+									for(int dy = 0; dy < 2; dy++) {
+										for(int dx = 0; dx < 2; dx++) {
+											int ny = ry + dy;
+											int nx = rx + dx;
+											if(ny >= 0 && ny < Screen.room.worldHeight && nx >= 0 && nx < Screen.room.worldWidth) {
+												Screen.room.block[ny][nx].towerID = Value.PLACEHOLDER;
+												Screen.room.block[ny][nx].rootX = -1;
+												Screen.room.block[ny][nx].rootY = -1;
+												Screen.room.block[ny][nx].currentTower = null;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				else if(Screen.coinage >= buttonPrice[realID]) {
+					for(int y= 0; y < Screen.room.block.length; y++) {
+						for(int x = 0; x < Screen.room.block[0].length; x++) {
+							if(Screen.room.block[y][x].contains(Screen.mse)) {
+>>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
 								// Ô (y, x) là Ô DƯỚI - BÊN PHẢI của tháp 2x2
 								// Cụm 2x2 gồm: (y - 1, x - 1), (y - 1, x), (y, x - 1), (y, x)
 								if(y >= 1 && y < Screen.room.worldHeight && x >= 1 && x < Screen.room.worldWidth) {
@@ -121,7 +150,11 @@ public class Store {
 									for(int dy = 0; dy < 2; dy++) {
 										for(int dx = 0; dx < 2; dx++) {
 											Block b = Screen.room.block[y - 1 + dy][x - 1 + dx];
+<<<<<<< HEAD
 											if(!isCellPlaceable(b, heldID)) {
+=======
+											if(b.isRoad() || b.towerID != Value.PLACEHOLDER) {
+>>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
 												canPlace = false;
 												break;
 											}
@@ -150,12 +183,15 @@ public class Store {
 											}
 										}
 
+<<<<<<< HEAD
 										// Nếu là Spell Black Hole: Thêm vào activeSpells
 										if (heldID == Value.SPELL_BLACK_HOLE) {
 											Block topLeft = Screen.room.block[rootY][rootX];
 											Screen.activeSpells.add(new BlackHole(topLeft.x, topLeft.y, rootX, rootY));
 										}
 
+=======
+>>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
 										Screen.coinage -= buttonPrice[realID];  
 										// delete sprite if current coin is less than the held item
 										if (Screen.coinage < buttonPrice[realID]){
@@ -348,6 +384,7 @@ public class Store {
 						}
 					}
 				}
+<<<<<<< HEAD
 			}
 			else if (heldID == Value.SPELL_BOMBER_PLANE) {
 				// Bán kính nổ mặc định tương đương 2x2 ô
@@ -372,6 +409,8 @@ public class Store {
 				g.drawLine(Screen.mse.x, Screen.mse.y - r - 12, Screen.mse.x, Screen.mse.y - 8);
 				g.drawLine(Screen.mse.x, Screen.mse.y + 8, Screen.mse.x, Screen.mse.y + r + 12);
 				g.fillOval(Screen.mse.x - 3, Screen.mse.y - 3, 6, 6);
+=======
+>>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
 			}
 			else {
 				Image holdingItem = null;
@@ -387,12 +426,15 @@ public class Store {
 				else if(heldID == Value.CANNON_TOWER) {
 					holdingItem = Screen.cannon[0];
 				}
+<<<<<<< HEAD
 				else if(heldID == Value.SPELL_BLACK_HOLE) {
 					if (Screen.blackHole != null && Screen.blackHole.length > 0) {
 						int frame = (int) ((System.currentTimeMillis() / 80) % Screen.blackHole.length);
 						holdingItem = Screen.blackHole[frame];
 					}
 				}
+=======
+>>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
 
 				for(int y = 0; y < Screen.room.block.length; y++) {
 					for(int x = 0; x < Screen.room.block[0].length; x++) {
@@ -403,7 +445,11 @@ public class Store {
 								for(int dy = 0; dy < 2; dy++) {
 									for(int dx = 0; dx < 2; dx++) {
 										Block b = Screen.room.block[y - 1 + dy][x - 1 + dx];
+<<<<<<< HEAD
 										if(!isCellPlaceable(b, heldID)) {
+=======
+										if(b.isRoad() || b.towerID != Value.PLACEHOLDER) {
+>>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
 											canPlace = false;
 											break;
 										}

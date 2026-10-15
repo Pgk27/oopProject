@@ -5,35 +5,36 @@ import java.awt.event.*;
 
 public class KeyHandel implements MouseMotionListener, MouseListener {
 
-	Rectangle startGame = new Rectangle(500, 300, 144 , 72);
-	Rectangle quitGame = new Rectangle(500, 450, 144 , 72);
+	Rectangle startGame = new Rectangle(950, 450, 144, 72);
+	Rectangle quitGame = new Rectangle(950, 590, 144, 72);
 	Rectangle settings = new Rectangle(5, 5, 35, 35);
-	Rectangle store = new Rectangle(500, 375, 144 , 72);
+	Rectangle store = new Rectangle(950, 520, 144, 72);
 	Rectangle backz = new Rectangle(5, 5, 50, 35);
-	Rectangle toGacha = new Rectangle(340, 275, 100, 40);
-	Rectangle toBuyItem = new Rectangle(515, 275, 100, 40);
-	Rectangle in4gacha = new Rectangle(640, 20, 30, 30);
-	Rectangle gachaRateFrame = new Rectangle(140, 5, 400, 555);
-	Rectangle iconShardShop = new Rectangle(620, 60, 50, 50);
-	Rectangle shardShopBigFramee = new Rectangle(90, 5, 500, 500);
+	Rectangle backz2 = new Rectangle (5, 700, 50, 35);
+	Rectangle toGacha = new Rectangle(680, 365, 170, 50);
+	Rectangle toBuyItem = new Rectangle(950, 365, 170, 50);
+	Rectangle in4gacha = new Rectangle(1110, 20, 40, 40);
+	Rectangle gachaRateFrame = new Rectangle(300, 5, 600, 750);
+	Rectangle iconShardShop = new Rectangle(1100, 80, 65, 65);
+	Rectangle shardShopBigFramee = new Rectangle(160, 30, 900, 680);
 
 
-	Rectangle gachaTornadoButt = new Rectangle(270, 250, 75, 40);
-	Rectangle gachaEnhanceButt = new Rectangle(270, 345, 75, 40);
-	Rectangle gachaMercenaryButt = new Rectangle(265, 450, 75, 40);
-	Rectangle summonHeroButt = new Rectangle(438, 410, 96, 80);
-	Rectangle thongBaoFrame = new Rectangle(168, 130, 350, 250);
+	Rectangle gachaTornadoButt = new Rectangle(500, 345,  85, 50);
+	Rectangle gachaEnhanceButt = new Rectangle(500, 475,  85, 50);
+	Rectangle gachaMercenaryButt = new Rectangle(500, 610,  90, 53);
+	Rectangle summonButt = new Rectangle(800, 545, 125, 104);
+	Rectangle thongBaoFrame = new Rectangle(360, 140, 500, 400);
 
-	Rectangle doiTornadoButt = new Rectangle(450, 145, 70, 25);
-	Rectangle doiEnhanceButt = new Rectangle(450, 210, 70, 25);
-	Rectangle doiMercenaryButt = new Rectangle(450, 275, 70, 25);
-	Rectangle doiGiantOrcButt = new Rectangle(450, 340, 70, 25);
+	Rectangle doiBHButt = new Rectangle(670, 210, 95, 30);
+	Rectangle doiEnhanceButt = new Rectangle(670, 290, 95, 30);
+	Rectangle doiMercenaryButt = new Rectangle(670, 370, 95, 30);
+	Rectangle doiECButt = new Rectangle(670, 450, 95, 30);
 
 
-	Rectangle TKWtoMenu = new Rectangle(210, 357, 125, 30);
-	Rectangle TKWtoPlay = new Rectangle(352, 357, 125, 30);
-	Rectangle TKLtoMenu = new Rectangle(210, 352, 125, 30);
-	Rectangle TKLtoPlay = new Rectangle(352, 352, 125, 30);
+	Rectangle TKWtoMenu = new Rectangle(375, 495, 220, 45);
+	Rectangle TKWtoPlay = new Rectangle(625, 495, 220, 45);
+	Rectangle TKLtoMenu = new Rectangle(375, 487, 220, 45);
+	Rectangle TKLtoPlay = new Rectangle(625, 487, 220, 45);
 
 
 	public void mouseClicked(MouseEvent e) {
@@ -54,6 +55,12 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 				e.getComponent().repaint();
 			}else if(quitGame.contains(mouseX, mouseY)) {
 				System.exit(0);
+			}
+		}
+		else if(Screen.gameState == Screen.playGame) {
+			if(backz2.contains(mouseX, mouseY)) {
+				xuLyOutGame();
+				Screen.gameState = Screen.tileScreen;
 			}
 		}
 
@@ -91,10 +98,8 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 			}
 			else if( gachaTornadoButt.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.thongBao;
-				Screen.gachaType = Screen.gachaTornado;
-				
-				logicGachaTornado();
-				
+				Screen.gachaType = Screen.gachaBH;
+				logicGachaBH();
 				e.getComponent().repaint();
 			}
 			else if( gachaEnhanceButt.contains(mouseX, mouseY)) {
@@ -109,12 +114,13 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 				logicGachaMercenary();
 				e.getComponent().repaint();
 			}
-			else if( summonHeroButt.contains(mouseX, mouseY)) {
+			else if( summonButt.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.thongBao;
-				Screen.gachaType = Screen.summonHero;
-				logicSummonHero();
+				Screen.gachaType = Screen.summon;
+				logicSummon();
 				e.getComponent().repaint();
 			}
+			
 
 
 
@@ -134,11 +140,11 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 				Screen.gameState = Screen.gacha;
 				e.getComponent().repaint();
 			}
-			else if( doiTornadoButt.contains(mouseX, mouseY)) {
-				if(Screen.coinage >= 100 && Screen.shard >=100  && Screen.unlockTornado == false) {
+			else if( doiBHButt.contains(mouseX, mouseY)) {
+				if(Screen.coinage >= 100 && Screen.shard >=100  && Screen.unlockBH == false) {
 					Screen.coinage = Screen.coinage - 100;
 					Screen.shard = Screen.shard - 100;
-					Screen.unlockTornado = true;
+					Screen.unlockBH = true;
 				}
 			}
 			else if( doiEnhanceButt.contains(mouseX, mouseY)) {
@@ -155,13 +161,14 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 					Screen.unlockMercenary = true;
 				}
 			}
-			else if( doiGiantOrcButt.contains(mouseX, mouseY)) {
-				if(Screen.coinage >= 250 && Screen.shard >=100  && Screen.unlockGiantOrc == false) {
-					Screen.coinage = Screen.coinage - 250;
-					Screen.shard = Screen.shard - 100;
-					Screen.unlockGiantOrc = true;
+			else if(doiECButt.contains(mouseX, mouseY)) {
+				if(Screen.coinage >= 200 && Screen.shard >=200) {
+					Screen.coinage = Screen.coinage - 200;
+					Screen.shard = Screen.shard - 200;
+					Screen.eCore++;
 				}
 			}
+			
 			
 		}
 
@@ -240,14 +247,14 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 	//Hàm phụ xử lí logic, thằng nào đụng vào bố chặt tay
 
-	private void logicGachaTornado() {
+	private void logicGachaBH() {
 		if(Screen.coinage >=11) {
 			Screen.coinage = Screen.coinage - 1;
 			Screen.ok=true;
 			Screen.randomNum = Screen.rand.nextInt(100) + 1;
 					
 			if (Screen.randomNum <=2) {
-				Screen.unlockTornado = true;
+				Screen.unlockBH = true;
 			}
 			else if(Screen.randomNum <=5) {
 				Screen.shard = Screen.shard + 50;
@@ -348,14 +355,14 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		}
 	}
 
-	private void logicSummonHero() {
+	private void logicSummon() {
 		if(Screen.coinage >=12) {
 			Screen.coinage = Screen.coinage - 2;
 			Screen.ok=true;
 			Screen.randomNum = Screen.rand.nextInt(100) + 1;
-					
+
 			if (Screen.randomNum ==1) {
-				Screen.unlockGiantOrc = true;
+				Screen.eCore++;
 			}
 			else if(Screen.randomNum ==2) {
 				Screen.shard = Screen.shard + 100;
@@ -384,19 +391,28 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		}
 	}
 
-	public void updateTongKetRects() {
-		int w = Screen.myWidth > 0 ? Screen.myWidth : 1204;
-		int h = Screen.myHeight > 0 ? Screen.myHeight : 741;
-		int menuX = (int) Math.round(308.0 * w / 1024.0);
-		int menuY = (int) Math.round(537.0 * h / 851.0);
-		int playX = (int) Math.round(525.0 * w / 1024.0);
-		int btnW = (int) Math.round(191.0 * w / 1024.0);
-		int btnH = (int) Math.round(49.0 * h / 851.0);
+	private void xuLyOutGame() {
+		if(Screen.coinDauTran >=60) {
+			Screen.coinage = Screen.coinDauTran - 50;
+		}
+		else {
+			Screen.coinage = 50;
+		}
 
-		TKWtoMenu = new Rectangle(menuX, menuY, btnW, btnH);
-		TKWtoPlay = new Rectangle(playX, menuY, btnW, btnH);
-		TKLtoMenu = new Rectangle(menuX, menuY, btnW, btnH);
-		TKLtoPlay = new Rectangle(playX, menuY, btnW, btnH);
+		if(Screen.healthDauTran >=2 ) {
+			Screen.health = Screen.healthDauTran - 1;
+		}
+		else {
+			Screen.health = 1;
+		}
+
+	}
+
+
+		// TKWtoMenu = new Rectangle(menuX, menuY, btnW, btnH);
+		// TKWtoPlay = new Rectangle(playX, menuY, btnW, btnH);
+		// TKLtoMenu = new Rectangle(menuX, menuY, btnW, btnH);
+		// TKLtoPlay = new Rectangle(playX, menuY, btnW, btnH);
 	}
 	
 }
