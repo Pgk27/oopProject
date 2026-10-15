@@ -218,7 +218,7 @@ public class Minion extends Mob {
 		}
 		else health += healAmount;
 	}
-
+	
 	@Override
 	boolean checkMatching(Mob[] mob){
 		// if the current target is still in Game & in range & not dead, LOCK ON it

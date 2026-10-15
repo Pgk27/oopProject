@@ -5,13 +5,21 @@ import javax.swing.*;
 public class Frame extends JFrame{
 	public static String title = "FINAL KINGDOM";
 	public static Dimension size = new Dimension(1220, 780);
-	private boolean isFullscreen = true;
+	private boolean isFullscreen = false;
 	private Screen screen;
 	
 	public Frame() {
 		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		// Chạy code = mhinh tỉ lệ gốc
+		// Đừng xóa cục này
+		// Tao phải xài cục này để check tọa độ gốc cho dễ
+
+
+		// setSize(size);
+		// setLocationRelativeTo(null);
+
 		// Fullscreen setup: borderless, maximized to screen
 		setUndecorated(true);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
