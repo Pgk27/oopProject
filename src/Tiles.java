@@ -107,7 +107,6 @@ public class Tiles {
             iconBH = readImage("tileImage/iconBH.png");
             iconEnhance = readImage("tileImage/iconEnhance1.png");
             iconMercenary = readImage("tileImage/iconMercenary1.png");
-            iconFrame = readImage("tileImage/iconFrame4.png");
             dauCong = readImage("tileImage/daucong2.png");
             muiTen = readImage("tileImage/muiten2.png");
             iconCoin = readImage("tileImage/coin4.png");

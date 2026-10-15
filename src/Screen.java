@@ -51,7 +51,7 @@ public class Screen extends JPanel implements Runnable {
 	static Map<Integer, Image> projectiles = new HashMap<>(); 
 	// sẽ update tiếp sau
 
-	public static int gameState = 8;
+	public static int gameState = 0;
 
 	public static final int tileScreen=0;
 	public static final int playGame=1;
