@@ -1,46 +1,56 @@
-
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 public class Frame extends JFrame{
 	public static String title = "FINAL KINGDOM";
 	public static Dimension size = new Dimension(1220, 780);
+	private boolean isFullscreen = true;
+	private Screen screen;
 	
 	public Frame() {
 		setTitle(title);
-		setSize(size);
-		setResizable(false); 
-		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		setLayout(new GridLayout(1,1));
-		/*
-		nghia là cửa sổ không bị phân lô bán nền như dưới:
-		1 hàng
-		┌─────────────────────┐
-		│                     │
-		│       Screen        │  ← 1 ô duy nhất
-		│                     │
-		└─────────────────────┘
-		1 cột
+		// Fullscreen setup: borderless, maximized to screen
+		setUndecorated(true);
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		setBounds(0, 0, screenSize.width, screenSize.height);
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
+		
+		setLayout(new GridLayout(1, 1));
+		screen = new Screen(this);
+		add(screen);
 
-		nếu chia thành 2,2 thì sẽ như này:
-		┌─────────┬─────────┐
-		│ Ô 1     │ Ô 2     │
-		├─────────┼─────────┤
-		│ Ô 3     │ Ô 4     │
-		└─────────┴─────────┘
-		*/
-		Screen screen = new Screen(this);
-		/*
-		từ new là để cấp phát bộ nhớ động kiểu malloc
-		Screen() được gọi là constructor và cấp vào con trỏ this để có gì lấy dữ liệu từ Frame() cho dễ
-		*/
-		add(screen); //dòng này sẽ hiện cái screen làm xong hiện lên màn hình
+		// Global hotkey: F11 to toggle fullscreen / windowed mode
+		screen.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+			KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), "toggleFullscreen");
+		screen.getActionMap().put("toggleFullscreen", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				toggleFullscreen();
+			}
+		});
+
 		setVisible(true);
 	}
-	 //hello
-	
+
+	public void toggleFullscreen() {
+		dispose();
+		isFullscreen = !isFullscreen;
+		if (isFullscreen) {
+			setUndecorated(true);
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			setBounds(0, 0, screenSize.width, screenSize.height);
+			setExtendedState(JFrame.MAXIMIZED_BOTH);
+		} else {
+			setUndecorated(false);
+			setExtendedState(JFrame.NORMAL);
+			setSize(size);
+			setLocationRelativeTo(null);
+		}
+		setVisible(true);
+	}
 	
 	public static void main(String args[]) {
         new Frame();
