@@ -413,6 +413,6 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		// TKWtoPlay = new Rectangle(playX, menuY, btnW, btnH);
 		// TKLtoMenu = new Rectangle(menuX, menuY, btnW, btnH);
 		// TKLtoPlay = new Rectangle(playX, menuY, btnW, btnH);
-	}
-	
 }
+	
+

@@ -11,11 +11,7 @@ public class Value { // CẤM ĐƯỢC THAY ĐỔI
 	
 	static protected final int PLACEHOLDER = -1;
 	static protected final int TOWER_OCCUPIED = -2;
-<<<<<<< HEAD
 	static protected final int CASTLE = 0; // Đích đến / Nhà chính (đổi từ BLACK_HOLE cũ)
-=======
-	static protected final int BLACK_HOLE = 0;
->>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
 	static protected final int TRASH_CAN = 1;
 
 
@@ -23,12 +19,9 @@ public class Value { // CẤM ĐƯỢC THAY ĐỔI
 	static protected final int MAGE_TOWER = nextId();
 	static protected final int CANNON_TOWER = nextId();
 	static protected final int GOLD_MINER = nextId(); 
-<<<<<<< HEAD
 
 	static protected final int SPELL_BLACK_HOLE = nextId(); 
 	static protected final int SPELL_BOMBER_PLANE = nextId(); 
-=======
->>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
 
 
 	static protected final int MOB_PLACEHOLDER = -1;

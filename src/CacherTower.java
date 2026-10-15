@@ -4,11 +4,7 @@ public class CacherTower extends Tower {
 
     public CacherTower(int x, int y, int width, int height) {
         // Truyền thông số: Tầm bắn 100, Sát thương 2, frame bắn 6, ID tháp
-<<<<<<< HEAD
         super(x, y, width, height, 1000, 1, 5, Value.ARCHER_TOWER); //check id
-=======
-        super(x, y, width, height, 100, 2, 5, Value.ARCHER_TOWER); //check id
->>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
     }
 
     @Override

@@ -5,19 +5,13 @@ import javax.swing.*;
 public class Frame extends JFrame{
 	public static String title = "FINAL KINGDOM";
 	public static Dimension size = new Dimension(1220, 780);
-<<<<<<< HEAD
-	private boolean isFullscreen = true;
-=======
 	private boolean isFullscreen = false;
->>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
 	private Screen screen;
 	
 	public Frame() {
 		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-<<<<<<< HEAD
-=======
 		// Chạy code = mhinh tỉ lệ gốc
 		// Đừng xóa cục này
 		// Tao phải xài cục này để check tọa độ gốc cho dễ
@@ -26,7 +20,6 @@ public class Frame extends JFrame{
 		// setSize(size);
 		// setLocationRelativeTo(null);
 
->>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
 		// Fullscreen setup: borderless, maximized to screen
 		setUndecorated(true);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

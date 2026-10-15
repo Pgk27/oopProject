@@ -63,11 +63,7 @@ public class Block extends Rectangle {
         if (currentTower != null) {
             currentTower.draw(g); 
         } 
-<<<<<<< HEAD
 		else if (towerID != Value.PLACEHOLDER && towerID != Value.TOWER_OCCUPIED && towerID != Value.SPELL_BLACK_HOLE && towerID >= 0 && towerID < Screen.tileset_air.length) {
-=======
-		else if (towerID != Value.PLACEHOLDER && towerID != Value.TOWER_OCCUPIED && towerID >= 0) {
->>>>>>> 50fcaccc3db1501ebec44cd89acd1658bfd8c0a6
             g.drawImage(Screen.tileset_air[towerID], x, y, width, height, null);
         }
 	}
