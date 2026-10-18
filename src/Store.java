@@ -228,7 +228,7 @@ public class Store {
 		
 			if(button[i].contains(Screen.mse)) {
 				g.drawImage(
-				Tiles.touchedButton,
+				Screen.tiles.touchedButton,
 				button[i].x,
 				button[i].y,
 				button[i].width,
@@ -238,7 +238,7 @@ public class Store {
 			}
 			else{
 				g.drawImage(
-				Tiles.button,
+				Screen.tiles.button,
 				button[i].x,
 				button[i].y,
 				button[i].width,
@@ -251,7 +251,7 @@ public class Store {
 			
 
 			g.drawImage(
-				Tiles.button,
+				Screen.tiles.button,
 				secondButtonRow[i].x,
 				secondButtonRow[i].y,
 				secondButtonRow[i].width,

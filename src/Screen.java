@@ -140,6 +140,9 @@ public class Screen extends JPanel implements Runnable {
 	
 	static Point mse = new Point();
 	
+	BufferedImage blankCursorImg;
+	Cursor blankCursor;
+
 	static Room room;
 	static Save save;
 	static Store store;
@@ -353,7 +356,11 @@ public class Screen extends JPanel implements Runnable {
 		loadLevel();
 		store = new Store();
 		
-		
+		// tạo con trỏ trong suốt
+		// mục đích để chèn "skin" con trỏ khác lên
+		blankCursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+		blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(blankCursorImg, new Point(0,0), "blank cursor");
+		this.setCursor(blankCursor);
 		
 		for(int i = 0; i < tileset_ground.length; i++) {
 			tileset_ground[i] = new ImageIcon("res/tileset_ground.png").getImage();

@@ -43,6 +43,13 @@ public class GameRender {
                 drawTongKetLose(g, width, height);
                 break;
         }
+
+        // vẽ con trỏ chuột custom vào game
+        if (Screen.tiles.customCursor != null){
+            int cursorWidth = 32;
+            int cursorHeight = 32;
+            g.drawImage(Screen.tiles.customCursor, Screen.mse.x, Screen.mse.y, cursorWidth, cursorHeight, null);
+        }
     }
 
     private void drawPlayGame(Graphics g, int width, int height) {
@@ -130,6 +137,14 @@ public class GameRender {
     }    
 
     private void drawSetting(Graphics g, int width, int height){
+        int x = 300;
+        int y = 375;
+
+        int backGroundWidth = 2 * x;
+        int backGroundHeight = 2 * y;
+        g.drawImage(Screen.tiles.settingMenuBackground, width / 2 - x, height / 2 - y, backGroundWidth, backGroundHeight, null);
+
+
     }
 
     private void drawGachaScreen(Graphics g, int width, int height) {

@@ -232,17 +232,13 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 	//Hàm thì gọi lung tung hết file này đến file kia, phân bố như cứt
 	//tính tọa độ thì lúc gọi frame, lúc gọi screen, loạn hết cụ lên, đọc chỉ khổ ng bảo trì
 
-
-	public void mouseDragged(MouseEvent e) { // kuleleri sürükleme
-		if(Screen.gameState == Screen.playGame) {
-			Screen.mse = Screen.toVirtualPoint(e.getX(), e.getY());
-		}
+	// cập nhật tọa độ chuột liên tục, không chỉ ở màn hình playGame
+	public void mouseDragged(MouseEvent e) {
+		Screen.mse = Screen.toVirtualPoint(e.getX(), e.getY());
 	}
 	
-	public void mouseMoved(MouseEvent e) { // kuleleri ve shoptaki slotları seçme ve görme
-		if (Screen.gameState == Screen.playGame) {
-			Screen.mse = Screen.toVirtualPoint(e.getX(), e.getY());
-		}
+	public void mouseMoved(MouseEvent e) {
+		Screen.mse = Screen.toVirtualPoint(e.getX(), e.getY());
 	}
 
 
@@ -250,7 +246,6 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 
 	//Hàm phụ xử lí logic, thằng nào đụng vào bố chặt tay
-
 	private void logicGachaBH() {
 		if(Screen.coinage >=11) {
 			Screen.coinage = Screen.coinage - 1;

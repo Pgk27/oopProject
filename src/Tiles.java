@@ -3,11 +3,12 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.Buffer;
 
 import javax.imageio.ImageIO;
 
 public class Tiles {
+    public BufferedImage customCursor;
+
     public BufferedImage tileScreen;
     public BufferedImage newGameButton;
     public BufferedImage quitGameButton;
@@ -51,8 +52,9 @@ public class Tiles {
     public BufferedImage tongKetWin;
     public BufferedImage tongKetLose;
 
-    static BufferedImage button;
-	static BufferedImage touchedButton;
+    public BufferedImage button;
+	public BufferedImage touchedButton;
+    public BufferedImage settingMenuBackground;
 
     public Font pixelFontv1;
     public Font pixelFontv2;
@@ -85,6 +87,8 @@ public class Tiles {
 
     public Tiles() {
         try {
+            customCursor = readImage("res/ui/mouse/mouse1.png");
+
             tileScreen = readImage("res/tileImage/game_tilee.png");
             newGameButton = readImage("res/tileImage/playGame2.png");
             backButton = readImage("res/tileImage/backk3.png");
@@ -130,6 +134,7 @@ public class Tiles {
 
             button = readImage("res/ui/button.png");
 		    touchedButton = readImage("res/ui/touchedButton.png");
+            settingMenuBackground = readImage("res/ui/setting/background.png");
         } catch (Exception e) {
             e.printStackTrace();
         }
