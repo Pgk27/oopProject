@@ -136,9 +136,9 @@ public class Tiles {
     
 
         try {
-            File fontFile = new File("src/font/SVN-Determination Sans.ttf");
+            File fontFile = new File("res/font/SVN-Determination Sans.ttf");
             if (!fontFile.exists()) {
-                throw new FileNotFoundException("Missing font: src/font/SVN-Determination Sans.ttf");
+                throw new FileNotFoundException("Missing font: res/font/SVN-Determination Sans.ttf");
             }
 
             Font baseFont = Font.createFont(Font.TRUETYPE_FONT, new java.io.FileInputStream(fontFile));
