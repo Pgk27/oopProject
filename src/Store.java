@@ -227,22 +227,31 @@ public class Store {
 		for(int i = 0; i < button.length; i++) {
 		
 			if(button[i].contains(Screen.mse)) {
-				g.setColor(new Color(51,204,255,100));
-				g.fillRect(button[i].x, button[i].y, button[i].width, button[i].height); // phát sáng highlight màu 'xanh' khi chỏ chuột vào store
-			}
-			
-			// Vẽ khung cho tất cả ô shop
-			g.drawImage(
-				Screen.tileset_res[0],
+				g.drawImage(
+				Tiles.touchedButton,
 				button[i].x,
 				button[i].y,
 				button[i].width,
 				button[i].height,
 				null
-			);
+				);
+			}
+			else{
+				g.drawImage(
+				Tiles.button,
+				button[i].x,
+				button[i].y,
+				button[i].width,
+				button[i].height,
+				null
+				);
+			}
+			
+			// Vẽ khung cho tất cả ô shop
+			
 
 			g.drawImage(
-				Screen.tileset_res[0],
+				Tiles.button,
 				secondButtonRow[i].x,
 				secondButtonRow[i].y,
 				secondButtonRow[i].width,

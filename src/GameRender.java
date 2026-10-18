@@ -17,7 +17,7 @@ public class GameRender {
                 drawStore(g, width, height);
                 break;
             case Screen.settings:
-                
+                drawSetting(g, width, height);
                 break;
             case Screen.selectSkill:
                 
@@ -128,6 +128,9 @@ public class GameRender {
         g.drawImage(Screen.tiles.storeOptions, 550, 20, 650, height-50, null);
         g.setColor(new Color(0, 0, 0, 200));
     }    
+
+    private void drawSetting(Graphics g, int width, int height){
+    }
 
     private void drawGachaScreen(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.gachaTile, 0, 0, width, height, null);

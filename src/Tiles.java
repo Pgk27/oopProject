@@ -3,6 +3,8 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.Buffer;
+
 import javax.imageio.ImageIO;
 
 public class Tiles {
@@ -49,6 +51,9 @@ public class Tiles {
     public BufferedImage tongKetWin;
     public BufferedImage tongKetLose;
 
+    static BufferedImage button;
+	static BufferedImage touchedButton;
+
     public Font pixelFontv1;
     public Font pixelFontv2;
     public Font pixelFontvSmall;
@@ -80,48 +85,51 @@ public class Tiles {
 
     public Tiles() {
         try {
-            tileScreen = readImage("tileImage/game_tilee.png");
-            newGameButton = readImage("tileImage/playGame2.png");
-            backButton = readImage("tileImage/backk3.png");
-            quitGameButton = readImage("tileImage/quitgame2.png");
-            settingsButton = readImage("tileImage/setting_icon2.png");
-            storeButton = readImage("tileImage/store2.png");
-            storeTile = readImage("tileImage/storeTile.png");
-            storeOptions = readImage("tileImage/storeOptionVip4.png");
-            gachaButton = readImage("tileImage/GachaButtonV2_3.png");
-            gachaTile = readImage("tileImage/GachaScreen2.png");
+            tileScreen = readImage("res/tileImage/game_tilee.png");
+            newGameButton = readImage("res/tileImage/playGame2.png");
+            backButton = readImage("res/tileImage/backk3.png");
+            quitGameButton = readImage("res/tileImage/quitgame2.png");
+            settingsButton = readImage("res/tileImage/setting_icon2.png");
+            storeButton = readImage("res/tileImage/store2.png");
+            storeTile = readImage("res/tileImage/storeTile.png");
+            storeOptions = readImage("res/tileImage/storeOptionVip4.png");
+            gachaButton = readImage("res/tileImage/GachaButtonV2_3.png");
+            gachaTile = readImage("res/tileImage/GachaScreen2.png");
 
-            gachaButt = readImage("tileImage/GachaButt3.png");
-            BlackHoleC = readImage("tileImage/BHC4.png");
-            MercenaryC = readImage("tileImage/MercenaryC3.png");
-            EnhanceC = readImage("tileImage/EnhanceC3.png");
-            summonHeroButt = readImage("tileImage/SummonH3.png");
-            in4Butt = readImage("tileImage/infoButt3.png");
-            gachaInfoFrame = readImage("tileImage/gachaInfoFrame3.png");
-            gachaRateText = readImage("tileImage/GachaRateText2.png");
-            iconShardShop = readImage("tileImage/iconShardShop3.png");
-            mysteryShard = readImage("tileImage/mysteryShard3.png");
-            shardShopBigFrame = readImage("tileImage/shardShopBigFrame3.png");
-            awakeningText = readImage("tileImage/awakeText4.png");
+            gachaButt = readImage("res/tileImage/GachaButt3.png");
+            BlackHoleC = readImage("res/tileImage/BHC4.png");
+            MercenaryC = readImage("res/tileImage/MercenaryC3.png");
+            EnhanceC = readImage("res/tileImage/EnhanceC3.png");
+            summonHeroButt = readImage("res/tileImage/SummonH3.png");
+            in4Butt = readImage("res/tileImage/infoButt3.png");
+            gachaInfoFrame = readImage("res/tileImage/gachaInfoFrame3.png");
+            gachaRateText = readImage("res/tileImage/GachaRateText2.png");
+            iconShardShop = readImage("res/tileImage/iconShardShop3.png");
+            mysteryShard = readImage("res/tileImage/mysteryShard3.png");
+            shardShopBigFrame = readImage("res/tileImage/shardShopBigFrame3.png");
+            awakeningText = readImage("res/tileImage/awakeText4.png");
 
-            iconBH = readImage("tileImage/iconBH.png");
-            iconEnhance = readImage("tileImage/iconEnhance1.png");
-            iconMercenary = readImage("tileImage/iconMercenary1.png");
-            dauCong = readImage("tileImage/daucong2.png");
-            muiTen = readImage("tileImage/muiten2.png");
-            iconCoin = readImage("tileImage/coin4.png");
-            iconCore = readImage("tileImage/core1.png");
-            congra = readImage("tileImage/congra3.png");
-            oopss = readImage("tileImage/oopss6.png");
+            iconBH = readImage("res/tileImage/iconBH.png");
+            iconEnhance = readImage("res/tileImage/iconEnhance1.png");
+            iconMercenary = readImage("res/tileImage/iconMercenary1.png");
+            dauCong = readImage("res/tileImage/daucong2.png");
+            muiTen = readImage("res/tileImage/muiten2.png");
+            iconCoin = readImage("res/tileImage/coin4.png");
+            iconCore = readImage("res/tileImage/core1.png");
+            congra = readImage("res/tileImage/congra3.png");
+            oopss = readImage("res/tileImage/oopss6.png");
 
-            awaButtV1 = readImage("tileImage/awaken.png");
-            awaButtV2 = readImage("tileImage/awaButtV2.png");
-            awaButtV3 = readImage("tileImage/awaButtV3.png");
-            purchaseSang = readImage("tileImage/purchaseSang.png");
-            purchaseToi = readImage("tileImage/purchaseToi.png");
+            awaButtV1 = readImage("res/tileImage/awaken.png");
+            awaButtV2 = readImage("res/tileImage/awaButtV2.png");
+            awaButtV3 = readImage("res/tileImage/awaButtV3.png");
+            purchaseSang = readImage("res/tileImage/purchaseSang.png");
+            purchaseToi = readImage("res/tileImage/purchaseToi.png");
 
-            tongKetWin = readImage("tileImage/tongKetWin4.png");
-            tongKetLose = readImage("tileImage/tongKetLose2.png");
+            tongKetWin = readImage("res/tileImage/tongKetWin4.png");
+            tongKetLose = readImage("res/tileImage/tongKetLose2.png");
+
+            button = readImage("res/ui/button.png");
+		    touchedButton = readImage("res/ui/touchedButton.png");
         } catch (Exception e) {
             e.printStackTrace();
         }
