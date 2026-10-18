@@ -15,14 +15,22 @@ public class Store {
 	public static int[] buttonPrice = {10,30,75,40,50,75,100,0};
 	
 	public Rectangle[] button = new Rectangle[shopWidth]; // chắc là dùng cho eventListener
-	public Rectangle buttonHealth ;
-	public Rectangle buttonCoins ;
+	public Rectangle[] secondButtonRow = new Rectangle[shopWidth];
+	public Rectangle buttonHealth;
+	public Rectangle buttonCoins;
 	
 	public boolean holdsItem = false ;
 	
 	public Store() {
 		for(int i = 0; i < button.length; i++) {
-			button[i] = new Rectangle((Screen.myWidth/2) - ((shopWidth*(buttonSize+cellSpace))/2) + ((buttonSize+cellSpace)*i), (Screen.room.block[Screen.room.worldHeight-1][0].y) +Screen.room.blockSize + awayFromRoom, buttonSize, buttonSize);
+			button[i] = new Rectangle((Screen.myWidth/2) - ((shopWidth*(buttonSize+cellSpace))/2) + ((buttonSize+cellSpace)*i), 
+									(Screen.room.block[Screen.room.worldHeight-1][0].y) + Screen.room.blockSize + awayFromRoom, 
+									buttonSize, buttonSize);
+		}
+		for(int i = 0; i < secondButtonRow.length; i++) {
+			secondButtonRow[i] = new Rectangle((Screen.myWidth/2) - ((shopWidth*(buttonSize+cellSpace))/2) + ((buttonSize+cellSpace)*i), 
+									(Screen.room.block[Screen.room.worldHeight-1][0].y) + Screen.room.blockSize + awayFromRoom + ((buttonSize + cellSpace)), 
+									buttonSize, buttonSize);
 		}
 		
 		buttonHealth = new Rectangle(Screen.room.block[0][0].x-1, button[0].y, iconSize,iconSize);
@@ -219,11 +227,9 @@ public class Store {
 		for(int i = 0; i < button.length; i++) {
 		
 			if(button[i].contains(Screen.mse)) {
-				g.setColor(new Color(51,204,255,100));  //  shoptaki slotların highlights 
-				g.fillRect(button[i].x, button[i].y, button[i].width, button[i].height); // içini dolduruyor
+				g.setColor(new Color(51,204,255,100));
+				g.fillRect(button[i].x, button[i].y, button[i].width, button[i].height); // phát sáng highlight màu 'xanh' khi chỏ chuột vào store
 			}
-
-			//g.drawImage(Screen.tileset_res[0] ,button[i].x,  button[i].y, button[i].width, button[i].height,null); // store daki slotların çizilmesi
 			
 			// Vẽ khung cho tất cả ô shop
 			g.drawImage(
@@ -232,6 +238,15 @@ public class Store {
 				button[i].y,
 				button[i].width,
 				button[i].height,
+				null
+			);
+
+			g.drawImage(
+				Screen.tileset_res[0],
+				secondButtonRow[i].x,
+				secondButtonRow[i].y,
+				secondButtonRow[i].width,
+				secondButtonRow[i].height,
 				null
 			);
 
@@ -361,7 +376,7 @@ public class Store {
 			g.drawString("Wave: " + Screen.waveManager.getCurrentWave() + " / " + Screen.waveManager.getTotalWaves(), 870,670);
 		}
 		
-		// 
+		// xử lí logic khi đang giữ tháp/item
 		if(holdsItem) {
 			if (heldID == Value.TRASH_CAN) {
 				// Highlight tháp 2x2 khi rê thùng rác vào
