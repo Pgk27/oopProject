@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -45,10 +46,23 @@ public class GameRender {
         }
 
         // vẽ con trỏ chuột custom vào game
-        if (Screen.tiles.customCursor != null){
-            int cursorWidth = 32;
-            int cursorHeight = 32;
-            g.drawImage(Screen.tiles.customCursor, Screen.mse.x, Screen.mse.y, cursorWidth, cursorHeight, null);
+        boolean isHover = KeyHandel.isHoveringButton(Screen.mse.x, Screen.mse.y);
+        BufferedImage currentCursor;
+
+        if (isHover && KeyHandel.isMousePressed) {
+            // 1. Đang click vào button
+            currentCursor = Screen.tiles.cursorPressed;
+        } else if (isHover) {
+            // 2. Đang hover trên button
+            currentCursor = Screen.tiles.cursorHover;
+        } else {
+            // 3. Chuột bình thường
+            currentCursor = Screen.tiles.cursorNormal;
+        }
+
+        if (currentCursor != null){
+            int cursorSize = 32;
+            g.drawImage(currentCursor, Screen.mse.x, Screen.mse.y, cursorSize, cursorSize, null);
         }
     }
 
@@ -137,13 +151,14 @@ public class GameRender {
     }    
 
     private void drawSetting(Graphics g, int width, int height){
-        int x = 300;
-        int y = 375;
+        int offsetFromCenterX = 300;
+        int offsetFromCenterY = 375;
 
-        int backGroundWidth = 2 * x;
-        int backGroundHeight = 2 * y;
-        g.drawImage(Screen.tiles.settingMenuBackground, width / 2 - x, height / 2 - y, backGroundWidth, backGroundHeight, null);
-
+        int menuX = width / 2 - offsetFromCenterX;
+        int menuY = height / 2 - offsetFromCenterY;
+        int menuWidth = 2 * offsetFromCenterX;
+        int menuHeight = 2 * offsetFromCenterY;
+        g.drawImage(Screen.tiles.settingMenu, menuX, menuY, menuWidth, menuHeight, null);
 
     }
 

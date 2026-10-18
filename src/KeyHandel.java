@@ -4,37 +4,38 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class KeyHandel implements MouseMotionListener, MouseListener {
+	public static boolean isMousePressed = false;
 
-	Rectangle startGame = new Rectangle(950, 450, 144, 72);
-	Rectangle quitGame = new Rectangle(950, 590, 144, 72);
-	Rectangle settings = new Rectangle(5, 5, 35, 35);
-	Rectangle store = new Rectangle(950, 520, 144, 72);
-	Rectangle backz = new Rectangle(5, 5, 50, 35);
-	Rectangle backz2 = new Rectangle (5, 700, 50, 35);
-	Rectangle toGacha = new Rectangle(680, 365, 170, 50);
-	Rectangle toBuyItem = new Rectangle(950, 365, 170, 50);
-	Rectangle in4gacha = new Rectangle(1110, 20, 40, 40);
-	Rectangle gachaRateFrame = new Rectangle(300, 5, 600, 750);
-	Rectangle iconShardShop = new Rectangle(1100, 80, 65, 65);
-	Rectangle shardShopBigFramee = new Rectangle(160, 30, 900, 680);
-
-
-	Rectangle gachaTornadoButt = new Rectangle(500, 345,  85, 50);
-	Rectangle gachaEnhanceButt = new Rectangle(500, 475,  85, 50);
-	Rectangle gachaMercenaryButt = new Rectangle(500, 610,  90, 53);
-	Rectangle summonButt = new Rectangle(800, 545, 125, 104);
-	Rectangle thongBaoFrame = new Rectangle(360, 140, 500, 400);
-
-	Rectangle doiBHButt = new Rectangle(670, 210, 95, 30);
-	Rectangle doiEnhanceButt = new Rectangle(670, 290, 95, 30);
-	Rectangle doiMercenaryButt = new Rectangle(670, 370, 95, 30);
-	Rectangle doiECButt = new Rectangle(670, 450, 95, 30);
+	static Rectangle startGame = new Rectangle(950, 450, 144, 72);
+	static Rectangle quitGame = new Rectangle(950, 590, 144, 72);
+	static Rectangle settings = new Rectangle(5, 5, 35, 35);
+	static Rectangle store = new Rectangle(950, 520, 144, 72);
+	static Rectangle backz = new Rectangle(5, 5, 50, 35);
+	static Rectangle backz2 = new Rectangle (5, 700, 50, 35);
+	static Rectangle toGacha = new Rectangle(680, 365, 170, 50);
+	static Rectangle toBuyItem = new Rectangle(950, 365, 170, 50);
+	static Rectangle in4gacha = new Rectangle(1110, 20, 40, 40);
+	static Rectangle gachaRateFrame = new Rectangle(300, 5, 600, 750);
+	static Rectangle iconShardShop = new Rectangle(1100, 80, 65, 65);
+	static Rectangle shardShopBigFramee = new Rectangle(160, 30, 900, 680);
 
 
-	Rectangle TKWtoMenu = new Rectangle(375, 495, 220, 45);
-	Rectangle TKWtoPlay = new Rectangle(625, 495, 220, 45);
-	Rectangle TKLtoMenu = new Rectangle(375, 487, 220, 45);
-	Rectangle TKLtoPlay = new Rectangle(625, 487, 220, 45);
+	static Rectangle gachaTornadoButt = new Rectangle(500, 345,  85, 50);
+	static Rectangle gachaEnhanceButt = new Rectangle(500, 475,  85, 50);
+	static Rectangle gachaMercenaryButt = new Rectangle(500, 610,  90, 53);
+	static Rectangle summonButt = new Rectangle(800, 545, 125, 104);
+	static Rectangle thongBaoFrame = new Rectangle(360, 140, 500, 400);
+
+	static Rectangle doiBHButt = new Rectangle(670, 210, 95, 30);
+	static Rectangle doiEnhanceButt = new Rectangle(670, 290, 95, 30);
+	static Rectangle doiMercenaryButt = new Rectangle(670, 370, 95, 30);
+	static Rectangle doiECButt = new Rectangle(670, 450, 95, 30);
+
+
+	static Rectangle TKWtoMenu = new Rectangle(375, 495, 220, 45);
+	static Rectangle TKWtoPlay = new Rectangle(625, 495, 220, 45);
+	static Rectangle TKLtoMenu = new Rectangle(375, 487, 220, 45);
+	static Rectangle TKLtoPlay = new Rectangle(625, 487, 220, 45);
 
 
 	public void mouseClicked(MouseEvent e) {
@@ -218,13 +219,13 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 	public void mouseExited(MouseEvent e) {
 	}
 	public void mouseReleased(MouseEvent e) {
+		if (e.getButton() == MouseEvent.BUTTON1) isMousePressed = false;
 	}
 
 	public void mousePressed(MouseEvent e) {
-		if(Screen.gameState == Screen.playGame) {
-			Screen.mse = Screen.toVirtualPoint(e.getX(), e.getY());
-			Screen.store.click(e.getButton());
-		}
+		if (e.getButton() == MouseEvent.BUTTON1) isMousePressed = true;
+		Screen.mse = Screen.toVirtualPoint(e.getX(), e.getY());
+		Screen.store.click(e.getButton());
 	}
 	
 	//con vợ nào viết dòng này thì lúc nào gần xong nhớ xóa đi nhé:)))
@@ -241,9 +242,49 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		Screen.mse = Screen.toVirtualPoint(e.getX(), e.getY());
 	}
 
+public static boolean isHoveringButton(int mouseX, int mouseY) {
+    switch (Screen.gameState) {
+        case Screen.tileScreen:
+            return startGame.contains(mouseX, mouseY) 
+                || store.contains(mouseX, mouseY) 
+                || quitGame.contains(mouseX, mouseY) 
+                || settings.contains(mouseX, mouseY);
 
+        case Screen.gameShop:
+            return backz.contains(mouseX, mouseY) 
+                || toGacha.contains(mouseX, mouseY) 
+                || toBuyItem.contains(mouseX, mouseY);
 
+        case Screen.gacha:
+            return backz.contains(mouseX, mouseY) 
+                || in4gacha.contains(mouseX, mouseY) 
+                || iconShardShop.contains(mouseX, mouseY)
+                || gachaTornadoButt.contains(mouseX, mouseY) 
+                || gachaEnhanceButt.contains(mouseX, mouseY)
+                || gachaMercenaryButt.contains(mouseX, mouseY);
 
+        case Screen.shardShop:
+            return doiEnhanceButt.contains(mouseX, mouseY) 
+                || doiMercenaryButt.contains(mouseX, mouseY);
+
+        case Screen.tongKetWin:
+            return TKWtoMenu.contains(mouseX, mouseY) || TKWtoPlay.contains(mouseX, mouseY);
+
+        case Screen.tongKetLose:
+            return TKLtoMenu.contains(mouseX, mouseY) || TKLtoPlay.contains(mouseX, mouseY);
+
+        case Screen.playGame:
+            if (Screen.store != null && Screen.store.button != null) {
+                for (Rectangle btn : Screen.store.button) {
+                    if (btn != null && btn.contains(mouseX, mouseY)) return true;
+                }
+            }
+            return false;
+
+        default:
+            return false;
+    }
+}
 
 	//Hàm phụ xử lí logic, thằng nào đụng vào bố chặt tay
 	private void logicGachaBH() {

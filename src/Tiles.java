@@ -7,12 +7,13 @@ import java.io.FileNotFoundException;
 import javax.imageio.ImageIO;
 
 public class Tiles {
-    public BufferedImage customCursor;
+    public BufferedImage cursorNormal;
+    public BufferedImage cursorHover;
+    public BufferedImage cursorPressed;
 
     public BufferedImage tileScreen;
     public BufferedImage newGameButton;
     public BufferedImage quitGameButton;
-    public BufferedImage settingsButton;
     public BufferedImage backButton;
     public BufferedImage storeButton;
     public BufferedImage storeTile;
@@ -54,7 +55,8 @@ public class Tiles {
 
     public BufferedImage button;
 	public BufferedImage touchedButton;
-    public BufferedImage settingMenuBackground;
+    public BufferedImage settingMenu;
+    public BufferedImage settingsButton;
 
     public Font pixelFontv1;
     public Font pixelFontv2;
@@ -87,13 +89,14 @@ public class Tiles {
 
     public Tiles() {
         try {
-            customCursor = readImage("res/ui/mouse/mouse1.png");
+            cursorNormal = readImage("res/ui/mouse/mouse1.png");
+            cursorHover = readImage("res/ui/mouse/mouse2.png");
+            cursorPressed = readImage("res/ui/mouse/mouse3.png");
 
             tileScreen = readImage("res/tileImage/game_tilee.png");
             newGameButton = readImage("res/tileImage/playGame2.png");
             backButton = readImage("res/tileImage/backk3.png");
             quitGameButton = readImage("res/tileImage/quitgame2.png");
-            settingsButton = readImage("res/tileImage/setting_icon2.png");
             storeButton = readImage("res/tileImage/store2.png");
             storeTile = readImage("res/tileImage/storeTile.png");
             storeOptions = readImage("res/tileImage/storeOptionVip4.png");
@@ -134,7 +137,8 @@ public class Tiles {
 
             button = readImage("res/ui/button.png");
 		    touchedButton = readImage("res/ui/touchedButton.png");
-            settingMenuBackground = readImage("res/ui/setting/background.png");
+            settingMenu = readImage("res/ui/setting/menu.png");
+            settingsButton = readImage("res/ui/setting/icon.png");
         } catch (Exception e) {
             e.printStackTrace();
         }
