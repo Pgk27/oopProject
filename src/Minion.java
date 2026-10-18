@@ -14,7 +14,7 @@ public class Minion extends Mob {
 
     Minion(){    
 		this.renderScale = 1.8;
-		this.dmgReduction = 0; 
+		this.dmgReduction = 0;
 		this.attackDmg = 20;
 		this.mobSize = 80;
 	}
@@ -71,6 +71,8 @@ public class Minion extends Mob {
 
 		// set tầm bắn
 		this.rangeBox.setBounds(x - shootRange, y - shootRange/ 2, width + shootRange * 2, height + shootRange);
+		// set tầm đánh là sprite của minion luôn
+		this.attackRangeBox.setBounds(x, y, mobSize, mobSize); 
 
 		this.mobID = mobID;
 		this.health = mobSize;
@@ -87,9 +89,12 @@ public class Minion extends Mob {
 	
 	@Override
 	public void physic(){
+		// set tầm đánh (bên trái)
+		
+
 		if (isDying){ // tính toán frame cho animation mob chết
-			if (Screen.mobOrcDeadAnim != null && Screen.mobOrcDeadAnim.length > 0){
-				if (deadFrame < Screen.mobOrcDeadAnim.length - 1){
+			if (Screen.minionDeadAnim != null && Screen.minionDeadAnim.length > 0){
+				if (deadFrame < Screen.minionDeadAnim.length - 1){
 					deadTick++;
 					if (deadTick >= deadSpeed){
 						deadFrame++;
@@ -113,12 +118,8 @@ public class Minion extends Mob {
 			this.target = null;
 		}
 
-		if (!checkMatching(Screen.mobs) && !checkMatching(Screen.mobss) && !checkMatching(Screen.mobsss)){
-			isMatching = false;
-		} else{
-			isMatching = true;
-			isShooting = false; // ngừng bắn khi vào tầm đánh cận chiến
-		}
+		isMatching = checkMatching(Screen.mobs, Screen.mobss, Screen.mobsss);
+		isShooting = !isMatching; // nếu không bắn cung thì đánh cận chiến và ngược lại
 
 		if(isMatching){
 			int currentAttackFrame = Screen.AnimFrame % 6;
@@ -212,7 +213,7 @@ public class Minion extends Mob {
 		inGame = false;
 	}
 
-	public void selfHeal(){
+	private void selfHeal(){
 		if (health + healAmount >= maxHealth){
 			health = maxHealth;
 		}
@@ -220,26 +221,28 @@ public class Minion extends Mob {
 	}
 	
 	@Override
-	boolean checkMatching(Mob[] mob){
+	boolean checkMatching(Mob[]... mobGroups){
 		// if the current target is still in Game & in range & not dead, LOCK ON it
 		if (this.target != null && this.target.inGame && this.intersects(this.target) &&  !this.target.isDead()){
-			this.isMatching = true;
 			return true;
 		}
 
 		// otherwise, switch to a new target
-		for (int i = 0; i < mob.length; i++){
-			if (this.intersects(mob[i]) && mob[i] != null && mob[i].inGame && !mob[i].isDead()){
-				this.isMatching = true;
-				this.target = mob[i];
-				this.target.gotDamage = true;
-				this.target.lastGotDamagedTime = System.currentTimeMillis();
-				return true;
+		for (Mob[] mob : mobGroups){
+			for (int i = 0; i < mob.length; i++){
+				if (this.intersects(mob[i]) && mob[i] != null && mob[i].inGame && !mob[i].isDead()){
+					this.isMatching = true;
+					this.target = mob[i];
+					this.target.gotDamage = true;
+					this.target.lastGotDamagedTime = System.currentTimeMillis();
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 
+	@Override
 	public Image getSprite(){
 		if (isDying){ // dying mob animation
 			if (Screen.minionDeadAnim != null && Screen.minionDeadAnim.length > 0){

@@ -16,27 +16,38 @@ public class Screen extends JPanel implements Runnable {
 	static Image[] tileset_air = new Image[100];
 	static Image[] tileset_res = new Image[100];    
 	
-	// initilizers for animations
+	// khởi tạo chu kì animation
+	// Orc
 	static Image[] mobOrcWalkAnim = new Image[8]; // 8 walking frames
 	static Image[] mobOrcDeadAnim = new Image[4];
 	static Image[] mobOrcAttack1Anim = new Image[6];
 	static Image[] mobOrcAttack2Anim = new Image[6];
 
+	// Demon
 	static Image[] mobDemonWalkAnim = new Image[8];
 	static Image[] mobDemonDeadAnim = new Image[4];
 	static Image[] mobDemonAttack1Anim = new Image[8];
 	static Image[] mobDemonAttack2Anim = new Image[8];
 
-	static Image[] mobSlimeWalkAnim = new Image[8]; // cat has 10 running frames
+	// Slime
+	static Image[] mobSlimeWalkAnim = new Image[8];
 	static Image[] mobSlimeDeadAnim = new Image[7];
 	static Image[] mobSlimeAttack1Anim = new Image[8];
 	static Image[] mobSlimeAttack2Anim = new Image[8];
 
+	// Minion
 	static Image[] minionIdleAnim = new Image[6];
 	static Image[] minionDeadAnim = new Image[4];
 	static Image[] minionAttack1Anim = new Image[6];
 	static Image[] minionAttack2Anim = new Image[6];
 	static Image[] minionShootingAnim = new Image[9];
+
+	// Mercenary
+	static Image mercenaryIcon;
+	static Image[] mercenaryIdleAnim = new Image[4];
+	static Image[] mercenaryDeadAnim = new Image[5];
+	static Image[] mercenaryAttackAnim = new Image[7];
+	
 
 	static int AnimFrame = 0;
 	static int AnimTime = 40; // ANIMATION FRAME DELAY
@@ -48,8 +59,9 @@ public class Screen extends JPanel implements Runnable {
 	static Image[] cannon = new Image[8];
 	static Image[] goldMiner = new Image[8];
 	public static Image[] blackHole = new Image[8];
-	public static Image airplane;
 	public static Image[] explosion = new Image[8];
+	public static Image airplane;
+	
 
 	public static CopyOnWriteArrayList<Spell> activeSpells = new CopyOnWriteArrayList<>();
 
@@ -87,11 +99,11 @@ public class Screen extends JPanel implements Runnable {
 	public static boolean unlockEnhance = false;
 	public static boolean unlockMercenary = false;
 
-	public static int coinage = 99999;
+	public static int coinage = 999999;
 	public static int coinDauTran;
 	public static int healthDauTran;
 	public static int shard =0;
-	public static int eCore =0;
+	public static int energyCore =0;
 
 	public static boolean ok; 	//Đcm tluc thông minh vclll
 	//Con này fix bug đoạn coin sát mép số 10, đề phòng bọn nghẹo gacha ko có tiền mua tháp
@@ -139,6 +151,7 @@ public class Screen extends JPanel implements Runnable {
 	static Mob2[] mobss = new Mob2[100];
 	static Mob3[] mobsss = new Mob3[100];
 	static Minion[] mini = new Minion[10];
+	static Mercenary[] merc = new Mercenary[10];
 
 	public Frame frame;
 	private GameRender gameRender = new GameRender();
@@ -165,98 +178,6 @@ public class Screen extends JPanel implements Runnable {
 		Screen.coinDauTran = coinage;
 		Screen.healthDauTran = health;
 	}
-	
-	public void define() {
-		save = new Save();
-		Screen.tiles = new Tiles();
-		loadLevel();
-		store = new Store();
-		
-		for(int i = 0; i < tileset_ground.length; i++) {
-			tileset_ground[i] = new ImageIcon("res/tileset_ground.png").getImage();
-			tileset_ground[i] = createImage(new FilteredImageSource(tileset_ground[i].getSource(), new CropImageFilter(0, 26*i, 26, 26)));
-		}
-		for(int i = 0; i < tileset_air.length; i++) {
-			tileset_air[i] = new ImageIcon("res/tileset_air.png").getImage();
-			tileset_air[i] = createImage(new FilteredImageSource(tileset_air[i].getSource(), new CropImageFilter(0, 26*i, 26, 26)));
-		}
-
-		for (int i = 0; i < cacherTower.length; i++) {
-			cacherTower[i] = loadFrame("characterSprites/cacherTower/cacherTower" + i + ".png");
-		}
-		for (int i = 0; i < mageTower.length; i++) {
-			mageTower[i] = loadFrame("characterSprites/mageTower/mageTower" + i + ".png");
-		}
-		for(int i = 0; i < cannon.length; i++){
-			cannon[i] = loadFrame("characterSprites/cannon/cannon" + i + ".png");
-		}
-		for(int i = 0; i < goldMiner.length; i++){
-			goldMiner[i] = loadFrame("characterSprites/goldMiner/goldMiner" + i + ".png");
-		}
-		for(int i = 0; i < blackHole.length; i++){
-			blackHole[i] = loadFrame("characterSprites/blackHole/blackHole" + i + ".png");
-		}
-		airplane = loadFrame("characterSprites/airplane/airplane.png");
-		for(int i = 0; i < explosion.length; i++){
-			explosion[i] = loadFrame("characterSprites/airplane/explosion" + i + ".png");
-		}
-		
-		tileset_res[0] = new ImageIcon("res/cell.png").getImage();
-		tileset_res[1] = new ImageIcon("res/heart.png").getImage();
-		tileset_res[2] = new ImageIcon("res/coin.png").getImage();
-		
-		for (int i = 0; i < mobOrcWalkAnim.length; i++){
-			mobOrcWalkAnim[i] = loadFrame("characterSprites/orc/walk00" + i + ".png");
-			mobDemonWalkAnim[i] = loadFrame("characterSprites/demon/walk00" + i + ".png");
-			mobSlimeWalkAnim[i] = loadFrame("characterSprites/slime/walk00" + i + ".png");
-		}
-		for (int i = 0; i < mobOrcDeadAnim.length; i++){
-			mobOrcDeadAnim[i] = loadFrame("characterSprites/orc/dead00" + i + ".png");
-			mobDemonDeadAnim[i] = loadFrame("characterSprites/demon/dead00" + i + ".png");
-		}
-		for(int i = 0; i < mobSlimeDeadAnim.length; i++){
-			mobSlimeDeadAnim[i] = loadFrame("characterSprites/slime/dead00" + i + ".png");
-		}
-
-		for (int i = 0; i < minionIdleAnim.length; i++){
-			minionIdleAnim[i] = loadFrame("characterSprites/minion/idle00" + i + ".png");
-		}
-
-		for (int i = 0; i < mobOrcAttack1Anim.length; i++){
-			mobOrcAttack1Anim[i] = loadFrame("characterSprites/orc/attack100" + i + ".png");
-			mobOrcAttack2Anim[i] = loadFrame("characterSprites/orc/attack200" + i + ".png");
-		}
-
-		for (int i = 0; i < mobDemonAttack1Anim.length; i++){
-			mobDemonAttack1Anim[i] = loadFrame("characterSprites/demon/attack100" + i + ".png");
-			mobDemonAttack2Anim[i] = loadFrame("characterSprites/demon/attack200" + i + ".png");
-		}
-
-		for (int i = 0; i < mobSlimeAttack1Anim.length; i++){
-			mobSlimeAttack1Anim[i] = loadFrame("characterSprites/slime/attack100" + i + ".png");
-			mobSlimeAttack2Anim[i] = loadFrame("characterSprites/slime/attack200" + i + ".png");
-		}
-
-		for (int i = 0; i < minionAttack1Anim.length; i++){
-			minionAttack1Anim[i] = loadFrame("characterSprites/minion/attack100" + i + ".png");
-			minionAttack2Anim[i] = loadFrame("characterSprites/minion/attack200" + i + ".png");
-		}
-
-		for (int i = 0; i < minionShootingAnim.length; i++){
-			minionShootingAnim[i] = loadFrame("characterSprites/minion/bowAttack00" + i + ".png");
-		}
-		
-		for (int i = 0; i < minionDeadAnim.length; i++){
-			minionDeadAnim[i] = loadFrame("characterSprites/minion/dead00" + i + ".png");
-		}
-
-		projectiles.put(Value.ARCHER_TOWER, loadFrame("characterSprites/cacherTower/arrow000.png"));
-		projectiles.put(Value.MAGE_TOWER, loadFrame("characterSprites/mageTower/energyBall.png"));
-		projectiles.put(Value.CANNON_TOWER, loadFrame("characterSprites/cannon/cannonBall.png"));
-		projectiles.put(Value.MINION_SOLDIER, loadFrame("characterSprites/cacherTower/arrow002.png"));
-		
-		loadLevel();
-	}
 
 	public static void loadLevel() {
 		room = new Room();
@@ -281,6 +202,10 @@ public class Screen extends JPanel implements Runnable {
 
 		for (int i = 0; i < mini.length; i++){
 			mini[i] = new Minion();
+		}
+
+		for (int i = 0; i < mini.length; i++){
+			merc[i] = new Mercenary();
 		}
 		
 		waveManager = new WaveManager(level);
@@ -349,7 +274,6 @@ public class Screen extends JPanel implements Runnable {
 					waveManager.update();
 					hasWon(); // Liên tục kiểm tra điều kiện thắng để bắt kịp lúc animation quái chết kết thúc
 					
-					// Advance animation cycle ==> ??????? sos cứu t Cường ơi éo hiểu :))))
 					AnimTick++;
 					if (AnimTick >= AnimTime) {
 						AnimFrame++;
@@ -383,6 +307,12 @@ public class Screen extends JPanel implements Runnable {
 						}
 					}
 
+					for (int i = 0; i < merc.length; i++){
+						if(merc[i].inGame){
+							merc[i].physic();
+						}
+					}
+
 					for (Projectiles a : pjt) {
 						a.physic();
 						if (a.hasRemoved) {
@@ -401,7 +331,7 @@ public class Screen extends JPanel implements Runnable {
 				}
 				if (health <= 0) {
 					gameState = tongKetLose;
-					health = rand.nextInt(3) + 2; // reset health random ;))
+					health = rand.nextInt(3) + 2; // reset health random ;)) // chịu em lực
 				} else if (isWin) {
 					rielLevel++;
 					gameState = tongKetWin;
@@ -412,6 +342,112 @@ public class Screen extends JPanel implements Runnable {
 				Thread.sleep(1);// acılma süresi
 			} catch(Exception e)  {}
 		}
+	}
+
+	// đẩy define xuống dưới vì nó kém quan trọng, phải lướt nhiều >:(
+	public void define() {
+		save = new Save();
+		Screen.tiles = new Tiles();
+		loadLevel();
+		store = new Store();
+		
+		for(int i = 0; i < tileset_ground.length; i++) {
+			tileset_ground[i] = new ImageIcon("res/tileset_ground.png").getImage();
+			tileset_ground[i] = createImage(new FilteredImageSource(tileset_ground[i].getSource(), new CropImageFilter(0, 26*i, 26, 26)));
+		}
+		for(int i = 0; i < tileset_air.length; i++) {
+			tileset_air[i] = new ImageIcon("res/tileset_air.png").getImage();
+			tileset_air[i] = createImage(new FilteredImageSource(tileset_air[i].getSource(), new CropImageFilter(0, 26*i, 26, 26)));
+		}
+
+		for (int i = 0; i < cacherTower.length; i++) {
+			cacherTower[i] = loadFrame("characterSprites/cacherTower/cacherTower" + i + ".png");
+		}
+		for (int i = 0; i < mageTower.length; i++) {
+			mageTower[i] = loadFrame("characterSprites/mageTower/mageTower" + i + ".png");
+		}
+		for(int i = 0; i < cannon.length; i++){
+			cannon[i] = loadFrame("characterSprites/cannon/cannon" + i + ".png");
+		}
+		for(int i = 0; i < goldMiner.length; i++){
+			goldMiner[i] = loadFrame("characterSprites/goldMiner/goldMiner" + i + ".png");
+		}
+		for(int i = 0; i < blackHole.length; i++){
+			blackHole[i] = loadFrame("characterSprites/blackHole/blackHole" + i + ".png");
+		}
+		airplane = loadFrame("characterSprites/airplane/airplane.png");
+		for(int i = 0; i < explosion.length; i++){
+			explosion[i] = loadFrame("characterSprites/airplane/explosion" + i + ".png");
+		}
+
+		
+		tileset_res[0] = new ImageIcon("res/cell.png").getImage();
+		tileset_res[1] = new ImageIcon("res/heart.png").getImage();
+		tileset_res[2] = new ImageIcon("res/coin.png").getImage();
+		
+		for (int i = 0; i < mobOrcWalkAnim.length; i++){
+			mobOrcWalkAnim[i] = loadFrame("characterSprites/orc/walk00" + i + ".png");
+			mobDemonWalkAnim[i] = loadFrame("characterSprites/demon/walk00" + i + ".png");
+			mobSlimeWalkAnim[i] = loadFrame("characterSprites/slime/walk00" + i + ".png");
+		}
+		for (int i = 0; i < mobOrcDeadAnim.length; i++){
+			mobOrcDeadAnim[i] = loadFrame("characterSprites/orc/dead00" + i + ".png");
+			mobDemonDeadAnim[i] = loadFrame("characterSprites/demon/dead00" + i + ".png");
+		}
+		for(int i = 0; i < mobSlimeDeadAnim.length; i++){
+			mobSlimeDeadAnim[i] = loadFrame("characterSprites/slime/dead00" + i + ".png");
+		}
+
+
+		for (int i = 0; i < minionIdleAnim.length; i++){
+			minionIdleAnim[i] = loadFrame("characterSprites/minion/idle00" + i + ".png");
+		}
+
+		mercenaryIcon = loadFrame("characterSprites/mercenary/icon.png");
+		for (int i = 0; i < mercenaryIdleAnim.length; i++){
+			mercenaryIdleAnim[i] = loadFrame("characterSprites/mercenary/idle00" + i + ".png");
+		}
+		for (int i = 0; i < mercenaryDeadAnim.length; i++){
+			mercenaryDeadAnim[i] = loadFrame("characterSprites/mercenary/dead00" + i + ".png");
+		}
+		for (int i = 0; i < mercenaryAttackAnim.length; i++){
+			mercenaryAttackAnim[i] = loadFrame("characterSprites/mercenary/attack00" + i + ".png");
+		}
+
+		for (int i = 0; i < mobOrcAttack1Anim.length; i++){
+			mobOrcAttack1Anim[i] = loadFrame("characterSprites/orc/attack100" + i + ".png");
+			mobOrcAttack2Anim[i] = loadFrame("characterSprites/orc/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < mobDemonAttack1Anim.length; i++){
+			mobDemonAttack1Anim[i] = loadFrame("characterSprites/demon/attack100" + i + ".png");
+			mobDemonAttack2Anim[i] = loadFrame("characterSprites/demon/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < mobSlimeAttack1Anim.length; i++){
+			mobSlimeAttack1Anim[i] = loadFrame("characterSprites/slime/attack100" + i + ".png");
+			mobSlimeAttack2Anim[i] = loadFrame("characterSprites/slime/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < minionAttack1Anim.length; i++){
+			minionAttack1Anim[i] = loadFrame("characterSprites/minion/attack100" + i + ".png");
+			minionAttack2Anim[i] = loadFrame("characterSprites/minion/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < minionShootingAnim.length; i++){
+			minionShootingAnim[i] = loadFrame("characterSprites/minion/bowAttack00" + i + ".png");
+		}
+		
+		for (int i = 0; i < minionDeadAnim.length; i++){
+			minionDeadAnim[i] = loadFrame("characterSprites/minion/dead00" + i + ".png");
+		}
+
+		projectiles.put(Value.ARCHER_TOWER, loadFrame("characterSprites/cacherTower/arrow000.png")); // bắn tên thường
+		projectiles.put(Value.MAGE_TOWER, loadFrame("characterSprites/mageTower/energyBall.png"));
+		projectiles.put(Value.CANNON_TOWER, loadFrame("characterSprites/cannon/cannonBall.png"));
+		projectiles.put(Value.MINION_SOLDIER, loadFrame("characterSprites/cacherTower/arrow002.png")); // bắn tên đỏ
+		
+		loadLevel();
 	}
 
 	// crop frame by frame

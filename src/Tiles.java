@@ -61,7 +61,7 @@ public class Tiles {
     public Color purpleHole;
     public Color enhanceRed;
     public Color mercBlue;
-    public Color timMaMi;
+    public Color gloomyPurple;
     
 
 
@@ -147,6 +147,6 @@ public class Tiles {
         enhanceRed = Color.decode("#FF4444");
         mercBlue = Color.decode("#3399FF");
         royalGold = Color.decode("#FFBF00");
-        timMaMi = Color.decode("#8A2BE2");
+        gloomyPurple = Color.decode("#8A2BE2");
     }
 }

@@ -84,6 +84,12 @@ public class GameRender {
             }
         }
 
+        for (int i = 0; i < Screen.merc.length; i++){
+            if (Screen.merc[i] != null && Screen.merc[i].inGame){
+                renderMobs.add(Screen.merc[i]);
+            }
+        }
+
         // sắp xếp quái theo tọa độ y --> con nào có tọa độ y nhỏ hơn thì được vẽ trước
         // tránh trường hợp con ở trên đè lên con ở dưới
         renderMobs.sort(Comparator.comparingInt(m -> m.y));
@@ -121,8 +127,6 @@ public class GameRender {
         g.drawImage(Screen.tiles.backButton, 5, 5, 50, 35, null);
         g.drawImage(Screen.tiles.storeOptions, 550, 20, 650, height-50, null);
         g.setColor(new Color(0, 0, 0, 200));
-        
-
     }    
 
     private void drawGachaScreen(Graphics g, int width, int height) {
@@ -279,13 +283,13 @@ public class GameRender {
         g.drawImage(Screen.tiles.iconCore, 590, 440, 50, 50, null);
 
        
-        g.setColor(Screen.tiles.timMaMi);
+        g.setColor(Screen.tiles.gloomyPurple);
         g.drawString("Black Hole", 585, 260);
         g.setColor(Screen.tiles.enhanceRed);
         g.drawString("Enhancement", 580, 340);
         g.setColor(Screen.tiles.mercBlue);
         g.drawString("Mercenary", 585, 420);
-        g.setColor(Screen.tiles.timMaMi);
+        g.setColor(Screen.tiles.gloomyPurple);
         g.drawString("Energy Core", 580, 500);
 
         drawButtTraoDoi(g, 670, 210, 95, 30, Screen.unlockBH);
@@ -364,7 +368,7 @@ public class GameRender {
             if(Screen.gachaType == Screen.summon) {
                 if(Screen.randomNum == 1) {
                     g.drawImage(Screen.tiles.iconCore, 559, 329, 102, 102, null);
-                    g.setColor(Screen.tiles.timMaMi);
+                    g.setColor(Screen.tiles.gloomyPurple);
                     g.setFont(Screen.tiles.pixelFontMedi);
                     g.drawString("Energy Core", 542, 455);
                 }
@@ -422,7 +426,7 @@ public class GameRender {
                 if(Screen.randomNum <= 2) {
                     if(Screen.gachaType == Screen.gachaBH) {
                         g.drawImage(Screen.tiles.iconBH, 559, 329, 102, 102, null);
-                        g.setColor(Screen.tiles.timMaMi);
+                        g.setColor(Screen.tiles.gloomyPurple);
                         g.setFont(Screen.tiles.pixelFontMedi);
                         g.drawString("Black Hole", 550, 455);
                     }

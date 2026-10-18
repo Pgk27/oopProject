@@ -11,8 +11,8 @@ public class Store {
 	public static int itemIn = 4;   // khi vào trong game thì mỗi cạnh được ép xuống 4 pixel
 	public static int heldID = -1;
 	public static int realID = -1;
-	public static int[] buttonID = {Value.ARCHER_TOWER, Value.MAGE_TOWER ,Value.CANNON_TOWER ,Value.GOLD_MINER ,Value.SPELL_BLACK_HOLE ,Value.SPELL_BOMBER_PLANE ,Value.PLACEHOLDER ,Value.TRASH_CAN  };  //thứ tự hiển thị trong shop
-	public static int[] buttonPrice = {10,30,75,40,50,75,0,0};
+	public static int[] buttonID = {Value.ARCHER_TOWER, Value.MAGE_TOWER ,Value.CANNON_TOWER ,Value.GOLD_MINER ,Value.SPELL_BLACK_HOLE ,Value.SPELL_BOMBER_PLANE ,Value.SPELL_MERCENARY ,Value.TRASH_CAN  };  //thứ tự hiển thị trong shop
+	public static int[] buttonPrice = {10,30,75,40,50,75,100,0};
 	
 	public Rectangle[] button = new Rectangle[shopWidth]; // chắc là dùng cho eventListener
 	public Rectangle buttonHealth ;
@@ -113,10 +113,31 @@ public class Store {
 					else {
 						for(int y= 0; y < Screen.room.block.length; y++) {
 							for(int x = 0; x < Screen.room.block[0].length; x++) {
-							if(Screen.room.block[y][x].contains(Screen.mse)) {
-								// Ô (y, x) là Ô DƯỚI - BÊN PHẢI của tháp 2x2
-								// Cụm 2x2 gồm: (y - 1, x - 1), (y - 1, x), (y, x - 1), (y, x)
-								if(y >= 1 && y < Screen.room.worldHeight && x >= 1 && x < Screen.room.worldWidth) {
+								if(Screen.room.block[y][x].contains(Screen.mse) && 
+									y >= 1 && y < Screen.room.worldHeight && x >= 1 && x < Screen.room.worldWidth) {
+									// nếu là spell mercenary thì  khi đặt, nó chỉ được chiếm 1 ô
+									if (heldID == Value.SPELL_MERCENARY){
+										Block b = Screen.room.block[y][x];
+										if (isCellPlaceable(b, heldID)){
+											Screen.room.block[y][x].towerID = Value.TOWER_OCCUPIED;
+											for (int i = 0; i < Screen.merc.length; i++){
+												if (!Screen.merc[i].inGame){
+													int rootX = x;
+													int rootY = y;
+													Screen.merc[i].spawnMob(b.x, b.y, rootX, rootY, Value.SPELL_MERCENARY);
+													Screen.coinage -= buttonPrice[realID];
+
+													if (Screen.coinage < buttonPrice[realID]){
+														holdsItem = false;
+														realID = -1;
+														heldID = -1;
+													}
+													break; // CỰC QUAN TRỌNG: mỗi lần click đảm bảo sinh ra ĐÚNG MỘT CON
+												}
+											}
+										}
+										continue;
+									}
 									boolean canPlace = true;
 									for(int dy = 0; dy < 2; dy++) {
 										for(int dx = 0; dx < 2; dx++) {
@@ -128,7 +149,8 @@ public class Store {
 										}
 										if(!canPlace) break;
 									}
-
+									// Ô (y, x) là Ô DƯỚI - BÊN PHẢI của tháp 2x2
+									// Cụm 2x2 gồm: (y - 1, x - 1), (y - 1, x), (y, x - 1), (y, x)
 									if(canPlace) {
 										int rootY = y - 1;
 										int rootX = x - 1;
@@ -171,7 +193,6 @@ public class Store {
 				}
 			}
 		}
-		}
 
 		// stop holding item when pressing right click
 		else if (mouseButton == 3){
@@ -183,7 +204,7 @@ public class Store {
 	
 	private boolean isCellPlaceable(Block b, int itemID) {
 		if (b.towerID == Value.PLACEHOLDER) {
-			if (itemID == Value.SPELL_BLACK_HOLE) {
+			if (itemID == Value.SPELL_BLACK_HOLE || itemID == Value.SPELL_MERCENARY) {
 				return b.isRoad();
 			}
 			return !b.isRoad();
@@ -285,6 +306,19 @@ public class Store {
 				}
 			}
 
+			if (buttonID[i] == Value.SPELL_MERCENARY){
+				if (Screen.mercenaryIdleAnim != null){
+					g.drawImage(
+						Screen.mercenaryIcon,
+						button[i].x + itemIn,
+						button[i].y + itemIn,
+						button[i].width - itemIn * 2,
+						button[i].height - itemIn * 2,
+						null
+					);
+				}
+			}
+
 			if (buttonID[i] != Value.PLACEHOLDER && buttonID[i] != Value.SPELL_BLACK_HOLE && buttonID[i] != Value.SPELL_BOMBER_PLANE && i > 3) {
 				g.drawImage(
 					Screen.tileset_air[buttonID[i]],
@@ -312,13 +346,13 @@ public class Store {
 			}
 		}
 		
-		g.drawImage(Screen.tileset_res[1], buttonHealth.x, buttonHealth.y, buttonHealth.width, buttonHealth.height,null);//kalp resmini koyuyor
-		g.drawImage(Screen.tileset_res[2], buttonCoins.x, buttonCoins.y, buttonCoins.width, buttonCoins.height,null);//coin resmini koyuyor
+		g.drawImage(Screen.tileset_res[1], buttonHealth.x, buttonHealth.y, buttonHealth.width, buttonHealth.height,null);
+		g.drawImage(Screen.tileset_res[2], buttonCoins.x, buttonCoins.y, buttonCoins.width, buttonCoins.height,null);
 		g.setFont(new Font("Corier New", Font.BOLD,14));
 		g.setColor(new Color(255,255,255));
-		g.drawString(""+ Screen.health, buttonHealth.x + buttonHealth.width + iconSpace, buttonHealth.y + iconTextY);//kac canımız kaldığını kalbin yanına yazıyor
+		g.drawString(""+ Screen.health, buttonHealth.x + buttonHealth.width + iconSpace, buttonHealth.y + iconTextY);
 		
-		g.drawString(""+ Screen.coinage, buttonCoins.x + buttonCoins.width + iconSpace, buttonCoins.y + iconTextY); //kac coin kaldığını coinin yanına yazıyor
+		g.drawString(""+ Screen.coinage, buttonCoins.x + buttonCoins.width + iconSpace, buttonCoins.y + iconTextY);
 		
 		
 		g.drawString("Killed = "+ Screen.killed, 870,640); // killed / show
@@ -327,8 +361,8 @@ public class Store {
 			g.drawString("Wave: " + Screen.waveManager.getCurrentWave() + " / " + Screen.waveManager.getTotalWaves(), 870,670);
 		}
 		
-		
-		if(holdsItem) {// store dan elimize aldığımız kule vs.
+		// 
+		if(holdsItem) {
 			if (heldID == Value.TRASH_CAN) {
 				// Highlight tháp 2x2 khi rê thùng rác vào
 				for(int y = 0; y < Screen.room.block.length; y++) {
@@ -372,6 +406,34 @@ public class Store {
 				g.drawLine(Screen.mse.x, Screen.mse.y - r - 12, Screen.mse.x, Screen.mse.y - 8);
 				g.drawLine(Screen.mse.x, Screen.mse.y + 8, Screen.mse.x, Screen.mse.y + r + 12);
 				g.fillOval(Screen.mse.x - 3, Screen.mse.y - 3, 6, 6);
+			}
+			else if (heldID == Value.SPELL_MERCENARY){ // vẽ 1 ô only
+				Image holdingItem = Screen.mercenaryIdleAnim[0];
+				for(int y = 0; y < Screen.room.block.length; y++) {
+					for(int x = 0; x < Screen.room.block[0].length; x++) {
+						if(Screen.room.block[y][x].contains(Screen.mse)) {
+							// Ô (y, x) là ô Dưới - Bên Phải của cụm 2x2
+							if(y >= 1 && y < Screen.room.worldHeight && x >= 1 && x < Screen.room.worldWidth) {
+								Block b = Screen.room.block[y][x];
+								boolean canPlace = isCellPlaceable(b, heldID);
+								int blockSize = Screen.room.blockSize;
+
+								if(canPlace) {
+									g.setColor(new Color(0, 255, 0, 80));
+								} else {
+									g.setColor(new Color(255, 0, 0, 80));
+								}
+								g.fillRect(b.x, b.y, blockSize, blockSize);
+								g.setColor(canPlace ? Color.GREEN : Color.RED);
+								g.drawRect(b.x, b.y, blockSize, blockSize);
+
+								if(holdingItem != null) {
+									g.drawImage(holdingItem, b.x, b.y, blockSize, blockSize, null);
+								}
+							}
+						}
+					}
+				}
 			}
 			else {
 				Image holdingItem = null;

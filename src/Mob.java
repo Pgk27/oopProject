@@ -1,5 +1,10 @@
 import java.awt.*;
 
+/**
+ * Lớp cha cho tất cả các con quái
+ * (Orc, Demon, Slime...)
+ */
+
 public class Mob extends Rectangle{
 
 	int xC, yC; //  x,y kordinatları for mob
@@ -13,8 +18,8 @@ public class Mob extends Rectangle{
 	protected int spawnTime;
 	protected int mobWalk = 0;
 	protected int direction = right;
-	protected int mobID = Value.MOB_PLACEHOLDER;
-	protected int laneID = Value.MOB_PLACEHOLDER;
+	protected int mobID = Value.PLACEHOLDER;
+	protected int laneID = Value.PLACEHOLDER;
 	protected int increPos = 0;
 	protected int rand = 0;
 	protected double attackDmg;
@@ -39,6 +44,8 @@ public class Mob extends Rectangle{
 	protected int deadTick = 0;
 	protected int deadDelay = 0;
 	protected int deadDelayLimit = 1500; // Delay tại frame cuối trước khi biến mất (~1.5 đến 2 giây)
+
+	protected Rectangle attackRangeBox = new Rectangle();
 	
 	Mob() {
 		this.walkSpeed = 2; // lower is faster
@@ -46,6 +53,10 @@ public class Mob extends Rectangle{
 		this.renderScale = 1.5;
 		this.dmgReduction = 0;
 		this.attackDmg = 1;
+
+		// set TẦM ĐÁNH
+		// + thêm 2 để không bị đánh lan sang các làn khác
+		
 	}
     
 	void spawnMob(int mobID) { //full con này đơn giản chỉ spawn mob ở 1 trong 3 ô 1,2,3 tại cột đầu tiên
@@ -94,7 +105,7 @@ public class Mob extends Rectangle{
 		this.deadFrame = 0;
 		this.deadTick = 0;
 		this.deadDelay = 0;
-		
+
 		inGame = true;
 		
 	}
@@ -104,6 +115,9 @@ public class Mob extends Rectangle{
 	}
 
 	void physic() {
+		// set tầm đánh cho lớp Mob và các lớp con
+		this.attackRangeBox.setBounds(this.x + mobSize / 2, this.y + 2, mobSize / 2 - 2, mobSize - 4); 
+
 		if (isDying){ // tính toán frame cho animation mob chết
 			if (Screen.mobOrcDeadAnim != null && Screen.mobOrcDeadAnim.length > 0){
 				if (deadFrame < Screen.mobOrcDeadAnim.length - 1){
@@ -126,7 +140,7 @@ public class Mob extends Rectangle{
 			return;
 		}
 		
-		isMatching = checkMatching(Screen.mini);
+		isMatching = checkMatching(Screen.mini, Screen.merc);
 		
 		// if not fighting
 		if (!isMatching){
@@ -171,7 +185,6 @@ public class Mob extends Rectangle{
 				walkFrame+=1;
 			}
 		}
-
 		else{
 			// Lấy chỉ số frame đánh hiện tại (chu kỳ animation đánh có 6 frame: 0 -> 5)
 			int currentAttackFrame = Screen.AnimFrame % 6; 
@@ -229,15 +242,16 @@ public class Mob extends Rectangle{
 		}
 	}
 	  
-	boolean checkMatching(Mob[] mini){
-		for (int i = 0; i < mini.length; i++){
-			if (this.intersects(mini[i]) && mini[i] != null && mini[i].inGame && !mini[i].isDead()){
-				this.isMatching = true;
-				this.target = mini[i];
-				this.target.isMatching = true;
-				this.target.gotDamage = true;
-				this.target.lastGotDamagedTime = System.currentTimeMillis();
-				return true;
+	boolean checkMatching(Mob[]... minionGroups){
+		for (Mob[] mini : minionGroups){
+			for (int i = 0; i < mini.length; i++){
+				if (this.attackRangeBox.intersects(mini[i]) && mini[i] != null && mini[i].inGame && !mini[i].isDead()){
+					this.target = mini[i];
+					this.target.isMatching = true;
+					this.target.gotDamage = true;
+					this.target.lastGotDamagedTime = System.currentTimeMillis();
+					return true;
+				}
 			}
 		}
 		return false;
@@ -327,16 +341,16 @@ public class Mob extends Rectangle{
 		}
 
 		if (isDying){
-			if (coinDuration > 0 && coinTick < coinDuration) {
-				double progress = (double) coinTick / coinDuration; // Giá trị từ 0.0 -> 1.0
-				int coinOffsetY = (int) (progress * coinMaxFlyDist); // Bay dần lên trên
+			// if (coinDuration > 0 && coinTick < coinDuration) {
+			// 	double progress = (double) coinTick / coinDuration; // Giá trị từ 0.0 -> 1.0
+			// 	int coinOffsetY = (int) (progress * coinMaxFlyDist); // Bay dần lên trên
 				
-				int coinX = x + (width / 2) - (Store.iconSize / 2);
-				int coinY = (y - coinOffsetY);
+			// 	int coinX = x + (width / 2) - (Store.iconSize / 2);
+			// 	int coinY = (y - coinOffsetY);
 
-				// g.drawImage(Screen.tileset_res[2], coinX, coinY, Store.iconSize, Store.iconSize, null);
-				// xphpe la k ve dong xu bay len nua nhe
-			}
+			// 	// g.drawImage(Screen.tileset_res[2], coinX, coinY, Store.iconSize, Store.iconSize, null);
+			// 	// xphpe la k ve dong xu bay len nua nhe
+			// }
 			return;
 		}
 		

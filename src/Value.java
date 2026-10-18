@@ -22,9 +22,9 @@ public class Value { // CẤM ĐƯỢC THAY ĐỔI
 
 	static protected final int SPELL_BLACK_HOLE = nextId(); 
 	static protected final int SPELL_BOMBER_PLANE = nextId(); 
+	static protected final int SPELL_MERCENARY = nextId();
 
 
-	static protected final int MOB_PLACEHOLDER = -1;
 	static protected final int ORC_MONSTER = nextId();
 	static protected final int BLOOD_DEMON_MONSTER = nextId();	
 	static protected final int SLIME_MONSTER = nextId();

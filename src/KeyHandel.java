@@ -165,7 +165,7 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 				if(Screen.coinage >= 200 && Screen.shard >=200) {
 					Screen.coinage = Screen.coinage - 200;
 					Screen.shard = Screen.shard - 200;
-					Screen.eCore++;
+					Screen.energyCore++;
 				}
 			}
 			
@@ -366,7 +366,7 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 			Screen.randomNum = Screen.rand.nextInt(100) + 1;
 
 			if (Screen.randomNum ==1) {
-				Screen.eCore++;
+				Screen.energyCore++;
 			}
 			else if(Screen.randomNum ==2) {
 				Screen.shard = Screen.shard + 100;
