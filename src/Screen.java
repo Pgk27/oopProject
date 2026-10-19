@@ -15,6 +15,12 @@ public class Screen extends JPanel implements Runnable {
 	static Image[] tileset_ground = new Image[100];
 	static Image[] tileset_air = new Image[100];
 	static Image[] tileset_res = new Image[100];    
+
+	static Mob[] mobs = new Mob[100];
+	static Mob2[] mobss = new Mob2[100];
+	static Mob3[] mobsss = new Mob3[100];
+	static Minion[] mini = new Minion[10];
+	static Mercenary[] merc = new Mercenary[10];
 	
 	// khởi tạo chu kì animation
 	// Orc
@@ -48,7 +54,6 @@ public class Screen extends JPanel implements Runnable {
 	static Image[] mercenaryDeadAnim = new Image[5];
 	static Image[] mercenaryAttackAnim = new Image[7];
 	
-
 	static int AnimFrame = 0;
 	static int AnimTime = 40; // ANIMATION FRAME DELAY
 	static int AnimTick = 0;
@@ -61,39 +66,15 @@ public class Screen extends JPanel implements Runnable {
 	public static Image[] blackHole = new Image[8];
 	public static Image[] explosion = new Image[8];
 	public static Image airplane;
-	
-
-	public static CopyOnWriteArrayList<Spell> activeSpells = new CopyOnWriteArrayList<>();
-
-	static Map<Integer, Image> projectiles = new HashMap<>(); 
-	// sẽ update tiếp sau
-
-	public static int gameState = 0;
-
-	public static final int tileScreen=0;
-	public static final int playGame=1;
-	public static final int settings=2;
-	public static final int selectSkill=3;
-	public static final int gameShop=4;
-	public static final int buyItem=5;
-	public static final int gacha=6;
-	public static final int gachaRate=7;
-	public static final int shardShop=8;
-	public static final int thongBao=9;
-	public static final int tongKetWin=10;
-	public static final int tongKetLose=11;
-
 
 	public static Random rand = new Random();
 	public static int randomNum;
 
-	
 	public static int gachaType;
 	public static final int gachaBH=1;
 	public static final int gachaEnhance=2;
 	public static final int gachaMercenary=3;
 	public static final int summon=4;
-
 
 	public static boolean unlockBH = false;
 	public static boolean unlockEnhance = false;
@@ -102,8 +83,8 @@ public class Screen extends JPanel implements Runnable {
 	public static int coinage = 999999;
 	public static int coinDauTran;
 	public static int healthDauTran;
-	public static int shard =0;
-	public static int energyCore =0;
+	public static int shard = 0;
+	public static int energyCore = 0;
 
 	public static boolean ok; 	//Đcm tluc thông minh vclll
 	//Con này fix bug đoạn coin sát mép số 10, đề phòng bọn nghẹo gacha ko có tiền mua tháp
@@ -119,9 +100,37 @@ public class Screen extends JPanel implements Runnable {
 	public static int offsetX = 0;
 	public static int offsetY = 0;
 
+	static int health = 999999;
+	static int killed = 0, killsToWin = 0, level = 1, rielLevel =1;
+	static boolean isFirst = true;
+	static boolean isWin = false;
+
+	static int gameState = Value.TITLE_SCREEN; // cho biết mình đang ở màn hình nào
+
+	public static CopyOnWriteArrayList<Spell> activeSpells = new CopyOnWriteArrayList<>();
+
+	static Map<Integer, Image> projectiles = new HashMap<>(); 
+	
+	// sẽ update tiếp sau
+	static Point mse = new Point();
+	
+	static BufferedImage blankCursorImg;
+	static Cursor blankCursor;
+
+	public static int musicVolume = 7;
+	public static int sfxVolume = 5;
+
+	static Room room;
+	static Save save;
+	static Store store;
+	public static Tiles tiles;
+	public static WaveManager waveManager;
+
+	public Frame frame;
+	private GameRender gameRender = new GameRender();
+
 	// Đôi hàm chuyển tọa độ chuột từ bên Screen... sang tọa độ theo hệ quy chiếu gốc
 	// Cái này chuyển ngược so với hàm vẽ, hay phết :))
-
 	public static Point toVirtualPoint(Point p) {
 		return toVirtualPoint(p.x, p.y);
 	}
@@ -132,34 +141,6 @@ public class Screen extends JPanel implements Runnable {
 		int vy = (int) Math.round((screenY - offsetY) / scale);
 		return new Point(vx, vy);
 	}
-	static int health = 999999;
-	static int killed = 0, killsToWin = 0, level = 1, rielLevel =1;
-	static boolean isFirst = true;
-	static boolean isWin = false;
-	
-	
-	static Point mse = new Point();
-	
-	BufferedImage blankCursorImg;
-	Cursor blankCursor;
-
-	static Room room;
-	static Save save;
-	static Store store;
-	public static Tiles tiles;
-	public static WaveManager waveManager;
-
-
-	
-
-	static Mob[] mobs = new Mob[100];
-	static Mob2[] mobss = new Mob2[100];
-	static Mob3[] mobsss = new Mob3[100];
-	static Minion[] mini = new Minion[10];
-	static Mercenary[] merc = new Mercenary[10];
-
-	public Frame frame;
-	private GameRender gameRender = new GameRender();
 	
 	Screen(Frame frame) {
 		this.frame = frame;
@@ -179,7 +160,7 @@ public class Screen extends JPanel implements Runnable {
 	static void startGame() {
 		level = (int) ((rielLevel - 1) % 3) + 1;
 		loadLevel();
-		gameState = playGame;
+		gameState = Value.IN_GAME;
 		Screen.coinDauTran = coinage;
 		Screen.healthDauTran = health;
 	}
@@ -272,7 +253,7 @@ public class Screen extends JPanel implements Runnable {
 
 	public void run() {
 		while(true) {
-			if(!isFirst && gameState == playGame) {
+			if(!isFirst && gameState == Value.IN_GAME) {
 				if(health > 0 && !isWin) {
 					room.physic(); // oyunu ekrana veriyor
 
@@ -335,11 +316,11 @@ public class Screen extends JPanel implements Runnable {
 
 				}
 				if (health <= 0) {
-					gameState = tongKetLose;
+					gameState = Value.DEFEAT_SCREEN;
 					health = rand.nextInt(3) + 2; // reset health random ;)) // chịu em lực
 				} else if (isWin) {
 					rielLevel++;
-					gameState = tongKetWin;
+					gameState = Value.VICTORY_SCREEN;
 				}
 			}
 			repaint();

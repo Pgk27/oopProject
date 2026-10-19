@@ -1,5 +1,7 @@
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -7,49 +9,35 @@ import java.util.Comparator;
 public class GameRender {
     
     public void render(Graphics g, int width, int height) {
-        switch (Screen.gameState) {
-            case Screen.tileScreen:
-                drawTileScreen(g, width, height);
-                break;
-            case Screen.playGame:
-                drawPlayGame(g, width, height);
-                break;
-            case Screen.gameShop:
-                drawStore(g, width, height);
-                break;
-            case Screen.settings:
-                drawSetting(g, width, height);
-                break;
-            case Screen.selectSkill:
-                
-                break;
-            case Screen.buyItem:
-                break;
-            case Screen.gacha:
-                drawGachaScreen(g, width, height);
-                break;
-            case Screen.gachaRate:
-                drawGachaRateScreen(g, width, height);
-                break;
-            case Screen.shardShop:
-                drawShardShop(g, width, height);
-                break;
-            case Screen.thongBao:
-                drawThongBao(g, width, height);
-                break;
-            case Screen.tongKetWin:
-                drawTongKetWin(g, width, height);
-                break;
-            case Screen.tongKetLose:
-                drawTongKetLose(g, width, height);
-                break;
+        int state = Screen.gameState;
+
+        if (state == Value.TITLE_SCREEN) {
+            drawTitleScreen(g, width, height);
+        } else if (state == Value.IN_GAME) {
+            drawInGame(g, width, height);
+        } else if (state == Value.SHOP) {
+            drawStore(g, width, height);
+        } else if (state == Value.SETTING) {
+            drawSetting(g, width, height);
+        } else if (state == Value.GACHA) {
+            drawGachaScreen(g, width, height);
+        } else if (state == Value.GACHA_RATE) {
+            drawGachaRateScreen(g, width, height);
+        } else if (state == Value.SHARD_SHOP) {
+            drawShardShop(g, width, height);
+        } else if (state == Value.NOTI) {
+            drawThongBao(g, width, height);
+        } else if (state == Value.VICTORY_SCREEN) {
+            drawTongKetWin(g, width, height);
+        } else if (state == Value.DEFEAT_SCREEN) {
+            drawTongKetLose(g, width, height);
         }
 
         // vẽ con trỏ chuột custom vào game
         boolean isHover = KeyHandel.isHoveringButton(Screen.mse.x, Screen.mse.y);
         BufferedImage currentCursor;
 
-        if (isHover && KeyHandel.isMousePressed) {
+        if (KeyHandel.isMousePressed) {
             // 1. Đang click vào button
             currentCursor = Screen.tiles.cursorPressed;
         } else if (isHover) {
@@ -66,7 +54,7 @@ public class GameRender {
         }
     }
 
-    private void drawPlayGame(Graphics g, int width, int height) {
+    private void drawInGame(Graphics g, int width, int height) {
         
         g.setColor(new Color(70, 70, 70)); 
         g.fillRect(0, 0, width, height);
@@ -134,13 +122,12 @@ public class GameRender {
         
     }
 
-    private void drawTileScreen(Graphics g, int width, int height) {
-        g.drawImage(Screen.tiles.tileScreen, 0, 0, width, height, null);
+    private void drawTitleScreen(Graphics g, int width, int height) {
+        g.drawImage(Screen.tiles.titleScreen, 0, 0, width, height, null);
         g.drawImage(Screen.tiles.settingsButton, 5, 5, 35 , 35, null);
         g.drawImage(Screen.tiles.newGameButton, 950, 450, 144, 72, null);
         g.drawImage(Screen.tiles.storeButton, 950, 520, 144, 72, null);
         g.drawImage(Screen.tiles.quitGameButton, 950, 590, 144, 72, null);
-
     }
 
     private void drawStore(Graphics g, int width, int height) {
@@ -153,13 +140,71 @@ public class GameRender {
     private void drawSetting(Graphics g, int width, int height){
         int offsetFromCenterX = 300;
         int offsetFromCenterY = 375;
+        int buttonSize = 100;
+        int buttonWidth = 72;
+        int buttonHeight = 80;
+        int longButtonHeight = 70;
+        int longButtonWidth = 240;
+        int awayFromLeftEdge = 75;
+        int awayFromTopEdge = 250;
+        int count = 0;
+        int space = 100;
 
-        int menuX = width / 2 - offsetFromCenterX;
-        int menuY = height / 2 - offsetFromCenterY;
+        int menuX = width / 2 - offsetFromCenterX; // 310
+        int menuY = height / 2 - offsetFromCenterY; // 15
         int menuWidth = 2 * offsetFromCenterX;
-        int menuHeight = 2 * offsetFromCenterY;
-        g.drawImage(Screen.tiles.settingMenu, menuX, menuY, menuWidth, menuHeight, null);
+        int menuHeight = 2 * offsetFromCenterY; 
 
+        // vẽ background menu setting
+        g.drawImage(Screen.tiles.settingMenu, menuX, menuY, menuWidth, menuHeight, null);
+        
+        // vẽ các nút
+        g.setFont(Screen.tiles.pixelFontMedi);
+        g.drawString("MUSIC", menuX + awayFromLeftEdge, menuY + awayFromTopEdge + 35);
+        if (!KeyHandel.isMusicMuted)
+            g.drawImage(Screen.tiles.buttonSliderOn, menuX + awayFromLeftEdge + 350, menuY + awayFromTopEdge - 25 + space * count, buttonSize, buttonSize, null);
+        else
+            g.drawImage(Screen.tiles.buttonSliderOff, menuX + awayFromLeftEdge + 350, menuY + awayFromTopEdge - 25 + space * count, buttonSize, buttonSize, null);
+        drawSlider(g, menuX + awayFromLeftEdge + 125, menuY + awayFromTopEdge + space * (count++), Screen.musicVolume, KeyHandel.musicSliderBox);
+        
+        g.drawString("SFX", menuX + awayFromLeftEdge, menuY + awayFromTopEdge + space*count + 35);
+        if (!KeyHandel.isSfxMuted)
+            g.drawImage(Screen.tiles.buttonSliderOn, menuX + awayFromLeftEdge + 350, menuY + awayFromTopEdge - 25 + space * count, buttonSize, buttonSize, null);
+        else
+            g.drawImage(Screen.tiles.buttonSliderOff, menuX + awayFromLeftEdge + 350, menuY + awayFromTopEdge - 25 + space * count, buttonSize, buttonSize, null);
+        drawSlider(g, menuX + awayFromLeftEdge + 125, menuY + awayFromTopEdge + space * (count++), Screen.sfxVolume, KeyHandel.sfxSliderBox);
+
+        g.drawString("FULLSCREEN", menuX + awayFromLeftEdge, menuY + awayFromTopEdge + space * count + 35);
+        if (Frame.isFullscreen){
+            g.drawImage(Screen.tiles.tickPressedButton, menuX + awayFromLeftEdge + 200, menuY + awayFromTopEdge - 15 + space * count, buttonWidth, buttonHeight, null);
+            g.drawImage(Screen.tiles.xButton, menuX + awayFromLeftEdge + 300, menuY + awayFromTopEdge - 15 + space * count, buttonWidth, buttonHeight, null);
+        }
+        else{
+            g.drawImage(Screen.tiles.tickButton, menuX + awayFromLeftEdge + 200, menuY + awayFromTopEdge - 15 + space * count, buttonWidth, buttonHeight, null);
+            g.drawImage(Screen.tiles.xPressedButton, menuX + awayFromLeftEdge + 300, menuY + awayFromTopEdge - 15 + space * count, buttonWidth, buttonHeight, null);
+        }
+        
+        boolean isPressed = (System.currentTimeMillis() - KeyHandel.pressedTime < 150);
+        
+        if (!KeyHandel.isSettingCancelPressed){
+            g.drawImage(Screen.tiles.longButton, menuX + 40, menuY + 630, longButtonWidth, longButtonHeight, null);
+            g.drawString("CANCEL", menuX + 115, menuY + 638 + longButtonHeight / 2);
+        }
+        else{
+            g.drawImage(Screen.tiles.longPressedButton, menuX + 40, menuY + 630, longButtonWidth, longButtonHeight, null);
+            g.drawString("CANCEL", menuX + 115, menuY + 640 + longButtonHeight / 2);
+        }
+        
+        if (!KeyHandel.isSettingConfirmPressed){
+            g.drawImage(Screen.tiles.longButton, menuX + 40 + longButtonWidth + 40, menuY + 630, longButtonWidth, longButtonHeight, null);
+            g.drawString("CONFIRM", menuX + longButtonWidth + 140, menuY + 638 + longButtonHeight / 2);
+        }
+        else{
+            g.drawImage(Screen.tiles.longPressedButton, menuX + 40 + longButtonWidth + 40, menuY + 630, longButtonWidth, longButtonHeight, null);
+            g.drawString("CONFIRM", menuX + longButtonWidth + 140, menuY + 640 + longButtonHeight / 2);
+        }
+        
+        
     }
 
     private void drawGachaScreen(Graphics g, int width, int height) {
@@ -566,4 +611,46 @@ public class GameRender {
         
     }
 
+    /** 
+     * Vẽ thanh slider (dành cho sfx và music)
+    */
+    private void drawSlider(Graphics g, int startX, int startY, int currentVolume, Rectangle outHitBox){
+        int barW = 16;
+        int barH = 48;
+        int spacing = 5; // giãn cách giữa các thanh 
+        int totalBar = 10; // tổng số thanh muốn vẽ
+
+        int totalWidth = totalBar * barW + (totalBar - 1) * spacing;
+        outHitBox.setBounds(startX, startY, totalWidth, barH);
+
+        for (int i = 0; i < totalBar; i++){
+            int x = startX + i * (barW + spacing);
+            
+            if (i < currentVolume){
+                g.drawImage(Screen.tiles.volumeBarOn, x, startY, barW, barH, null);
+            }
+            else
+                g.drawImage(Screen.tiles.volumeBarOff, x, startY, barW, barH, null);
+        }
+    }
+
+    /**
+     * Vẽ nút dài tự động chuyển đổi giữa trạng thái Thường và Nhấn
+     * Kèm hiệu ứng canh giữa chữ và lún chữ khi click
+     */
+    private void drawLongButton(Graphics g, Rectangle btn, String text) {
+        // 1. Kiểm tra logic từ KeyHandel: Chuột đang đè xuống VÀ con trỏ đang nằm trong nút
+        boolean isPressed = KeyHandel.isMousePressed && btn.contains(Screen.mse);
+        // 2. Chọn sprite phù hợp
+        BufferedImage img = isPressed ? Screen.tiles.longPressedButton : Screen.tiles.longButton;
+        g.drawImage(img, btn.x, btn.y, btn.width, btn.height, null);
+        // 3. Tự động canh giữa chữ theo chiều ngang & dọc
+        FontMetrics fm = g.getFontMetrics();
+        int textX = btn.x + (btn.width - fm.stringWidth(text)) / 2;
+        
+        // Khi nhấn, chữ thụt xuống 4px theo bề mặt nút (tùy chỉnh 3-4px theo sprite pixel)
+        int textYOffset = isPressed ? 4 : 0; 
+        int textY = btn.y + (btn.height - fm.getHeight()) / 2 + fm.getAscent() + textYOffset;
+        g.drawString(text, textX, textY);
+    }
 }

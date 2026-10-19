@@ -11,7 +11,16 @@ public class Tiles {
     public BufferedImage cursorHover;
     public BufferedImage cursorPressed;
 
-    public BufferedImage tileScreen;
+    public BufferedImage volumeBarOn;
+    public BufferedImage volumeBarOff;
+    public BufferedImage tickButton;
+    public BufferedImage tickPressedButton;
+    public BufferedImage xButton;
+    public BufferedImage xPressedButton;
+    public BufferedImage longButton;
+    public BufferedImage longPressedButton;
+
+    public BufferedImage titleScreen;
     public BufferedImage newGameButton;
     public BufferedImage quitGameButton;
     public BufferedImage backButton;
@@ -57,13 +66,15 @@ public class Tiles {
 	public BufferedImage touchedButton;
     public BufferedImage settingMenu;
     public BufferedImage settingsButton;
+    public BufferedImage buttonSliderOff;
+    public BufferedImage buttonSliderOn;
 
     public Font pixelFontv1;
     public Font pixelFontv2;
     public Font pixelFontvSmall;
     public Font pixelFontMini;
     public Font pixelFontMedi;
-
+    public Font sproutLandsFont32f;
 
     public Color darkSilver;
     public Color royalGold;
@@ -71,10 +82,6 @@ public class Tiles {
     public Color enhanceRed;
     public Color mercBlue;
     public Color gloomyPurple;
-    
-
-
-
 
     private BufferedImage readImage(String relativePath) throws Exception {
         File file = new File("src/" + relativePath);
@@ -93,8 +100,17 @@ public class Tiles {
             cursorHover = readImage("res/ui/mouse/mouse2.png");
             cursorPressed = readImage("res/ui/mouse/mouse3.png");
 
-            tileScreen = readImage("res/tileImage/game_tilee.png");
-            newGameButton = readImage("res/tileImage/playGame2.png");
+            volumeBarOn = readImage("res/ui/setting/volumeBarOn.png");
+            volumeBarOff = readImage("res/ui/setting/volumeBarOff.png");
+            tickButton = readImage("res/ui/setting/tickButton.png");
+            tickPressedButton = readImage("res/ui/setting/tickPressedButton.png");
+            xButton = readImage("res/ui/setting/XButton.png");
+            xPressedButton = readImage("res/ui/setting/XPressedButton.png");
+            longButton = readImage("res/ui/setting/longButton.png");
+            longPressedButton = readImage("res/ui/setting/longPressedButton.png");
+
+            titleScreen = readImage("res/tileImage/game_tilee.png");
+            newGameButton = readImage("res/tileImage/playgame2.png");
             backButton = readImage("res/tileImage/backk3.png");
             quitGameButton = readImage("res/tileImage/quitgame2.png");
             storeButton = readImage("res/tileImage/store2.png");
@@ -139,6 +155,8 @@ public class Tiles {
 		    touchedButton = readImage("res/ui/touchedButton.png");
             settingMenu = readImage("res/ui/setting/menu.png");
             settingsButton = readImage("res/ui/setting/icon.png");
+            buttonSliderOff = readImage("res/ui/setting/buttonSliderOff.png");
+            buttonSliderOn = readImage("res/ui/setting/buttonSliderOn.png");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -155,7 +173,7 @@ public class Tiles {
             pixelFontv2 = baseFont.deriveFont(22f);
             pixelFontvSmall = baseFont.deriveFont(13f);
             pixelFontMini = baseFont.deriveFont(11f);
-            pixelFontMedi = baseFont.deriveFont(24f);
+            pixelFontMedi = baseFont.deriveFont(32f);
         } catch (Exception e) {
             e.printStackTrace();
         }

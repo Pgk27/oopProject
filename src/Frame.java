@@ -5,7 +5,7 @@ import javax.swing.*;
 public class Frame extends JFrame{
 	public static String title = "FINAL KINGDOM";
 	public static Dimension size = new Dimension(1220, 780);
-	private boolean isFullscreen = false;
+	public static boolean isFullscreen = false;
 	private Screen screen;
 	
 	public Frame() {
