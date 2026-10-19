@@ -3,7 +3,10 @@ import java.awt.*;
 public abstract class Tower {
     protected int x, y, width, height;
     protected int rangeSize;
-    protected int animationFrame = 0; // animFrame ở đây để kiểm soát khi nào mũi tên bắn~ ra
+    protected int animFrame = 0; 
+    protected int animTick = 0;
+    protected int animSpeed = 40;
+    protected int towerAnimFrame = 0;
     protected int shootFrame; // frame bắn của từng tháp
     protected double damage;
 
@@ -25,6 +28,10 @@ public abstract class Tower {
         this.rangeSize = rangeSize;
         this.damage = damage;
         this.id = id;
+
+        this.animFrame = Screen.rand.nextInt(8);
+		this.animTick = Screen.rand.nextInt(20);
+		this.animSpeed = 36 + Screen.rand.nextInt(10);
         
         // Khởi tạo tầm bắn ngay khi xây tháp
         this.towerSquare = new Rectangle(x - (rangeSize / 2), y - (rangeSize / 2), width + rangeSize, height + rangeSize);
@@ -43,6 +50,12 @@ public abstract class Tower {
     }
 
     public void physic() {
+        animTick++;
+		if (animTick >= animSpeed){
+			animFrame++;
+			animTick = 0;
+		}
+
         // A. KIỂM TRA MỤC TIÊU CŨ (Mất dấu hoặc quái chết thì buông mục tiêu ngay)
         if (shotMob != -1) {
             if (shotingMob1 && (Screen.mobs[shotMob] == null || Screen.mobs[shotMob].isDead() || !Screen.mobs[shotMob].inGame || !towerSquare.intersects(Screen.mobs[shotMob]))) {
@@ -116,7 +129,7 @@ public abstract class Tower {
             if (shotingMob1 && Screen.mobs[shotMob] != null) target = Screen.mobs[shotMob];
             else if (shotingMob2 && Screen.mobss[shotMob] != null) target = Screen.mobss[shotMob];
             else if (shotingMob3 && Screen.mobsss[shotMob] != null) target = Screen.mobsss[shotMob];
-            if (animationFrame == shootFrame) {
+            if (towerAnimFrame == shootFrame) {
                 double finalDamage = damage * (1-target.dmgReduction);
 
                 double startX = x + width/2;

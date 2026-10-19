@@ -78,6 +78,11 @@ public class Minion extends Mob {
 		this.health = mobSize;
 		this.maxHealth = health;
 
+		// set ngẫu nhiên frame cho từng con mob (ngẫu nhiên hóa chuyển động)
+		this.animFrame = Screen.rand.nextInt(8);
+		this.animTick = Screen.rand.nextInt(20);
+		this.animSpeed = 36 + Screen.rand.nextInt(10);
+
 		this.isDying = false;
 		this.deadFrame = 0;
 		this.deadTick = 0;
@@ -89,9 +94,6 @@ public class Minion extends Mob {
 	
 	@Override
 	public void physic(){
-		// set tầm đánh (bên trái)
-		
-
 		if (isDying){ // tính toán frame cho animation mob chết
 			if (Screen.minionDeadAnim != null && Screen.minionDeadAnim.length > 0){
 				if (deadFrame < Screen.minionDeadAnim.length - 1){
@@ -113,6 +115,12 @@ public class Minion extends Mob {
 			}
 			return;
 		}
+
+		animTick++;
+		if (animTick >= animSpeed){
+			animFrame++;
+			animTick = 0;
+		}
 		
 		if (this.target != null && (this.target.isDead() || !this.target.inGame || !this.intersects(this.target))){
 			this.target = null;
@@ -122,7 +130,7 @@ public class Minion extends Mob {
 		isShooting = !isMatching; // nếu không bắn cung thì đánh cận chiến và ngược lại
 
 		if(isMatching){
-			int currentAttackFrame = Screen.AnimFrame % 6;
+			int currentAttackFrame = animFrame % 6;
 
 			// Khi animation chạm frame thứ 5 và chưa gây sát thương trong lượt chém này
 			if (currentAttackFrame == 5) {
@@ -146,7 +154,7 @@ public class Minion extends Mob {
 		}
 		
 		if (isShooting){
-			int currentShootFrame = Screen.AnimFrame % 8;
+			int currentShootFrame = animFrame % 8;
 			if (currentShootFrame == 7){
 				shootArrow();
 				hasShotArrow = true;
@@ -253,20 +261,20 @@ public class Minion extends Mob {
 		if (isMatching){
 			if (Screen.minionAttack1Anim != null && Screen.minionAttack1Anim.length > 0
 			&& Screen.minionAttack2Anim != null && Screen.minionAttack2Anim.length > 0){
-				if (Screen.AnimFrame % Screen.minionAttack1Anim.length == 0) this.rand = (int) (Math.random()*2);
+				if (animFrame % Screen.minionAttack1Anim.length == 0) this.rand = (int) (Math.random()*2);
 				if (rand == 0)
-					return Screen.minionAttack1Anim[Screen.AnimFrame % Screen.minionAttack1Anim.length];
-				return Screen.minionAttack2Anim[Screen.AnimFrame % Screen.minionAttack2Anim.length];
+					return Screen.minionAttack1Anim[animFrame % Screen.minionAttack1Anim.length];
+				return Screen.minionAttack2Anim[animFrame % Screen.minionAttack2Anim.length];
 			}
 		}
 		if (isShooting){
 			if (Screen.minionShootingAnim != null && Screen.minionShootingAnim.length > 0){
-				return Screen.minionShootingAnim[Screen.AnimFrame % Screen.minionShootingAnim.length];
+				return Screen.minionShootingAnim[animFrame % Screen.minionShootingAnim.length];
 			}
 		}
 		// mob's normal walking animation
 		if (Screen.minionIdleAnim != null && Screen.minionIdleAnim.length > 0){
-			return Screen.minionIdleAnim[Screen.AnimFrame % Screen.minionIdleAnim.length];
+			return Screen.minionIdleAnim[animFrame % Screen.minionIdleAnim.length];
 		}
 		return Screen.minionIdleAnim[0];
 	}

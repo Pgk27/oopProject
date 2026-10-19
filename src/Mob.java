@@ -34,6 +34,10 @@ public class Mob extends Rectangle{
 	protected boolean isMatching = false;
 	protected boolean hasDealtDamage = false;
 
+	protected int animFrame = 0;
+	protected int animTick = 0;
+	protected int animSpeed = 40;
+
 	// scale kích thước cho một số mob có frame ảnh rộng
 	protected double renderScale;
 	protected double dmgReduction;
@@ -98,6 +102,11 @@ public class Mob extends Rectangle{
 		this.health = mobSize;
 		this.maxHealth = health;
 
+		// set ngẫu nhiên frame cho từng con mob (ngẫu nhiên hóa chuyển động)
+		this.animFrame = Screen.rand.nextInt(8);
+		this.animTick = Screen.rand.nextInt(20);
+		this.animSpeed = 36 + Screen.rand.nextInt(10); // biến này là TỐC ĐỘ của frame, cho dao động nhẹ 36 - 45 ticks
+
 		direction = right;
 		mobWalk = 0;
 		walkFrame = 0;
@@ -138,6 +147,13 @@ public class Mob extends Rectangle{
 				deleteMob();
 			}
 			return;
+		}
+
+		// tăng frame, xúc tiến chuyển động
+		animTick++;
+		if (animTick >= animSpeed){
+			animFrame++;
+			animTick = 0;
 		}
 		
 		isMatching = checkMatching(Screen.mini, Screen.merc);
@@ -187,7 +203,7 @@ public class Mob extends Rectangle{
 		}
 		else{
 			// Lấy chỉ số frame đánh hiện tại (chu kỳ animation đánh có 6 frame: 0 -> 5)
-			int currentAttackFrame = Screen.AnimFrame % 6; 
+			int currentAttackFrame = animFrame % 6; 
 
 			// Khi animation chạm frame thứ 5 và chưa gây sát thương trong lượt chém này
 			if (currentAttackFrame == 5) {
@@ -289,15 +305,15 @@ public class Mob extends Rectangle{
 		if (isMatching){
 			if (Screen.mobOrcAttack1Anim != null && Screen.mobOrcAttack1Anim.length > 0
 			&& Screen.mobOrcAttack2Anim != null && Screen.mobOrcAttack2Anim.length > 0){
-				if (Screen.AnimFrame % Screen.mobOrcAttack1Anim.length == 0) this.rand = (int) (Math.random()*2);
+				if (animFrame % Screen.mobOrcAttack1Anim.length == 0) this.rand = (int) (Math.random()*2);
 				if (rand == 0)
-					return Screen.mobOrcAttack1Anim[Screen.AnimFrame % Screen.mobOrcAttack1Anim.length];
-				return Screen.mobOrcAttack2Anim[Screen.AnimFrame % Screen.mobOrcAttack2Anim.length];
+					return Screen.mobOrcAttack1Anim[animFrame % Screen.mobOrcAttack1Anim.length];
+				return Screen.mobOrcAttack2Anim[animFrame % Screen.mobOrcAttack2Anim.length];
 			}
 		}
 		// walking
 		if (Screen.mobOrcWalkAnim != null && Screen.mobOrcWalkAnim.length > 0){
-			return Screen.mobOrcWalkAnim[Screen.AnimFrame % Screen.mobOrcWalkAnim.length];
+			return Screen.mobOrcWalkAnim[animFrame % Screen.mobOrcWalkAnim.length];
 		}
 		return Screen.mobOrcWalkAnim[0];
 	}

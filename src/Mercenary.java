@@ -17,6 +17,11 @@ public class Mercenary extends Minion{
 		this.health = mobSize;
 		this.maxHealth = health;
 
+		// set ngẫu nhiên frame cho từng con mercenary (ngẫu nhiên hóa chuyển động)
+		this.animFrame = Screen.rand.nextInt(8);
+		this.animTick = Screen.rand.nextInt(20);
+		this.animSpeed = 36 + Screen.rand.nextInt(10);
+
 		this.isDying = false;
 		this.deadFrame = 0;
 		this.deadTick = 0;
@@ -51,6 +56,13 @@ public class Mercenary extends Minion{
 			}
 			return;
 		}
+
+		// tăng frame, xúc tiến chuyển động
+		animTick++;
+		if (animTick >= animSpeed){
+			animFrame++;
+			animTick = 0;
+		}
 		
 		if (this.target != null && (this.target.isDead() || !this.target.inGame || !this.attackRangeBox.intersects(this.target))){
 			this.target = null;
@@ -59,7 +71,7 @@ public class Mercenary extends Minion{
 		isMatching = checkMatching(Screen.mobs, Screen.mobss, Screen.mobsss);
 
 		if(isMatching){
-			int currentAttackFrame = Screen.AnimFrame % 6;
+			int currentAttackFrame = animFrame % 6;
 
 			// Khi animation chạm frame thứ 5 và chưa gây sát thương trong lượt chém này
 			if (currentAttackFrame == 5) {
@@ -113,11 +125,11 @@ public class Mercenary extends Minion{
 		}
 		if (isMatching){
 			if (Screen.mercenaryAttackAnim != null && Screen.mercenaryAttackAnim.length > 0){
-				return Screen.mercenaryAttackAnim[Screen.AnimFrame % Screen.mercenaryAttackAnim.length];
+				return Screen.mercenaryAttackAnim[animFrame % Screen.mercenaryAttackAnim.length];
 			}
 		}
         if (Screen.mercenaryIdleAnim != null && Screen.mercenaryIdleAnim.length > 0){
-			return Screen.mercenaryIdleAnim[Screen.AnimFrame % Screen.mercenaryIdleAnim.length];
+			return Screen.mercenaryIdleAnim[animFrame % Screen.mercenaryIdleAnim.length];
 		}
 		return Screen.mercenaryIdleAnim[0];
     }

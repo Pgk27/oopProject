@@ -53,10 +53,6 @@ public class Screen extends JPanel implements Runnable {
 	static Image[] mercenaryIdleAnim = new Image[4];
 	static Image[] mercenaryDeadAnim = new Image[5];
 	static Image[] mercenaryAttackAnim = new Image[7];
-	
-	static int AnimFrame = 0;
-	static int AnimTime = 40; // ANIMATION FRAME DELAY
-	static int AnimTick = 0;
 
 	//for Tower
 	static Image[] cacherTower = new Image[8];
@@ -259,15 +255,6 @@ public class Screen extends JPanel implements Runnable {
 
 					waveManager.update();
 					hasWon(); // Liên tục kiểm tra điều kiện thắng để bắt kịp lúc animation quái chết kết thúc
-					
-					AnimTick++;
-					if (AnimTick >= AnimTime) {
-						AnimFrame++;
-						if (AnimFrame >= mobOrcWalkAnim.length){
-							AnimFrame = 0;
-						}
-						AnimTick = 0;
-					}
 
 					for(int i = 0; i < mobs.length; i++) { // mobun hareketi
 						if(mobs[i].inGame) {

@@ -42,7 +42,7 @@ public class Block extends Rectangle {
 				currentTower = new MageTower(x, y, width * 2, height * 2);
 			}
 			else if(towerID == Value.CANNON_TOWER){
-				currentTower = new Canon(x, y, width * 2, height * 2);
+				currentTower = new Cannon(x, y, width * 2, height * 2);
 			}
 			else if(towerID == Value.GOLD_MINER){
 				currentTower = new GoldMiner(x, y, width * 2, height * 2);

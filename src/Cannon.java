@@ -1,8 +1,8 @@
 import java.awt.*;
 
-public class Canon extends Tower {
+public class Cannon extends Tower {
 
-    public Canon(int x, int y, int width, int height) {
+    public Cannon(int x, int y, int width, int height) {
         // Truyền thông số: Tầm bắn 70, Sát thương 2, frame bắn: 2, ID tháp
         super(x, y, width, height, 70000, 1, 2, Value.CANNON_TOWER); //check id
     }
@@ -14,14 +14,14 @@ public class Canon extends Tower {
             return; 
         }
 
-        animationFrame = 0;
+        towerAnimFrame = 0;
         
         // Chỉ chạy hoạt ảnh khi đang khóa mục tiêu, nếu không thì đứng im ở frame 0
         if (shotingMob1 || shotingMob2 || shotingMob3) {
-            animationFrame = Screen.AnimFrame % Screen.cannon.length;
+            towerAnimFrame = animFrame % Screen.cannon.length;
         }
         
-        Image currentFrame = Screen.cannon[animationFrame];
+        Image currentFrame = Screen.cannon[towerAnimFrame];
         
         // Tìm tọa độ mục tiêu để lật ảnh
         int targetX = this.x + width / 2; 

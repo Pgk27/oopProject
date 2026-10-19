@@ -14,14 +14,14 @@ public class MageTower extends Tower {
             return; 
         }
 
-        animationFrame = 0;
+        towerAnimFrame = 0;
         
         // Chỉ chạy hoạt ảnh khi đang khóa mục tiêu, nếu không thì đứng im ở frame 0
         if (shotingMob1 || shotingMob2 || shotingMob3) {
-            animationFrame = Screen.AnimFrame % Screen.mageTower.length;
+            towerAnimFrame = animFrame % Screen.mageTower.length;
         }
         
-        Image currentFrame = Screen.mageTower[animationFrame];
+        Image currentFrame = Screen.mageTower[towerAnimFrame];
         
         // Tìm tọa độ mục tiêu để lật ảnh
         int targetX = this.x + width / 2; 

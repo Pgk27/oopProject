@@ -21,7 +21,7 @@ public class LevelConfig {
             // Wave 1 (0:00 - 0:25): 10x Slime (Spawn mỗi 2s).
             WaveData w1 = new WaveData(0); // 0s
             w1.addSpawn(new MobSpawnInfo(Value.BLOOD_DEMON_MONSTER, 24, 500, 1.0, 1.0, 1.0, 4));
-            w1.addSpawn(new MobSpawnInfo(Value.ORC_MONSTER, 24, 500, 1.0, 1.0, 1.0, 4)); // Slime
+            w1.addSpawn(new MobSpawnInfo(Value.SLIME_MONSTER, 24, 500, 1.0, 1.0, 1.0, 4)); // Slime
             config.waves.add(w1);
 
             // Wave 2 (0:30 - 0:55): 8x Slime + 3x Orc xuất hiện xen kẽ (Spawn mỗi 1.5s).

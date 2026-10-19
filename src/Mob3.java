@@ -19,14 +19,14 @@ public class Mob3 extends Mob {
 		if (isMatching){
 			if (Screen.mobSlimeAttack1Anim != null && Screen.mobSlimeAttack1Anim.length > 0
 			&& Screen.mobSlimeAttack2Anim != null && Screen.mobSlimeAttack2Anim.length > 0){
-				if (Screen.AnimFrame % Screen.mobSlimeAttack1Anim.length == 0) this.rand = (int) (Math.random()*2);
+				if (animFrame % Screen.mobSlimeAttack1Anim.length == 0) this.rand = (int) (Math.random()*2);
 				if (rand == 0)
-					return Screen.mobSlimeAttack1Anim[Screen.AnimFrame % Screen.mobSlimeAttack1Anim.length];
-				return Screen.mobSlimeAttack2Anim[Screen.AnimFrame % Screen.mobSlimeAttack2Anim.length];
+					return Screen.mobSlimeAttack1Anim[animFrame % Screen.mobSlimeAttack1Anim.length];
+				return Screen.mobSlimeAttack2Anim[animFrame % Screen.mobSlimeAttack2Anim.length];
 			}
 		}
 		if (Screen.mobSlimeWalkAnim != null && Screen.mobSlimeWalkAnim.length > 0){
-			return Screen.mobSlimeWalkAnim[Screen.AnimFrame];
+			return Screen.mobSlimeWalkAnim[animFrame % Screen.mobSlimeWalkAnim.length];
 		}
 		return Screen.mobSlimeWalkAnim[0];
 	}
