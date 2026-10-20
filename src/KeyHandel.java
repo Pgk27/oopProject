@@ -10,10 +10,15 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 	static boolean isSfxMuted = false;
 	static boolean isSettingCancelPressed = false;
 	static boolean isSettingConfirmPressed = false;
+	static boolean isUpdated = false;
 
-	static long pressedTime = 0;
-	static int prevMusicVolume = 0;
-	static int prevSfxVolume = 0;
+	static boolean prevMusicMuteState = isMusicMuted;
+	static boolean prevSfxMuteState = isSfxMuted;
+	static int prevMusicVolume = Screen.musicVolume;
+	static int prevSfxVolume = Screen.sfxVolume;
+	
+	static int currMusicVolume = Screen.musicVolume;
+	static int currSfxVolume = Screen.sfxVolume;
 
 	static Rectangle startGame = new Rectangle(950, 450, 144, 72);
 	static Rectangle quitGame = new Rectangle(950, 590, 144, 72);
@@ -206,25 +211,27 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		else if(Screen.gameState == Value.SETTING){
 			if(musicMuteSlider.contains(mouseX, mouseY)){
 				if (!isMusicMuted){
-					prevMusicVolume = Screen.musicVolume;
+					currMusicVolume = Screen.musicVolume;
 					Screen.musicVolume = 0;
 					isMusicMuted = true;
 				}
 				else{
-					Screen.musicVolume = prevMusicVolume;
+					Screen.musicVolume = currMusicVolume;
 					isMusicMuted = false;
 				}	
+				Screen.sound.setMusicVolume(Screen.musicVolume, true);
 			}
 			else if (sfxMuteSlider.contains(mouseX, mouseY)){
 				if (!isSfxMuted){
-					prevSfxVolume = Screen.sfxVolume;
+					currSfxVolume = Screen.sfxVolume;
 					Screen.sfxVolume = 0;
 					isSfxMuted = true;
 				}
 				else{
-					Screen.sfxVolume = prevSfxVolume;
+					Screen.sfxVolume = currSfxVolume;
 					isSfxMuted = false;
 				}
+				Screen.sound.setSfxVolume(Screen.sfxVolume);
 			}
 			else if (fullscreenTickButton.contains(mouseX, mouseY) && !Frame.isFullscreen){
 				Frame.isFullscreen = true;
@@ -242,6 +249,10 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 	public void mouseReleased(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) isMousePressed = false;
 		if (Screen.gameState == Value.SETTING){
+			// // instant = true --> nhạc to nhỏ ngay tức thì, không bị trễ một giây mới update như trước
+			// if (musicSliderBox.contains(mse)){
+			// 	Screen.sound.setMusicVolume(Screen.musicVolume, true);
+			// }
 			if (isSettingCancelPressed){
 				isSettingCancelPressed = false;
 				Screen.gameState = Value.TITLE_SCREEN;
@@ -267,12 +278,24 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 				if (Screen.sfxVolume > 0) isSfxMuted = false;
 			}
 			else if (settingConfirmButton.contains(mse)){
+				// update giá trị trước (prev) nếu confirm
+				prevMusicMuteState = isMusicMuted;
+				prevSfxMuteState = isSfxMuted;
+
+				prevMusicVolume = Screen.musicVolume;
+				prevSfxVolume = Screen.sfxVolume;
 				isSettingConfirmPressed = true;
-				pressedTime = System.currentTimeMillis();
 			}
 			else if (settingCancelButton.contains(mse)){
+				// trao trả các giá trị về giá trị ban đầu
+				isMusicMuted = (isMusicMuted == prevMusicMuteState) ? isMusicMuted : !isMusicMuted;
+				isSfxMuted = (isSfxMuted == prevSfxMuteState) ? isSfxMuted : !isSfxMuted;
+
+				Screen.musicVolume = prevMusicVolume;
+				Screen.sfxVolume = prevSfxVolume;
+				Screen.sound.setMusicVolume(prevMusicVolume);
+				Screen.sound.setSfxVolume(prevSfxVolume);
 				isSettingCancelPressed = true;
-				pressedTime = System.currentTimeMillis();
 			}
 		}
 		Screen.store.click(e.getButton());
@@ -355,9 +378,11 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 		if (isMusic){
 			Screen.musicVolume = level;
+			Screen.sound.setMusicVolume(level, false);
 		}
 		else{
 			Screen.sfxVolume = level;
+			Screen.sound.setSfxVolume(level);
 		}
 	}
 

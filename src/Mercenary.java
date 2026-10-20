@@ -8,7 +8,11 @@ public class Mercenary extends Minion{
         this.renderScale = 1.8;
 		this.dmgReduction = 0; 
 		this.attackDmg = 2;
+		this.attackSpeed = 1.5;
         this.mobSize = 32;
+		this.totalCombatFrames = Screen.mercenaryAttackAnim.length;
+		this.hitFrame = Screen.mercenaryAttackAnim.length - 1;
+		this.attackSound = Screen.sound.sfxPierce;
     }
 
     public void spawnMob(int x, int y, int rootX, int rootY, int mobID){
@@ -71,18 +75,23 @@ public class Mercenary extends Minion{
 		isMatching = checkMatching(Screen.mobs, Screen.mobss, Screen.mobsss);
 
 		if(isMatching){
-			int currentAttackFrame = animFrame % 6;
+			// int currentAttackFrame = animFrame % 6;
 
-			// Khi animation chạm frame thứ 5 và chưa gây sát thương trong lượt chém này
-			if (currentAttackFrame == 5) {
-				if (!hasDealtDamage) {
-					attack();
-					hasDealtDamage = true; // Đánh dấu đã chém trúng, không chém thêm trong frame này nữa
-				}
-			} else {
-				// Khi animation chuyển sang frame khác (0, 1, 2, 3, 4), reset cờ để chuẩn bị cho đòn kế tiếp
-				hasDealtDamage = false;
-			}
+			// // Khi animation chạm frame thứ 5 và chưa gây sát thương trong lượt chém này
+			// if (currentAttackFrame == 5) {
+			// 	if (!hasDealtDamage) {
+			// 		attack();
+			// 		hasDealtDamage = true; // Đánh dấu đã chém trúng, không chém thêm trong frame này nữa
+			// 	}
+			// } else {
+			// 	// Khi animation chuyển sang frame khác (0, 1, 2, 3, 4), reset cờ để chuẩn bị cho đòn kế tiếp
+			// 	hasDealtDamage = false;
+			// }
+			updateCombat(totalCombatFrames, hitFrame);
+		}
+		else{
+			lastAttackTime = 0;
+			hasDealtDamage = false;
 		}
     }
 
@@ -124,8 +133,9 @@ public class Mercenary extends Minion{
 			}
 		}
 		if (isMatching){
+			int frame = currentAttackFrame % Screen.mobOrcAttack1Anim.length;
 			if (Screen.mercenaryAttackAnim != null && Screen.mercenaryAttackAnim.length > 0){
-				return Screen.mercenaryAttackAnim[animFrame % Screen.mercenaryAttackAnim.length];
+				return Screen.mercenaryAttackAnim[frame];
 			}
 		}
         if (Screen.mercenaryIdleAnim != null && Screen.mercenaryIdleAnim.length > 0){

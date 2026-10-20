@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -183,8 +182,7 @@ public class GameRender {
             g.drawImage(Screen.tiles.tickButton, menuX + awayFromLeftEdge + 200, menuY + awayFromTopEdge - 15 + space * count, buttonWidth, buttonHeight, null);
             g.drawImage(Screen.tiles.xPressedButton, menuX + awayFromLeftEdge + 300, menuY + awayFromTopEdge - 15 + space * count, buttonWidth, buttonHeight, null);
         }
-        
-        boolean isPressed = (System.currentTimeMillis() - KeyHandel.pressedTime < 150);
+
         
         if (!KeyHandel.isSettingCancelPressed){
             g.drawImage(Screen.tiles.longButton, menuX + 40, menuY + 630, longButtonWidth, longButtonHeight, null);
@@ -632,25 +630,5 @@ public class GameRender {
             else
                 g.drawImage(Screen.tiles.volumeBarOff, x, startY, barW, barH, null);
         }
-    }
-
-    /**
-     * Vẽ nút dài tự động chuyển đổi giữa trạng thái Thường và Nhấn
-     * Kèm hiệu ứng canh giữa chữ và lún chữ khi click
-     */
-    private void drawLongButton(Graphics g, Rectangle btn, String text) {
-        // 1. Kiểm tra logic từ KeyHandel: Chuột đang đè xuống VÀ con trỏ đang nằm trong nút
-        boolean isPressed = KeyHandel.isMousePressed && btn.contains(Screen.mse);
-        // 2. Chọn sprite phù hợp
-        BufferedImage img = isPressed ? Screen.tiles.longPressedButton : Screen.tiles.longButton;
-        g.drawImage(img, btn.x, btn.y, btn.width, btn.height, null);
-        // 3. Tự động canh giữa chữ theo chiều ngang & dọc
-        FontMetrics fm = g.getFontMetrics();
-        int textX = btn.x + (btn.width - fm.stringWidth(text)) / 2;
-        
-        // Khi nhấn, chữ thụt xuống 4px theo bề mặt nút (tùy chỉnh 3-4px theo sprite pixel)
-        int textYOffset = isPressed ? 4 : 0; 
-        int textY = btn.y + (btn.height - fm.getHeight()) / 2 + fm.getAscent() + textYOffset;
-        g.drawString(text, textX, textY);
     }
 }

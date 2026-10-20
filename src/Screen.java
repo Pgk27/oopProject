@@ -113,16 +113,17 @@ public class Screen extends JPanel implements Runnable {
 	static BufferedImage blankCursorImg;
 	static Cursor blankCursor;
 
-	public static int musicVolume = 7;
+	public static int musicVolume = 0;
 	public static int sfxVolume = 5;
 
-	static Room room;
-	static Save save;
-	static Store store;
+	// SYSTEM
+	public static Room room;
+	public static Save save;
+	public static Store store;
 	public static Tiles tiles;
 	public static WaveManager waveManager;
-
 	public Frame frame;
+	public static Sound sound = new Sound();
 	private GameRender gameRender = new GameRender();
 
 	// Đôi hàm chuyển tọa độ chuột từ bên Screen... sang tọa độ theo hệ quy chiếu gốc
@@ -142,7 +143,7 @@ public class Screen extends JPanel implements Runnable {
 		this.frame = frame;
 		addMouseListener(new KeyHandel());
 		addMouseMotionListener(new KeyHandel());
-		
+		sound.playMusic(sound.themeSong);
 		thread.start();
 	}
 	
@@ -167,7 +168,7 @@ public class Screen extends JPanel implements Runnable {
 		isWin = false;
 		activeSpells.clear();
 
-		save.loadSave(new File("save/map" + level)); //map ı yüklüyor
+		save.loadSave(new File("res/map/map" + level)); //map ı yüklüyor
 		
 		
 		for( int i = 0 ; i < mobs.length;i++) { // mob class ındaki özellikleri moblara atıyor
