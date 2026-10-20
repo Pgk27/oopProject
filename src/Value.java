@@ -22,14 +22,27 @@ public class Value { // CẤM ĐƯỢC THAY ĐỔI
 
 	static protected final int SPELL_BLACK_HOLE = nextId(); 
 	static protected final int SPELL_BOMBER_PLANE = nextId(); 
+	static protected final int SPELL_MERCENARY = nextId();
 
 
-	static protected final int MOB_PLACEHOLDER = -1;
 	static protected final int ORC_MONSTER = nextId();
 	static protected final int BLOOD_DEMON_MONSTER = nextId();	
 	static protected final int SLIME_MONSTER = nextId();
 
 	static protected final int MINION_SOLDIER = nextId();
+
+	static protected final int TITLE_SCREEN = nextId();
+	static protected final int IN_GAME = nextId();
+	static protected final int SETTING = nextId();
+	static protected final int SKILL_SELECT = nextId();
+	static protected final int SHOP = nextId();
+	static protected final int ITEM_SHOP = nextId();
+	static protected final int GACHA = nextId();
+	static protected final int GACHA_RATE = nextId();
+	static protected final int SHARD_SHOP = nextId();
+	static protected final int NOTI = nextId();
+	static protected final int VICTORY_SCREEN = nextId();
+	static protected final int DEFEAT_SCREEN = nextId();
 	
 	
 	static int[] deathReward = {5, 10, 15, 0}; // öldüğünde moblar ne kadar para veriyor

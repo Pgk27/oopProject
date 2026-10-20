@@ -6,7 +6,11 @@ public class Mob2 extends Mob {
 		this.spawnTime = 1200;
 		this.renderScale = 1.3;
 		this.dmgReduction = 0.25;
-		this.attackDmg = 1.2;
+		this.attackDmg = 1.5;
+		this.attackSpeed = 0.75;
+		this.totalCombatFrames = Screen.mobDemonAttack1Anim.length;
+		this.hitFrame = Screen.mobDemonAttack1Anim.length-2;
+		this.attackSound = Screen.sound.sfxSlash;
 	}
 
 	@Override
@@ -17,16 +21,17 @@ public class Mob2 extends Mob {
 			}
 		}
 		if (isMatching){
+			int frame = currentAttackFrame % Screen.mobDemonAttack1Anim.length;
 			if (Screen.mobDemonAttack1Anim != null && Screen.mobDemonAttack1Anim.length > 0
 			&& Screen.mobDemonAttack2Anim != null && Screen.mobDemonAttack2Anim.length > 0){
-				if (Screen.AnimFrame % Screen.mobDemonAttack1Anim.length == 0) this.rand = (int) (Math.random()*2);
+				if (animFrame % Screen.mobDemonAttack1Anim.length == 0) this.rand = (int) (Math.random()*2);
 				if (rand == 0)
-					return Screen.mobDemonAttack1Anim[Screen.AnimFrame % Screen.mobDemonAttack1Anim.length];
-				return Screen.mobDemonAttack2Anim[Screen.AnimFrame % Screen.mobDemonAttack2Anim.length];
+					return Screen.mobDemonAttack1Anim[frame];
+				return Screen.mobDemonAttack2Anim[frame];
 			}
 		}
 		if (Screen.mobDemonWalkAnim != null && Screen.mobDemonWalkAnim.length > 0){
-			return Screen.mobDemonWalkAnim[Screen.AnimFrame];
+			return Screen.mobDemonWalkAnim[animFrame % Screen.mobDemonWalkAnim.length];
 		}
 		return Screen.mobDemonWalkAnim[0];
 	}

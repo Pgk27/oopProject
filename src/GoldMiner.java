@@ -7,7 +7,7 @@ public class GoldMiner extends Tower {
 
     public GoldMiner(int x, int y, int width, int height) {
         // Truyền thông số: Tầm bắn 70, Sát thương 2, Thời gian khựng 50, ID tháp
-        super(x, y, width, height, 70, 2, 2, Value.GOLD_MINER); //check id
+        super(x, y, width, height, 0, 0, 2, Value.GOLD_MINER); //check id
     }
 
     @Override 
@@ -24,8 +24,9 @@ public class GoldMiner extends Tower {
         if (Screen.cacherTower == null || Screen.cacherTower.length == 0) {
             return; 
         }
-
-        if (Screen.AnimTick % 120003 == 0) {
+        
+        // NOTE TO SELF: nhớ quay lại xem lại
+        if (animFrame % 60 == 0) {
             goldMinerAnimFrame = (goldMinerAnimFrame + 1) % Screen.goldMiner.length;
         }
         Image currentFrame = Screen.goldMiner[goldMinerAnimFrame];

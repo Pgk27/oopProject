@@ -1,4 +1,10 @@
 import java.awt.*;
+import java.net.URL;
+
+/**
+ * Lớp cha cho tất cả các con quái
+ * (Orc, Demon, Slime...)
+ */
 
 public class Mob extends Rectangle{
 
@@ -13,8 +19,8 @@ public class Mob extends Rectangle{
 	protected int spawnTime;
 	protected int mobWalk = 0;
 	protected int direction = right;
-	protected int mobID = Value.MOB_PLACEHOLDER;
-	protected int laneID = Value.MOB_PLACEHOLDER;
+	protected int mobID = Value.PLACEHOLDER;
+	protected int laneID = Value.PLACEHOLDER;
 	protected int increPos = 0;
 	protected int rand = 0;
 	protected double attackDmg;
@@ -29,6 +35,16 @@ public class Mob extends Rectangle{
 	protected boolean isMatching = false;
 	protected boolean hasDealtDamage = false;
 
+	protected int animFrame = 0;
+	protected int animTick = 0;
+	protected int animSpeed = 40;
+
+	protected double attackSpeed = 1.0;
+	protected long lastAttackTime = 0;
+	protected int currentAttackFrame = 0;
+	protected int totalCombatFrames;
+	protected int hitFrame;
+
 	// scale kích thước cho một số mob có frame ảnh rộng
 	protected double renderScale;
 	protected double dmgReduction;
@@ -39,6 +55,11 @@ public class Mob extends Rectangle{
 	protected int deadTick = 0;
 	protected int deadDelay = 0;
 	protected int deadDelayLimit = 1500; // Delay tại frame cuối trước khi biến mất (~1.5 đến 2 giây)
+
+	protected URL attackSound;
+	protected URL deathSound;
+
+	protected Rectangle attackRangeBox = new Rectangle();
 	
 	Mob() {
 		this.walkSpeed = 2; // lower is faster
@@ -46,6 +67,11 @@ public class Mob extends Rectangle{
 		this.renderScale = 1.5;
 		this.dmgReduction = 0;
 		this.attackDmg = 1;
+		this.attackSpeed = 0.75;
+		this.totalCombatFrames = Screen.mobOrcAttack1Anim.length;
+		this.hitFrame = Screen.mobOrcAttack1Anim.length - 1;
+		this.attackSound = Screen.sound.sfxSlash;
+		this.deathSound = Screen.sound.sfxDeath;
 	}
     
 	void spawnMob(int mobID) { //full con này đơn giản chỉ spawn mob ở 1 trong 3 ô 1,2,3 tại cột đầu tiên
@@ -87,6 +113,11 @@ public class Mob extends Rectangle{
 		this.health = mobSize;
 		this.maxHealth = health;
 
+		// set ngẫu nhiên frame cho từng con mob (ngẫu nhiên hóa chuyển động)
+		this.animFrame = Screen.rand.nextInt(8);
+		this.animTick = Screen.rand.nextInt(20);
+		this.animSpeed = 36 + Screen.rand.nextInt(10); // biến này là TỐC ĐỘ của frame, cho dao động nhẹ 36 - 45 ticks
+
 		direction = right;
 		mobWalk = 0;
 		walkFrame = 0;
@@ -94,16 +125,60 @@ public class Mob extends Rectangle{
 		this.deadFrame = 0;
 		this.deadTick = 0;
 		this.deadDelay = 0;
-		
+
 		inGame = true;
 		
 	}
 	
+	void updateCombat(int totalFrames, int hitFrame){
+		long now = System.currentTimeMillis();
+		long cooldownMs = (long) (1000.0 / attackSpeed);
+
+		if (lastAttackTime == 0){
+			lastAttackTime = now;
+			hasDealtDamage = false;
+		}
+
+		long elapsed = now - lastAttackTime;
+		if (elapsed >= cooldownMs){
+			lastAttackTime = now;
+			hasDealtDamage = false;
+			elapsed = 0;
+		}
+
+		double progress = Math.min(1.0, (double) elapsed / cooldownMs);
+		currentAttackFrame = (int) (progress * totalFrames);
+		if (currentAttackFrame >= totalFrames){
+			currentAttackFrame = totalFrames - 1;
+		}
+
+		// chạy đến frame ra đòn và chưa gây sát thương --> chém
+		if (currentAttackFrame >= hitFrame && !hasDealtDamage){
+			attack();
+			hasDealtDamage = true;
+		}
+	}
+
+	void playAttackSound(){
+		if(attackSound != null){
+			Screen.sound.playSfx(attackSound);
+		}
+	}
+
+	void playDeathSound(){
+		if (deathSound != null){
+			Screen.sound.playSfx(deathSound);
+		}
+	}
+
 	void playerLoseHealth() {
 		Screen.health -= 1;   
 	}
 
 	void physic() {
+		// set tầm đánh cho lớp Mob và các lớp con
+		this.attackRangeBox.setBounds(this.x + mobSize / 2, this.y + 2, mobSize / 2 - 2, mobSize - 4); 
+
 		if (isDying){ // tính toán frame cho animation mob chết
 			if (Screen.mobOrcDeadAnim != null && Screen.mobOrcDeadAnim.length > 0){
 				if (deadFrame < Screen.mobOrcDeadAnim.length - 1){
@@ -125,11 +200,22 @@ public class Mob extends Rectangle{
 			}
 			return;
 		}
+
+		// tăng frame, xúc tiến chuyển động
+		animTick++;
+		if (animTick >= animSpeed){
+			animFrame++;
+			animTick = 0;
+		}
 		
-		isMatching = checkMatching(Screen.mini);
+		isMatching = checkMatching(Screen.mini, Screen.merc);
 		
 		// if not fighting
 		if (!isMatching){
+			// reset combat khi không còn tham chiến
+			lastAttackTime = 0;
+			hasDealtDamage = false;
+
 			if(walkFrame >= walkSpeed) {
 				if(direction == right){
 					x+=1;
@@ -171,21 +257,21 @@ public class Mob extends Rectangle{
 				walkFrame+=1;
 			}
 		}
-
 		else{
 			// Lấy chỉ số frame đánh hiện tại (chu kỳ animation đánh có 6 frame: 0 -> 5)
-			int currentAttackFrame = Screen.AnimFrame % 6; 
+			// int currentAttackFrame = animFrame % 6; 
 
-			// Khi animation chạm frame thứ 5 và chưa gây sát thương trong lượt chém này
-			if (currentAttackFrame == 5) {
-				if (!hasDealtDamage) {
-					attack();
-					hasDealtDamage = true; // Đánh dấu đã chém trúng, không chém thêm trong frame này nữa
-				}
-			} else {
-				// Khi animation chuyển sang frame khác (0, 1, 2, 3, 4), reset cờ để chuẩn bị cho đòn kế tiếp
-				hasDealtDamage = false;
-			}
+			// // Khi animation chạm frame thứ 5 và chưa gây sát thương trong lượt chém này
+			// if (currentAttackFrame == 5) {
+			// 	if (!hasDealtDamage) {
+			// 		attack();
+			// 		hasDealtDamage = true; // Đánh dấu đã chém trúng, không chém thêm trong frame này nữa
+			// 	}
+			// } else {
+			// 	// Khi animation chuyển sang frame khác (0, 1, 2, 3, 4), reset cờ để chuẩn bị cho đòn kế tiếp
+			// 	hasDealtDamage = false;
+			// }
+			updateCombat(totalCombatFrames, hitFrame);
 		}
 	}
 
@@ -229,15 +315,16 @@ public class Mob extends Rectangle{
 		}
 	}
 	  
-	boolean checkMatching(Mob[] mini){
-		for (int i = 0; i < mini.length; i++){
-			if (this.intersects(mini[i]) && mini[i] != null && mini[i].inGame && !mini[i].isDead()){
-				this.isMatching = true;
-				this.target = mini[i];
-				this.target.isMatching = true;
-				this.target.gotDamage = true;
-				this.target.lastGotDamagedTime = System.currentTimeMillis();
-				return true;
+	boolean checkMatching(Mob[]... minionGroups){
+		for (Mob[] mini : minionGroups){
+			for (int i = 0; i < mini.length; i++){
+				if (this.attackRangeBox.intersects(mini[i]) && mini[i] != null && mini[i].inGame && !mini[i].isDead()){
+					this.target = mini[i];
+					this.target.isMatching = true;
+					this.target.gotDamage = true;
+					this.target.lastGotDamagedTime = System.currentTimeMillis();
+					return true;
+				}
 			}
 		}
 		return false;
@@ -255,6 +342,7 @@ public class Mob extends Rectangle{
 	}
 
 	void mobDead(){
+		playDeathSound();
 		mobWalk = 0;
 		isDying = true;
 		deadFrame = 0;
@@ -262,6 +350,18 @@ public class Mob extends Rectangle{
 		deadDelay = 0;
 		this.coinTick = 0;
 		Screen.killed++;
+	}
+
+	void attack(){
+		double dmg = attackDmg - (1*target.dmgReduction);
+		if (target != null){
+			playAttackSound();
+			target.loseHealth(dmg);
+			if (target.isDead()){
+				target = null;
+				isMatching = false;
+			}
+		}
 	}
 
 	Image getSprite(){
@@ -273,31 +373,23 @@ public class Mob extends Rectangle{
 		}
 		// fighting
 		if (isMatching){
+			int frame = currentAttackFrame % Screen.mobOrcAttack1Anim.length;
 			if (Screen.mobOrcAttack1Anim != null && Screen.mobOrcAttack1Anim.length > 0
 			&& Screen.mobOrcAttack2Anim != null && Screen.mobOrcAttack2Anim.length > 0){
-				if (Screen.AnimFrame % Screen.mobOrcAttack1Anim.length == 0) this.rand = (int) (Math.random()*2);
+				if (animFrame % Screen.mobOrcAttack1Anim.length == 0) this.rand = (int) (Math.random()*2);
 				if (rand == 0)
-					return Screen.mobOrcAttack1Anim[Screen.AnimFrame % Screen.mobOrcAttack1Anim.length];
-				return Screen.mobOrcAttack2Anim[Screen.AnimFrame % Screen.mobOrcAttack2Anim.length];
+					return Screen.mobOrcAttack1Anim[frame];
+				return Screen.mobOrcAttack2Anim[frame];
 			}
 		}
 		// walking
 		if (Screen.mobOrcWalkAnim != null && Screen.mobOrcWalkAnim.length > 0){
-			return Screen.mobOrcWalkAnim[Screen.AnimFrame % Screen.mobOrcWalkAnim.length];
+			return Screen.mobOrcWalkAnim[animFrame % Screen.mobOrcWalkAnim.length];
 		}
 		return Screen.mobOrcWalkAnim[0];
 	}
 	   
-	void attack(){
-		double dmg = attackDmg - (1*target.dmgReduction);
-		if (target != null){
-			target.loseHealth(dmg);
-			if (target.isDead()){
-				target = null;
-				isMatching = false;
-			}
-		}
-	}
+	
 	
 	void draw(Graphics g) {
 		if (!inGame) return;
@@ -327,16 +419,16 @@ public class Mob extends Rectangle{
 		}
 
 		if (isDying){
-			if (coinDuration > 0 && coinTick < coinDuration) {
-				double progress = (double) coinTick / coinDuration; // Giá trị từ 0.0 -> 1.0
-				int coinOffsetY = (int) (progress * coinMaxFlyDist); // Bay dần lên trên
+			// if (coinDuration > 0 && coinTick < coinDuration) {
+			// 	double progress = (double) coinTick / coinDuration; // Giá trị từ 0.0 -> 1.0
+			// 	int coinOffsetY = (int) (progress * coinMaxFlyDist); // Bay dần lên trên
 				
-				int coinX = x + (width / 2) - (Store.iconSize / 2);
-				int coinY = (y - coinOffsetY);
+			// 	int coinX = x + (width / 2) - (Store.iconSize / 2);
+			// 	int coinY = (y - coinOffsetY);
 
-				// g.drawImage(Screen.tileset_res[2], coinX, coinY, Store.iconSize, Store.iconSize, null);
-				// xphpe la k ve dong xu bay len nua nhe
-			}
+			// 	// g.drawImage(Screen.tileset_res[2], coinX, coinY, Store.iconSize, Store.iconSize, null);
+			// 	// xphpe la k ve dong xu bay len nua nhe
+			// }
 			return;
 		}
 		
@@ -373,6 +465,7 @@ public class Mob extends Rectangle{
 	
 	public void applyMultiplier(double hpMult, double speedMult) {
 		this.maxHealth = (int)(this.maxHealth * hpMult);
+		this.attackSpeed *= 1.5;
 		this.health = this.maxHealth;
 		this.walkSpeed = (int)(this.walkSpeed / speedMult); // walkSpeed is frame delay
 	}

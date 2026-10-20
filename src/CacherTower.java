@@ -14,14 +14,14 @@ public class CacherTower extends Tower {
             return; 
         }
 
-        animationFrame = 0;
+        towerAnimFrame = 0;
         
         // Chỉ chạy hoạt ảnh khi đang khóa mục tiêu, nếu không thì đứng im ở frame 0
         if (shotingMob1 || shotingMob2 || shotingMob3) {
-            animationFrame = Screen.AnimFrame % Screen.cacherTower.length;
+            towerAnimFrame = animFrame % Screen.cacherTower.length;
         }
         
-        Image currentFrame = Screen.cacherTower[animationFrame];
+        Image currentFrame = Screen.cacherTower[towerAnimFrame];
         
         // Tìm tọa độ mục tiêu để lật ảnh
         int targetX = this.x + width / 2; 
