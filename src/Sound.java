@@ -12,14 +12,12 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
-import javax.sound.sampled.LineEvent;
 
 /**
  * Class xử lí âm thanh (Music + SFX)
  */
 public class Sound {
     private Clip musicClip;
-    private Clip sfxClip;
     
     // luồng nền riêng cho sfx để không bị freezing nữa
     private final ExecutorService sfxExecutor = Executors.newFixedThreadPool(2);
@@ -38,6 +36,7 @@ public class Sound {
     URL sfxDeath;
     URL sfxPierce;
     URL bowRelease;
+    URL spellCast;
 
     public Sound(){
         try{
@@ -48,6 +47,7 @@ public class Sound {
             sfxDeath = readAudio("sfx/roblox-death-sound-effect.wav");
             sfxPierce = readAudio("sfx/zapsplat_warfare_spear_land_ground_004_43629.wav");
             bowRelease = readAudio("sfx/bow-release.wav");
+            spellCast = readAudio("sfx/04_Fire_explosion_04_medium.wav");
 
             preloadSfx(sfxBite, 3);
             preloadSfx(sfxClaw, 3);
@@ -55,6 +55,7 @@ public class Sound {
             preloadSfx(sfxDeath, 2);
             preloadSfx(sfxPierce, 3);
             preloadSfx(bowRelease, 3);
+            preloadSfx(spellCast, 3);
 
         } catch(Exception e){
             e.printStackTrace();

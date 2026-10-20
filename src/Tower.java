@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.net.URL;
 
 public abstract class Tower {
     protected int x, y, width, height;
@@ -19,6 +20,8 @@ public abstract class Tower {
     protected boolean shotingMob3 = false;
     protected boolean hasDealtDamage = false;
     protected Rectangle towerSquare;
+
+    protected URL shootSound;
 
     public Tower(int x, int y, int width, int height, int rangeSize, int damage, int shootFrame, int id) {
         this.x = x;
@@ -135,6 +138,7 @@ public abstract class Tower {
                 double startX = x + width/2;
 				double startY = y + height/2;
                 if (target != null && !hasDealtDamage){
+                    playShootSound();
                     Screen.pjt.add(new Projectiles(startX, startY, target, finalDamage, id));
 					hasDealtDamage = true;
 					if (target.isDead()) {
@@ -151,7 +155,12 @@ public abstract class Tower {
         }
     }
 
-    
+    protected void playShootSound(){
+        if (shootSound != null){
+            Screen.sound.playSfx(shootSound);
+        }
+    }
+
     public abstract void draw(Graphics g);
     public abstract void fight(Graphics g);
 }
