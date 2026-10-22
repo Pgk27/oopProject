@@ -4,14 +4,18 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.Buffer;
 
 import javax.imageio.ImageIO;
 
 public class Tiles {
+    public ManageNut buttonManager = Screen.manageNut;
+
     public BufferedImage cursorNormal;
     public BufferedImage cursorHover;
     public BufferedImage cursorPressed;
 
+    // SETTING MENU
     public BufferedImage volumeBarOn;
     public BufferedImage volumeBarOff;
     public BufferedImage tickButton;
@@ -20,7 +24,14 @@ public class Tiles {
     public BufferedImage xPressedButton;
     public BufferedImage longButton;
     public BufferedImage longPressedButton;
+    public BufferedImage button;
+	public BufferedImage touchedButton;
+    public BufferedImage settingMenu;
+    public BufferedImage settingsButton;
+    public BufferedImage buttonSliderOff;
+    public BufferedImage buttonSliderOn;
 
+    // TITLE SCREEN
     public BufferedImage titleScreen;
     public BufferedImage newGameButton;
     public BufferedImage quitGameButton;
@@ -43,6 +54,8 @@ public class Tiles {
     public BufferedImage shardShopBigFrame;
     public BufferedImage awakeningText;
 
+    public BufferedImage[] mapDanhNhau = new BufferedImage[4];
+
     public BufferedImage iconBH;
     public BufferedImage iconEnhance;
     public BufferedImage iconMercenary;
@@ -63,18 +76,29 @@ public class Tiles {
     public BufferedImage tongKetWin;
     public BufferedImage tongKetLose;
 
-    public BufferedImage button;
-	public BufferedImage touchedButton;
-    public BufferedImage settingMenu;
-    public BufferedImage settingsButton;
-    public BufferedImage buttonSliderOff;
-    public BufferedImage buttonSliderOn;
+    public BufferedImage tileUpdateHero;
+    public BufferedImage upHeroFrame;
+    public BufferedImage nenExpBlack;
+    public BufferedImage nenExpGreen;
+    public BufferedImage expBar;
+    public BufferedImage maxLevel;
+    public BufferedImage levelUpT;
+    public BufferedImage addPoint;
+    public BufferedImage addPointS;
+    public BufferedImage addPointT;
+    public BufferedImage max;
+    public BufferedImage awakeT;
+    public BufferedImage awaken;
+    public BufferedImage purchaseT;
+
+    public BufferedImage tileBuy;
 
     public Font pixelFontv1;
     public Font pixelFontv2;
     public Font pixelFontvSmall;
     public Font pixelFontMini;
     public Font pixelFontMedi;
+    public Font pixelFontHeroRequire;
     public Font sproutLandsFont32f;
 
     public Color darkSilver;
@@ -83,6 +107,8 @@ public class Tiles {
     public Color enhanceRed;
     public Color mercBlue;
     public Color gloomyPurple;
+    public Color okOK;
+    public Color notOK;
 
     private BufferedImage readImage(String relativePath) throws Exception {
         File file = new File("src/" + relativePath);
@@ -97,6 +123,7 @@ public class Tiles {
 
     public Tiles() {
         try {
+            
             cursorNormal = readImage("res/ui/mouse/mouse1.png");
             cursorHover = readImage("res/ui/mouse/mouse2.png");
             cursorPressed = readImage("res/ui/mouse/mouse3.png");
@@ -109,6 +136,83 @@ public class Tiles {
             xPressedButton = readImage("res/ui/setting/XPressedButton.png");
             longButton = readImage("res/ui/setting/longButton.png");
             longPressedButton = readImage("res/ui/setting/longPressedButton.png");
+
+            // gs tileScreen
+            buttonManager.playgame.ima[0] = readImage("tileImage/playgame.png");
+            buttonManager.playgame.ima[1] = readImage("tileImage/playgameS.png");
+          
+            buttonManager.store.ima[0] = readImage("tileImage/store.png");
+            buttonManager.store.ima[1] = readImage("tileImage/storeS.png");
+
+            buttonManager.updateHero.ima[0] = readImage("tileImage/updateHero.png");
+            buttonManager.updateHero.ima[1] = readImage("tileImage/updateHeroS.png");
+
+
+            buttonManager.quitgame.ima[0] = readImage("tileImage/quitgame.png");
+            buttonManager.quitgame.ima[1] = readImage("tileImage/quitgameS.png");
+
+            //gs gameShop
+
+            buttonManager.backInGameShop.ima[0]= readImage("tileImage/back.png");
+            buttonManager.backInGameShop.ima[1]= readImage("tileImage/backS.png");
+
+            buttonManager.backInGacha.ima[0]= readImage("tileImage/back.png");
+            buttonManager.backInGacha.ima[1]= readImage("tileImage/backS.png");
+
+            buttonManager.gachaBH.ima[0]= readImage("tileImage/gacha.png");
+            buttonManager.gachaBH.ima[1]= readImage("tileImage/gachaS.png");
+
+            buttonManager.gachaEnhance.ima[0]= readImage("tileImage/gacha.png");
+            buttonManager.gachaEnhance.ima[1]= readImage("tileImage/gachaS.png");
+
+            buttonManager.gachaMer.ima[0]= readImage("tileImage/gacha.png");
+            buttonManager.gachaMer.ima[1]= readImage("tileImage/gachaS.png");
+
+            buttonManager.summon.ima[0] = readImage("tileImage/summon.png");
+            buttonManager.summon.ima[1] = readImage("tileImage/summonS.png");
+            
+            
+            
+
+
+            buttonManager.doiBH.ima[0]= readImage("tileImage/awake.png");
+            buttonManager.doiBH.ima[1]= readImage("tileImage/awakeS.png");
+
+            buttonManager.doiEnhance.ima[0]= readImage("tileImage/awake.png");
+            buttonManager.doiEnhance.ima[1]= readImage("tileImage/awakeS.png");
+
+            buttonManager.doiMer.ima[0]= readImage("tileImage/awake.png");
+            buttonManager.doiMer.ima[1]= readImage("tileImage/awakeS.png");
+
+            buttonManager.doiEC.ima[0] = readImage("tileImage/purchase.png");
+            buttonManager.doiEC.ima[1] = readImage("tileImage/purchaseS.png");
+
+            buttonManager.levelUp.ima[0] = readImage("tileImage/levelUp.png");
+            buttonManager.levelUp.ima[1] = readImage("tileImage/levelUpS.png");
+
+            buttonManager.expBar.ima[0] = readImage("tileImage/expBar.png");
+            buttonManager.expBar.ima[1] = readImage("tileImage/expBarS.png");
+
+
+
+           
+            purchaseT = readImage("tileImage/purchaseT.png");
+            awakeT = readImage("tileImage/awakeT.png");
+            awaken = readImage("tileImage/awaken.png");
+            maxLevel = readImage("tileImage/maxLevel.png");
+            levelUpT = readImage("tileImage/levelUpT.png");
+
+            addPoint = readImage("tileImage/addPoint.png");
+            addPointS = readImage("tileImage/addPointS.png");
+            addPointT = readImage("tileImage/addPointT.png");
+            max = readImage("tileImage/max.png");
+
+
+
+            
+
+
+            buttonManager.thongBaoFrame.ima[0] = readImage("tileImage/awake.png");
 
             titleScreen = readImage("res/tileImage/game_tilee.png");
             newGameButton = readImage("res/tileImage/playgame2.png");
@@ -158,6 +262,8 @@ public class Tiles {
             settingsButton = readImage("res/ui/setting/icon.png");
             buttonSliderOff = readImage("res/ui/setting/buttonSliderOff.png");
             buttonSliderOn = readImage("res/ui/setting/buttonSliderOn.png");
+
+            mapDanhNhau[3] = readImage("tileImage/mapMa1.png");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -175,6 +281,7 @@ public class Tiles {
             pixelFontvSmall = baseFont.deriveFont(13f);
             pixelFontMini = baseFont.deriveFont(11f);
             pixelFontMedi = baseFont.deriveFont(32f);
+            pixelFontHeroRequire = baseFont.deriveFont(20f);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -184,5 +291,7 @@ public class Tiles {
         mercBlue = Color.decode("#3399FF");
         royalGold = Color.decode("#FFBF00");
         gloomyPurple = Color.decode("#8A2BE2");
+        okOK = Color.decode("#4ADE80");
+        notOK = Color.decode("#FF0F0F");
     }
 }

@@ -44,6 +44,7 @@ public class Value { // CẤM ĐƯỢC THAY ĐỔI
 	static public final int NOTI = nextId();
 	static public final int VICTORY_SCREEN = nextId();
 	static public final int DEFEAT_SCREEN = nextId();
+	static public final int UPDATE_HERO = nextId();
 	
 	
 	static int[] deathReward = {5, 10, 15, 0}; // öldüğünde moblar ne kadar para veriyor

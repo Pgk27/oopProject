@@ -14,7 +14,7 @@ import map.Block;
 public class Mob extends Rectangle{
 
 	int xC, yC; //  x,y kordinatları for mob
-	protected int health;
+	public int health;
 	protected int maxHealth;
 	protected int healthSpace = 3, healthHeight = 6;
 	protected int mobSize = 32;
@@ -71,7 +71,7 @@ public class Mob extends Rectangle{
 		this.spawnTime = 1600;
 		this.renderScale = 1.5;
 		this.dmgReduction = 0;
-		this.attackDmg = 1;
+		this.attackDmg = 10;
 		this.attackSpeed = 0.75;
 		this.totalCombatFrames = Screen.mobOrcAttack1Anim.length;
 		this.hitFrame = Screen.mobOrcAttack1Anim.length - 1;
@@ -422,21 +422,6 @@ public class Mob extends Rectangle{
 		if (Sprite != null){
             g.drawImage(Sprite, drawX, drawY, drawW, drawH, null);
 		}
-
-		if (isDying){
-			// if (coinDuration > 0 && coinTick < coinDuration) {
-			// 	double progress = (double) coinTick / coinDuration; // Giá trị từ 0.0 -> 1.0
-			// 	int coinOffsetY = (int) (progress * coinMaxFlyDist); // Bay dần lên trên
-				
-			// 	int coinX = x + (width / 2) - (Store.iconSize / 2);
-			// 	int coinY = (y - coinOffsetY);
-
-			// 	// g.drawImage(Screen.tileset_res[2], coinX, coinY, Store.iconSize, Store.iconSize, null);
-			// 	// xphpe la k ve dong xu bay len nua nhe
-			// }
-			return;
-		}
-		
 
 		int barY = y - (healthSpace + healthHeight);
 		double healthPercent = (double) health / maxHealth;

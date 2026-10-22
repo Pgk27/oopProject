@@ -20,6 +20,9 @@ import spell.Spell;
 import wave.WaveManager;
 
 public class Screen extends JPanel implements Runnable {
+
+    
+
 	Thread thread = new Thread(this);
 
 	public static CopyOnWriteArrayList<Projectiles> pjt = new CopyOnWriteArrayList<>();
@@ -84,6 +87,15 @@ public class Screen extends JPanel implements Runnable {
 	public static final int gachaMercenary=3;
 	public static final int summon=4;
 
+	public static int heroXp=999999;
+	public static int heroLevel=1;
+	public static int[] upHeroXp = new int[26];
+	public static int[] upHeroCoin = new int[26];
+	public static int[] upHeroShard = new int[26];
+	public static int[] upHeroECore = new int[26];
+
+	
+
 	public static boolean unlockBH = false;
 	public static boolean unlockEnhance = false;
 	public static boolean unlockMercenary = false;
@@ -91,13 +103,28 @@ public class Screen extends JPanel implements Runnable {
 	public static int coinage = 999999;
 	public static int coinDauTran;
 	public static int healthDauTran;
-	public static int shard = 0;
-	public static int energyCore = 0;
+	public static int shard =99999;
+	public static int energyCore =999;
+	public static int remainingPoint = 5 * heroLevel;
+	public static int maxPoint = 5 * heroLevel;
+	
+
+	public static int buffHp=0;
+	public static int buffHpRe=0;
+	public static int buffShield=0;
+	public static int buffADmg=0;
+	public static int buffSDmg=0;
+	public static int buffAtkSp=0;
+	public static int maxBuff = 25;
+
+
+
 
 	public static boolean ok; 	//Đcm tluc thông minh vclll
 	//Con này fix bug đoạn coin sát mép số 10, đề phòng bọn nghẹo gacha ko có tiền mua tháp
 	//Nếu cứ so sánh thì bên keyhandle trừ tiền trước, sau đó sang bên render check coin thấy =10
 	//thì nó lại hiện tb cảnh cáo, bị lệch render với logic.
+
 	
 	public static final int VIRTUAL_WIDTH = 1220;
 	public static final int VIRTUAL_HEIGHT = 780;
@@ -110,16 +137,14 @@ public class Screen extends JPanel implements Runnable {
 
 	public static int health = 999999;
 	public static int killed = 0;
-
     public static int killsToWin = 0;
 
-    static int level = 1;
+    public static int level = 1;
+    public static int rielLevel =1;
+	public static boolean isFirst = true;
+	public static boolean isWin = false;
 
-    static int rielLevel =1;
-	static boolean isFirst = true;
-	static boolean isWin = false;
-
-	static int gameState = Value.TITLE_SCREEN; // cho biết mình đang ở màn hình nào
+	public static int gameState = Value.TITLE_SCREEN; // cho biết mình đang ở màn hình nào
 
 	public static CopyOnWriteArrayList<Spell> activeSpells = new CopyOnWriteArrayList<>();
 
@@ -144,6 +169,10 @@ public class Screen extends JPanel implements Runnable {
 	public static Sound sound = new Sound();
 	private GameRender gameRender = new GameRender();
 
+	public static ManageNut manageNut;
+	
+	public static int ScreenCoNut=2;
+
 	// Đôi hàm chuyển tọa độ chuột từ bên Screen... sang tọa độ theo hệ quy chiếu gốc
 	// Cái này chuyển ngược so với hàm vẽ, hay phết :))
 	public static Point toVirtualPoint(Point p) {
@@ -159,6 +188,7 @@ public class Screen extends JPanel implements Runnable {
 	
 	Screen(Frame frame) {
 		this.frame = frame;
+		manageNut = new ManageNut(this);
 		addMouseListener(new KeyHandel());
 		addMouseMotionListener(new KeyHandel());
 		sound.playMusic(sound.themeSong);
@@ -168,7 +198,7 @@ public class Screen extends JPanel implements Runnable {
 	public static void hasWon() {
 		if(waveManager != null && waveManager.isAllWavesFinished() && !waveManager.isAnyMobAlive()) {
 			isWin = true;
-			killed = 0;		
+			// killed = 0;		
 		}
 	}
 
@@ -211,7 +241,7 @@ public class Screen extends JPanel implements Runnable {
 		
 		waveManager = new WaveManager(level);
 	}
-
+	
 	@Override 
 	public void paintComponent(Graphics g) {  // Hàm vẽ chính --> đẩy sang gamerender.java
 		if(isFirst) { 
@@ -324,9 +354,14 @@ public class Screen extends JPanel implements Runnable {
 				if (health <= 0) {
 					gameState = Value.DEFEAT_SCREEN;
 					health = rand.nextInt(3) + 2; // reset health random ;)) // chịu em lực
+					int luckyNumber = rand.nextInt(3)+2;
+					//Số kia vừa là hp radom reset, vừa là % heroXp bị trừ :))
+					health = luckyNumber; // reset health random ;))
+					heroXp = (int)(heroXp *(100-3*luckyNumber)/100); // trừ heroXp theo % :)))))))))))))))))
 				} else if (isWin) {
 					rielLevel++;
 					gameState = Value.VICTORY_SCREEN;
+					heroXp = heroXp + killed;
 				}
 			}
 			repaint();
@@ -459,4 +494,6 @@ public class Screen extends JPanel implements Runnable {
 			return null;
 		}
 	}
+
+	
 }
