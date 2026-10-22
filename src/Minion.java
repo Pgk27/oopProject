@@ -1,23 +1,27 @@
 import java.awt.*;
 
 public class Minion extends Mob {
-	private final long HEAL_COOL_DOWN = 1000; // bỏ final nếu sau này muốn chỉnh cooldown xuống bằng gacha!?
-	private int healAmount = 5;
+	private long HEAL_COOL_DOWN = MinionStats.HEAL_COOL_DOWN; //tgian giữa các lần hồi hp
+	private int healAmount = MinionStats.healAmount;  //lượng hp hồi 1 cục
 	private long lastHealTime = 0;
 
 	private boolean isShooting = false;
 	private boolean hasShotArrow = false;
 	private Mob shootTarget = null;
-	private double arrowDmg = 10;
+	private double arrowDmg = MinionStats.arrowDmg;  //st cung
 	private int shootRange = 300;
 	private Rectangle rangeBox = new Rectangle();
 
     Minion(){    
 		this.renderScale = 1.8;
-		this.dmgReduction = 0; 
-		this.attackDmg = 20;
+		this.dmgReduction = MinionStats.dmgReduction; //giảm st trừ thẳng
+		this.attackDmg = MinionStats.swordDmg; //st kiếm
+		this.maxHealth = MinionStats.maxHealth;
+		this.health = maxHealth;
 		this.mobSize = 80;
 	}
+
+
 
 	void spawnMob(int mobID) {
 		Block destination = null;
@@ -42,7 +46,7 @@ public class Minion extends Mob {
 			for (int y = 0; y < Screen.room.block.length; y++) {
 				for (int x = 0; x < Screen.room.block[y].length; x++) {
 					Block block = Screen.room.block[y][x];
-					if (block.towerID == Value.BLACK_HOLE) {
+					if (block.towerID == Value.CASTLE) {
 						if (destination != null) {
 							throw new IllegalStateException("The map has more than one gate tile.");
 						}
@@ -74,7 +78,7 @@ public class Minion extends Mob {
 
 		this.mobID = mobID;
 		this.health = mobSize;
-		this.maxHealth = health;
+		this.maxHealth = MinionStats.maxHealth;
 
 		this.isDying = false;
 		this.deadFrame = 0;
@@ -218,7 +222,7 @@ public class Minion extends Mob {
 		}
 		else health += healAmount;
 	}
-
+	
 	@Override
 	boolean checkMatching(Mob[] mob){
 		// if the current target is still in Game & in range & not dead, LOCK ON it

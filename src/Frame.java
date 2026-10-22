@@ -17,14 +17,14 @@ public class Frame extends JFrame{
 		// Tao phải xài cục này để check tọa độ gốc cho dễ
 
 
-		// setSize(size);
-		// setLocationRelativeTo(null);
+		setSize(size);
+		setLocationRelativeTo(null);
 
-		// Fullscreen setup: borderless, maximized to screen
-		setUndecorated(true);
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		setBounds(0, 0, screenSize.width, screenSize.height);
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
+		// // Fullscreen setup: borderless, maximized to screen
+		// setUndecorated(true);
+		// Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		// setBounds(0, 0, screenSize.width, screenSize.height);
+		// setExtendedState(JFrame.MAXIMIZED_BOTH);
 		
 		setLayout(new GridLayout(1, 1));
 		screen = new Screen(this);

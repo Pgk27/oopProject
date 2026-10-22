@@ -3,7 +3,7 @@ import java.awt.*;
 public class Mob extends Rectangle{
 
 	int xC, yC; //  x,y kordinatları for mob
-	protected int health;
+	public int health;
 	protected int maxHealth;
 	protected int healthSpace = 3, healthHeight = 6;
 	protected int mobSize = 32;
@@ -31,7 +31,7 @@ public class Mob extends Rectangle{
 
 	// scale kích thước cho một số mob có frame ảnh rộng
 	protected double renderScale;
-	protected double dmgReduction;
+	public double dmgReduction;
 	protected boolean isDying = false;
 	protected long lastGotDamagedTime;
 	protected int deadFrame = 0;
@@ -45,7 +45,7 @@ public class Mob extends Rectangle{
 		this.spawnTime = 1600;
 		this.renderScale = 1.5;
 		this.dmgReduction = 0;
-		this.attackDmg = 1;
+		this.attackDmg = 10;
 	}
     
 	void spawnMob(int mobID) { //full con này đơn giản chỉ spawn mob ở 1 trong 3 ô 1,2,3 tại cột đầu tiên
@@ -84,8 +84,8 @@ public class Mob extends Rectangle{
 		yC = spawnY;
 
 		this.mobID = mobID;
-		this.health = mobSize;
-		this.maxHealth = health;
+		this.health = 100;
+		this.maxHealth = 100;
 
 		direction = right;
 		mobWalk = 0;
@@ -156,7 +156,7 @@ public class Mob extends Rectangle{
 					}
 					
 					Block currentBlock = Screen.room.block[yC][xC];
-					if (currentBlock.groundID == 4 || currentBlock.towerID == Value.BLACK_HOLE) {
+					if (currentBlock.groundID == 4 || currentBlock.towerID == Value.CASTLE) {
 						deleteMob();
 						playerLoseHealth();
 						return;
@@ -334,7 +334,8 @@ public class Mob extends Rectangle{
 				int coinX = x + (width / 2) - (Store.iconSize / 2);
 				int coinY = (y - coinOffsetY);
 
-				g.drawImage(Screen.tileset_res[2], coinX, coinY, Store.iconSize, Store.iconSize, null);
+				// g.drawImage(Screen.tileset_res[2], coinX, coinY, Store.iconSize, Store.iconSize, null);
+				// xphpe la k ve dong xu bay len nua nhe
 			}
 			return;
 		}

@@ -8,6 +8,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.*;
 
 public class Screen extends JPanel implements Runnable {
+
+    
+
 	Thread thread = new Thread(this);
 
 	static CopyOnWriteArrayList<Projectiles> pjt = new CopyOnWriteArrayList<>();
@@ -47,6 +50,11 @@ public class Screen extends JPanel implements Runnable {
 	static Image[] mageTower = new Image[8];
 	static Image[] cannon = new Image[8];
 	static Image[] goldMiner = new Image[8];
+	public static Image[] blackHole = new Image[8];
+	public static Image airplane;
+	public static Image[] explosion = new Image[8];
+
+	public static CopyOnWriteArrayList<Spell> activeSpells = new CopyOnWriteArrayList<>();
 
 	static Map<Integer, Image> projectiles = new HashMap<>(); 
 	// sẽ update tiếp sau
@@ -60,11 +68,12 @@ public class Screen extends JPanel implements Runnable {
 	public static final int gameShop=4;
 	public static final int buyItem=5;
 	public static final int gacha=6;
-	public static final int gachaRate=7;
-	public static final int shardShop=8;
-	public static final int thongBao=9;
+	public static final int shardShop=7;
+	public static final int thongBao=8;
+	public static final int gachaRate=9;
 	public static final int tongKetWin=10;
 	public static final int tongKetLose=11;
+	public static final int updateHero=12;
 
 
 	public static Random rand = new Random();
@@ -77,6 +86,14 @@ public class Screen extends JPanel implements Runnable {
 	public static final int gachaMercenary=3;
 	public static final int summon=4;
 
+	public static int heroXp=999999;
+	public static int heroLevel=1;
+	public static int[] upHeroXp = new int[26];
+	public static int[] upHeroCoin = new int[26];
+	public static int[] upHeroShard = new int[26];
+	public static int[] upHeroECore = new int[26];
+
+	
 
 	public static boolean unlockBH = false;
 	public static boolean unlockEnhance = false;
@@ -85,16 +102,33 @@ public class Screen extends JPanel implements Runnable {
 	public static int coinage = 99999;
 	public static int coinDauTran;
 	public static int healthDauTran;
-	public static int shard =0;
-	public static int eCore =0;
+	public static int shard =99999;
+	public static int eCore =999;
+	public static int remainingPoint = 5 * heroLevel;
+	public static int maxPoint = 5 * heroLevel;
+	
+
+	public static int buffHp=0;
+	public static int buffHpRe=0;
+	public static int buffShield=0;
+	public static int buffADmg=0;
+	public static int buffSDmg=0;
+	public static int buffAtkSp=0;
+	public static int maxBuff = 25;
+
+
+
 
 	public static boolean ok; 	//Đcm tluc thông minh vclll
 	//Con này fix bug đoạn coin sát mép số 10, đề phòng bọn nghẹo gacha ko có tiền mua tháp
 	//Nếu cứ so sánh thì bên keyhandle trừ tiền trước, sau đó sang bên render check coin thấy =10
 	//thì nó lại hiện tb cảnh cáo, bị lệch render với logic.
+
 	
 	public static final int VIRTUAL_WIDTH = 1220;
 	public static final int VIRTUAL_HEIGHT = 780;
+	public static int myWidth = VIRTUAL_WIDTH;  
+    public static int myHeight = VIRTUAL_HEIGHT; 
 
 	public static double scale = 1.0;
 	public static int offsetX = 0;
@@ -113,12 +147,9 @@ public class Screen extends JPanel implements Runnable {
 		int vy = (int) Math.round((screenY - offsetY) / scale);
 		return new Point(vx, vy);
 	}
-
-	static int myWidth = VIRTUAL_WIDTH, myHeight = VIRTUAL_HEIGHT;
 	static int health = 999999;
-	static int killed = 0, killsToWin = 0, level = 1, rielLevel =1;
+	static int killed = 0, killsToWin = 0, level = 1, rielLevel =3;
 	static boolean isFirst = true;
-	static boolean isDebug = false;
 	static boolean isWin = false;
 	
 	
@@ -128,6 +159,10 @@ public class Screen extends JPanel implements Runnable {
 	static Save save;
 	static Store store;
 	public static Tiles tiles;
+	public static ManageNut manageNut;
+	
+	public static int ScreenCoNut=2;
+
 	public static WaveManager waveManager;
 	
 
@@ -141,6 +176,7 @@ public class Screen extends JPanel implements Runnable {
 	
 	Screen(Frame frame) {
 		this.frame = frame;
+		manageNut = new ManageNut(this);
 		addMouseListener(new KeyHandel());
 		addMouseMotionListener(new KeyHandel());
 		
@@ -150,7 +186,7 @@ public class Screen extends JPanel implements Runnable {
 	static void hasWon() {
 		if(waveManager != null && waveManager.isAllWavesFinished() && !waveManager.isAnyMobAlive()) {
 			isWin = true;
-			killed = 0;		
+			// killed = 0;		
 		}
 	}
 
@@ -164,6 +200,7 @@ public class Screen extends JPanel implements Runnable {
 	
 	public void define() {
 		save = new Save();
+		// manageNut = new ManageNut();
 		Screen.tiles = new Tiles();
 		loadLevel();
 		store = new Store();
@@ -188,6 +225,13 @@ public class Screen extends JPanel implements Runnable {
 		}
 		for(int i = 0; i < goldMiner.length; i++){
 			goldMiner[i] = loadFrame("characterSprites/goldMiner/goldMiner" + i + ".png");
+		}
+		for(int i = 0; i < blackHole.length; i++){
+			blackHole[i] = loadFrame("characterSprites/blackHole/blackHole" + i + ".png");
+		}
+		airplane = loadFrame("characterSprites/airplane/airplane.png");
+		for(int i = 0; i < explosion.length; i++){
+			explosion[i] = loadFrame("characterSprites/airplane/explosion" + i + ".png");
 		}
 		
 		tileset_res[0] = new ImageIcon("res/cell.png").getImage();
@@ -251,6 +295,7 @@ public class Screen extends JPanel implements Runnable {
 		room = new Room();
 		killed = 0;
 		isWin = false;
+		activeSpells.clear();
 
 		save.loadSave(new File("save/map" + level)); //map ı yüklüyor
 		
@@ -273,12 +318,11 @@ public class Screen extends JPanel implements Runnable {
 		
 		waveManager = new WaveManager(level);
 	}
-
+	
 	@Override 
 	public void paintComponent(Graphics g) {  // Hàm vẽ chính --> đẩy sang gamerender.java
 		if(isFirst) { 
-            myWidth = VIRTUAL_WIDTH;  
-            myHeight = VIRTUAL_HEIGHT; 
+            
             define();
             
             isFirst = false;
@@ -379,13 +423,27 @@ public class Screen extends JPanel implements Runnable {
 						}
 					}
 
+					for (Spell s : activeSpells) {
+						s.physic();
+						if (s.isFinished()) {
+							s.destroy();
+							activeSpells.remove(s);
+						}
+					}
+
 				}
 				if (health <= 0) {
 					gameState = tongKetLose;
-					health = rand.nextInt(3) + 2; // reset health random ;))
+					int luckyNumber = rand.nextInt(3)+2;
+					//Số kia vừa là hp radom reset, vừa là % heroXp bị trừ :))
+					health = luckyNumber; // reset health random ;))
+					heroXp = (int)(heroXp *(100-3*luckyNumber)/100); // trừ heroXp theo % :)))))))))))))))))
+
 				} else if (isWin) {
 					rielLevel++;
 					gameState = tongKetWin;
+					heroXp = heroXp + killed;
+					//Cộng Kinh nghiệm bằng số quái giết :>
 				}
 			}
 			repaint();
@@ -406,4 +464,6 @@ public class Screen extends JPanel implements Runnable {
 			return null;
 		}
 	}
+
+	
 }

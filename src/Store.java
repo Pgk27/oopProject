@@ -11,8 +11,8 @@ public class Store {
 	public static int itemIn = 4;   // khi vào trong game thì mỗi cạnh được ép xuống 4 pixel
 	public static int heldID = -1;
 	public static int realID = -1;
-	public static int[] buttonID = {Value.ARCHER_TOWER, Value.MAGE_TOWER ,Value.CANNON_TOWER ,Value.GOLD_MINER ,Value.PLACEHOLDER ,Value.PLACEHOLDER ,Value.PLACEHOLDER ,Value.TRASH_CAN  };  //thứ tự hiển thị trong shop
-	public static int[] buttonPrice = {10,30,75,40,0,0,0,0};
+	public static int[] buttonID = {Value.ARCHER_TOWER, Value.MAGE_TOWER ,Value.CANNON_TOWER ,Value.GOLD_MINER ,Value.SPELL_BLACK_HOLE ,Value.SPELL_BOMBER_PLANE ,Value.PLACEHOLDER ,Value.TRASH_CAN  };  //thứ tự hiển thị trong shop
+	public static int[] buttonPrice = {10,30,75,40,50,75,0,0};
 	
 	public Rectangle[] button = new Rectangle[shopWidth]; // chắc là dùng cho eventListener
 	public Rectangle buttonHealth ;
@@ -97,8 +97,22 @@ public class Store {
 					}
 				}
 				else if(Screen.coinage >= buttonPrice[realID]) {
-					for(int y= 0; y < Screen.room.block.length; y++) {
-						for(int x = 0; x < Screen.room.block[0].length; x++) {
+					// Nếu là Máy bay thả bom: Cho phép click thả bất kỳ đâu trên bản đồ (cả đường và cỏ)
+					if (heldID == Value.SPELL_BOMBER_PLANE) {
+						int mapBottom = Screen.room.block[Screen.room.worldHeight - 1][0].y + Screen.room.blockSize;
+						if (Screen.mse.y < mapBottom && Screen.mse.y >= 0 && Screen.mse.x >= 0 && Screen.mse.x < Screen.myWidth) {
+							Screen.activeSpells.add(new BomberPlane(Screen.mse.x, Screen.mse.y));
+							Screen.coinage -= buttonPrice[realID];
+							
+							// Nếu bỏ thêm cái bên dưới thì sau khi bấm sẽ ngay lập tức biến mất cái vòng tròn
+							// holdsItem = false;
+							// realID = -1;
+							// heldID = -1;
+						}
+					}
+					else {
+						for(int y= 0; y < Screen.room.block.length; y++) {
+							for(int x = 0; x < Screen.room.block[0].length; x++) {
 							if(Screen.room.block[y][x].contains(Screen.mse)) {
 								// Ô (y, x) là Ô DƯỚI - BÊN PHẢI của tháp 2x2
 								// Cụm 2x2 gồm: (y - 1, x - 1), (y - 1, x), (y, x - 1), (y, x)
@@ -107,7 +121,7 @@ public class Store {
 									for(int dy = 0; dy < 2; dy++) {
 										for(int dx = 0; dx < 2; dx++) {
 											Block b = Screen.room.block[y - 1 + dy][x - 1 + dx];
-											if(b.isRoad() || b.towerID != Value.PLACEHOLDER) {
+											if(!isCellPlaceable(b, heldID)) {
 												canPlace = false;
 												break;
 											}
@@ -136,6 +150,12 @@ public class Store {
 											}
 										}
 
+										// Nếu là Spell Black Hole: Thêm vào activeSpells
+										if (heldID == Value.SPELL_BLACK_HOLE) {
+											Block topLeft = Screen.room.block[rootY][rootX];
+											Screen.activeSpells.add(new BlackHole(topLeft.x, topLeft.y, rootX, rootY));
+										}
+
 										Screen.coinage -= buttonPrice[realID];  
 										// delete sprite if current coin is less than the held item
 										if (Screen.coinage < buttonPrice[realID]){
@@ -151,6 +171,7 @@ public class Store {
 				}
 			}
 		}
+		}
 
 		// stop holding item when pressing right click
 		else if (mouseButton == 3){
@@ -160,6 +181,18 @@ public class Store {
 		}
 	}
 	
+	private boolean isCellPlaceable(Block b, int itemID) {
+		if (b.towerID == Value.PLACEHOLDER) {
+			if (itemID == Value.SPELL_BLACK_HOLE) {
+				return b.isRoad();
+			}
+			return !b.isRoad();
+		}
+		return false;
+	}
+
+	BomberPlane previewBomberPlane = new BomberPlane(0, 0);
+	// lưu tạm để tí dùng cho việc xác định bán kính r
 	
 	public void draw(Graphics g) {
 		for(int i = 0; i < button.length; i++) {
@@ -226,7 +259,33 @@ public class Store {
 				);
 			}
 
-			if (buttonID[i] != Value.PLACEHOLDER && i > 3) {
+			else if (buttonID[i] == Value.SPELL_BLACK_HOLE) {
+				if (Screen.blackHole != null && Screen.blackHole[0] != null) {
+					g.drawImage(
+						Screen.blackHole[0],
+						button[i].x + itemIn,
+						button[i].y + itemIn,
+						button[i].width - itemIn * 2,
+						button[i].height - itemIn * 2,
+						null
+					);
+				}
+			}
+
+			else if (buttonID[i] == Value.SPELL_BOMBER_PLANE) {
+				if (Screen.airplane != null) {
+					g.drawImage(
+						Screen.airplane,
+						button[i].x + itemIn,
+						button[i].y + itemIn,
+						button[i].width - itemIn * 2,
+						button[i].height - itemIn * 2,
+						null
+					);
+				}
+			}
+
+			if (buttonID[i] != Value.PLACEHOLDER && buttonID[i] != Value.SPELL_BLACK_HOLE && buttonID[i] != Value.SPELL_BOMBER_PLANE && i > 3) {
 				g.drawImage(
 					Screen.tileset_air[buttonID[i]],
 					button[i].x + itemIn,
@@ -290,6 +349,30 @@ public class Store {
 					}
 				}
 			}
+			else if (heldID == Value.SPELL_BOMBER_PLANE) {
+				// Bán kính nổ mặc định tương đương 2x2 ô
+				int r = previewBomberPlane.getBlastRadius(); 
+				// Hiệu ứng nhấp nháy xanh lá dịu
+				int alpha = (int) (140 + 60 * Math.sin(System.currentTimeMillis() / 150.0));
+				if (alpha < 0) alpha = 0;
+				if (alpha > 255) alpha = 255;
+
+				// 1. Vùng phủ sóng sát thương hình tròn XANH LÁ MỜ (Green preview area)
+				g.setColor(new Color(0, 255, 0, 45));
+				g.fillOval(Screen.mse.x - r, Screen.mse.y - r, r * 2, r * 2);
+
+				// 2. Viền tròn XANH LÁ nhấp nháy đánh dấu
+				g.setColor(new Color(0, 255, 0, alpha));
+				g.drawOval(Screen.mse.x - r, Screen.mse.y - r, r * 2, r * 2);
+				g.drawOval(Screen.mse.x - r + 1, Screen.mse.y - r + 1, (r * 2) - 2, (r * 2) - 2);
+
+				// 3. Dấu thập ngắm bắn màu xanh lá (Crosshair)
+				g.drawLine(Screen.mse.x - r - 12, Screen.mse.y, Screen.mse.x - 8, Screen.mse.y);
+				g.drawLine(Screen.mse.x + 8, Screen.mse.y, Screen.mse.x + r + 12, Screen.mse.y);
+				g.drawLine(Screen.mse.x, Screen.mse.y - r - 12, Screen.mse.x, Screen.mse.y - 8);
+				g.drawLine(Screen.mse.x, Screen.mse.y + 8, Screen.mse.x, Screen.mse.y + r + 12);
+				g.fillOval(Screen.mse.x - 3, Screen.mse.y - 3, 6, 6);
+			}
 			else {
 				Image holdingItem = null;
 				if (heldID == Value.MAGE_TOWER) {
@@ -304,6 +387,12 @@ public class Store {
 				else if(heldID == Value.CANNON_TOWER) {
 					holdingItem = Screen.cannon[0];
 				}
+				else if(heldID == Value.SPELL_BLACK_HOLE) {
+					if (Screen.blackHole != null && Screen.blackHole.length > 0) {
+						int frame = (int) ((System.currentTimeMillis() / 80) % Screen.blackHole.length);
+						holdingItem = Screen.blackHole[frame];
+					}
+				}
 
 				for(int y = 0; y < Screen.room.block.length; y++) {
 					for(int x = 0; x < Screen.room.block[0].length; x++) {
@@ -314,7 +403,7 @@ public class Store {
 								for(int dy = 0; dy < 2; dy++) {
 									for(int dx = 0; dx < 2; dx++) {
 										Block b = Screen.room.block[y - 1 + dy][x - 1 + dx];
-										if(b.isRoad() || b.towerID != Value.PLACEHOLDER) {
+										if(!isCellPlaceable(b, heldID)) {
 											canPlace = false;
 											break;
 										}

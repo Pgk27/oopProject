@@ -5,30 +5,12 @@ import java.awt.event.*;
 
 public class KeyHandel implements MouseMotionListener, MouseListener {
 
-	Rectangle startGame = new Rectangle(950, 450, 144, 72);
-	Rectangle quitGame = new Rectangle(950, 590, 144, 72);
-	Rectangle settings = new Rectangle(5, 5, 35, 35);
-	Rectangle store = new Rectangle(950, 520, 144, 72);
 	Rectangle backz = new Rectangle(5, 5, 50, 35);
 	Rectangle backz2 = new Rectangle (5, 700, 50, 35);
 	Rectangle toGacha = new Rectangle(680, 365, 170, 50);
 	Rectangle toBuyItem = new Rectangle(950, 365, 170, 50);
-	Rectangle in4gacha = new Rectangle(1110, 20, 40, 40);
-	Rectangle gachaRateFrame = new Rectangle(300, 5, 600, 750);
-	Rectangle iconShardShop = new Rectangle(1100, 80, 65, 65);
-	Rectangle shardShopBigFramee = new Rectangle(160, 30, 900, 680);
 
 
-	Rectangle gachaTornadoButt = new Rectangle(500, 345,  85, 50);
-	Rectangle gachaEnhanceButt = new Rectangle(500, 475,  85, 50);
-	Rectangle gachaMercenaryButt = new Rectangle(500, 610,  90, 53);
-	Rectangle summonButt = new Rectangle(800, 545, 125, 104);
-	Rectangle thongBaoFrame = new Rectangle(360, 140, 500, 400);
-
-	Rectangle doiBHButt = new Rectangle(670, 210, 95, 30);
-	Rectangle doiEnhanceButt = new Rectangle(670, 290, 95, 30);
-	Rectangle doiMercenaryButt = new Rectangle(670, 370, 95, 30);
-	Rectangle doiECButt = new Rectangle(670, 450, 95, 30);
 
 
 	Rectangle TKWtoMenu = new Rectangle(375, 495, 220, 45);
@@ -41,36 +23,17 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		Point vp = Screen.toVirtualPoint(e.getX(), e.getY());
 		int mouseX = vp.x;
 		int mouseY = vp.y;
-
-		if(Screen.gameState == Screen.tileScreen) {
-			if(startGame.contains(mouseX, mouseY)) {
-				Screen.startGame();
-				e.getComponent().repaint();
-			}
-			else if(settings.contains(mouseX, mouseY)) {
-				Screen.gameState = Screen.settings;
-			}
-			else if(store.contains(mouseX, mouseY)) {
-				Screen.gameState = Screen.gameShop;
-				e.getComponent().repaint();
-			}else if(quitGame.contains(mouseX, mouseY)) {
-				System.exit(0);
-			}
-		}
-		else if(Screen.gameState == Screen.playGame) {
+		if(Screen.gameState == Screen.playGame) {
 			if(backz2.contains(mouseX, mouseY)) {
 				xuLyOutGame();
 				Screen.gameState = Screen.tileScreen;
 			}
 		}
 
-
-
-
 		else if(Screen.gameState == Screen.gameShop) {
 			if(backz.contains(mouseX, mouseY)) {
-				Screen.gameState = Screen.tileScreen;
-				e.getComponent().repaint();
+				// Screen.gameState = Screen.tileScreen;
+				// e.getComponent().repaint();
 			}
 			else if(toGacha.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.gacha;
@@ -81,45 +44,43 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		}
 
 
-
-
 		else if(Screen.gameState == Screen.gacha) {
 			if(backz.contains(mouseX, mouseY)) {
 				Screen.gameState = Screen.gameShop;
 				e.getComponent().repaint();
 			}
-			else if (in4gacha.contains(mouseX, mouseY)) {
-				Screen.gameState=Screen.gachaRate;
-				e.getComponent().repaint();
-			}
-			else if( iconShardShop.contains(mouseX, mouseY)){
-				Screen.gameState = Screen.shardShop;
-				e.getComponent().repaint();
-			}
-			else if( gachaTornadoButt.contains(mouseX, mouseY)) {
-				Screen.gameState = Screen.thongBao;
-				Screen.gachaType = Screen.gachaBH;
-				logicGachaBH();
-				e.getComponent().repaint();
-			}
-			else if( gachaEnhanceButt.contains(mouseX, mouseY)) {
-				Screen.gameState = Screen.thongBao;
-				Screen.gachaType = Screen.gachaEnhance;
-				logicGachaEnhance();
-				e.getComponent().repaint();
-			}
-			else if( gachaMercenaryButt.contains(mouseX, mouseY)) {
-				Screen.gameState = Screen.thongBao;
-				Screen.gachaType = Screen.gachaMercenary;
-				logicGachaMercenary();
-				e.getComponent().repaint();
-			}
-			else if( summonButt.contains(mouseX, mouseY)) {
-				Screen.gameState = Screen.thongBao;
-				Screen.gachaType = Screen.summon;
-				logicSummon();
-				e.getComponent().repaint();
-			}
+			// else if (in4gacha.contains(mouseX, mouseY)) {
+			// 	Screen.gameState=Screen.gachaRate;
+			// 	e.getComponent().repaint();
+			// }
+			// else if( iconShardShop.contains(mouseX, mouseY)){
+			// 	Screen.gameState = Screen.shardShop;
+			// 	e.getComponent().repaint();
+			// }
+			// else if( gachaTornadoButt.contains(mouseX, mouseY)) {
+			// 	Screen.gameState = Screen.thongBao;
+			// 	Screen.gachaType = Screen.gachaBH;
+			// 	logicGachaBH();
+			// 	e.getComponent().repaint();
+			// }
+			// else if( gachaEnhanceButt.contains(mouseX, mouseY)) {
+			// 	Screen.gameState = Screen.thongBao;
+			// 	Screen.gachaType = Screen.gachaEnhance;
+			// 	logicGachaEnhance();
+			// 	e.getComponent().repaint();
+			// }
+			// else if( gachaMercenaryButt.contains(mouseX, mouseY)) {
+			// 	Screen.gameState = Screen.thongBao;
+			// 	Screen.gachaType = Screen.gachaMercenary;
+			// 	logicGachaMercenary();
+			// 	e.getComponent().repaint();
+			// }
+			// else if( summonButt.contains(mouseX, mouseY)) {
+			// 	Screen.gameState = Screen.thongBao;
+			// 	Screen.gachaType = Screen.summon;
+			// 	logicSummon();
+			// 	e.getComponent().repaint();
+			// }
 			
 
 
@@ -127,47 +88,47 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 		}
 		else if(Screen.gameState == Screen.gachaRate) {
-			if(!gachaRateFrame.contains(mouseX, mouseY)) {
-				Screen.gameState = Screen.gacha;
-				e.getComponent().repaint();
-			}
+			// if(!gachaRateFrame.contains(mouseX, mouseY)) {
+			// 	Screen.gameState = Screen.gacha;
+			// 	e.getComponent().repaint();
+			// }
 		}
 
 
 
 		else if  (Screen.gameState ==  Screen.shardShop) {
-			if(!shardShopBigFramee.contains(mouseX, mouseY)) {
-				Screen.gameState = Screen.gacha;
-				e.getComponent().repaint();
-			}
-			else if( doiBHButt.contains(mouseX, mouseY)) {
-				if(Screen.coinage >= 100 && Screen.shard >=100  && Screen.unlockBH == false) {
-					Screen.coinage = Screen.coinage - 100;
-					Screen.shard = Screen.shard - 100;
-					Screen.unlockBH = true;
-				}
-			}
-			else if( doiEnhanceButt.contains(mouseX, mouseY)) {
-				if(Screen.coinage >= 100 && Screen.shard >=100  && Screen.unlockEnhance == false) {
-					Screen.coinage = Screen.coinage - 100;
-					Screen.shard = Screen.shard - 100;
-					Screen.unlockEnhance = true;
-				}
-			}
-			else if( doiMercenaryButt.contains(mouseX, mouseY)) {
-				if(Screen.coinage >= 100 && Screen.shard >=100  && Screen.unlockMercenary == false) {
-					Screen.coinage = Screen.coinage - 100;
-					Screen.shard = Screen.shard - 100;
-					Screen.unlockMercenary = true;
-				}
-			}
-			else if(doiECButt.contains(mouseX, mouseY)) {
-				if(Screen.coinage >= 200 && Screen.shard >=200) {
-					Screen.coinage = Screen.coinage - 200;
-					Screen.shard = Screen.shard - 200;
-					Screen.eCore++;
-				}
-			}
+			// if(!shardShopBigFramee.contains(mouseX, mouseY)) {
+			// 	Screen.gameState = Screen.gacha;
+			// 	e.getComponent().repaint();
+			// }
+			// else if( doiBHButt.contains(mouseX, mouseY)) {
+			// 	if(Screen.coinage >= 100 && Screen.shard >=100  && Screen.unlockBH == false) {
+			// 		Screen.coinage = Screen.coinage - 100;
+			// 		Screen.shard = Screen.shard - 100;
+			// 		Screen.unlockBH = true;
+			// 	}
+			// }
+			// else if( doiEnhanceButt.contains(mouseX, mouseY)) {
+			// 	if(Screen.coinage >= 100 && Screen.shard >=100  && Screen.unlockEnhance == false) {
+			// 		Screen.coinage = Screen.coinage - 100;
+			// 		Screen.shard = Screen.shard - 100;
+			// 		Screen.unlockEnhance = true;
+			// 	}
+			// }
+			// else if( doiMercenaryButt.contains(mouseX, mouseY)) {
+			// 	if(Screen.coinage >= 100 && Screen.shard >=100  && Screen.unlockMercenary == false) {
+			// 		Screen.coinage = Screen.coinage - 100;
+			// 		Screen.shard = Screen.shard - 100;
+			// 		Screen.unlockMercenary = true;
+			// 	}
+			// }
+			// else if(doiECButt.contains(mouseX, mouseY)) {
+			// 	if(Screen.coinage >= 200 && Screen.shard >=200) {
+			// 		Screen.coinage = Screen.coinage - 200;
+			// 		Screen.shard = Screen.shard - 200;
+			// 		Screen.eCore++;
+			// 	}
+			// }
 			
 			
 		}
@@ -176,10 +137,10 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 
 		else if(Screen.gameState == Screen.thongBao) {
-			if(!thongBaoFrame.contains(mouseX, mouseY)) {
-				Screen.gameState = Screen.gacha;
-				e.getComponent().repaint();
-			}
+			// if(!thongBaoFrame.contains(mouseX, mouseY)) {
+			// 	Screen.gameState = Screen.gacha;
+			// 	e.getComponent().repaint();
+			// }
 		}
 		else if(Screen.gameState == Screen.tongKetWin) {
 			if(TKWtoMenu.contains(mouseX, mouseY)) {
@@ -202,11 +163,7 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 				
 				e.getComponent().repaint();
 			}
-		}
-
-
-
-		
+		}	
 	}
 
 	public void mouseEntered(MouseEvent e) {
@@ -214,32 +171,75 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 	public void mouseExited(MouseEvent e) {
 	}
 	public void mouseReleased(MouseEvent e) {
+
+    	Point p = Screen.toVirtualPoint(e.getX(), e.getY());
+
+    	if(e.getButton() != MouseEvent.BUTTON1) {
+    	    return;
+    	}
+
+    	// Chốt state tại thời điểm event bắt đầu
+    	int currentState = Screen.gameState;
+
+    	for(int i = 0;
+    	    i < Screen.manageNut.countNut[currentState]; i++) {
+        	Screen.manageNut.heThongNut[currentState][i].mouseReleased(p.x, p.y);
+    	}
 	}
 
 	public void mousePressed(MouseEvent e) {
-		if(Screen.gameState == Screen.playGame) {
-			Screen.mse = Screen.toVirtualPoint(e.getX(), e.getY());
+		Point p = Screen.toVirtualPoint(e.getX(), e.getY());
+
+    	if(e.getButton() != MouseEvent.BUTTON1) {
+    	    return;
+    	}
+
+    	// Chốt state tại thời điểm event bắt đầu
+    	int currentState = Screen.gameState;
+		if(currentState == Screen.playGame) {
+        	Screen.mse = p;
 			Screen.store.click(e.getButton());
-		}
+    	}
+    	for(int i = 0; i < Screen.manageNut.countNut[currentState]; i++) {
+    	    Screen.manageNut.heThongNut[currentState][i].mousePressed(p.x, p.y);
+    	}
+		
+		
 	}
 	
-	//con vợ nào viết dòng này thì lúc nào gần xong nhớ xóa đi nhé:)))
-	//thằng code gốc cực ngu
-	//Hàm thì gọi lung tung hết file này đến file kia, phân bố như cứt
-	//tính tọa độ thì lúc gọi frame, lúc gọi screen, loạn hết cụ lên, đọc chỉ khổ ng bảo trì
 
 
-	public void mouseDragged(MouseEvent e) { // kuleleri sürükleme
-		if(Screen.gameState == Screen.playGame) {
-			Screen.mse = Screen.toVirtualPoint(e.getX(), e.getY());
-		}
-	}
+	public void mouseDragged(MouseEvent e) {
+    Point p = Screen.toVirtualPoint(e.getX(), e.getY());
+
+    int currentState = Screen.gameState;
+
+    // Logic riêng của playGame
+    
+
+    for(int i = 0; i < Screen.manageNut.countNut[currentState]; i++) {
+        Screen.manageNut.heThongNut[currentState][i].updateMouse(p.x, p.y);
+    }
+}
 	
-	public void mouseMoved(MouseEvent e) { // kuleleri ve shoptaki slotları seçme ve görme
-		if (Screen.gameState == Screen.playGame) {
-			Screen.mse = Screen.toVirtualPoint(e.getX(), e.getY());
-		}
-	}
+	public void mouseMoved(MouseEvent e) {
+
+    Point p = Screen.toVirtualPoint(e.getX(), e.getY());
+
+    int currentState = Screen.gameState;
+
+    if(currentState == Screen.playGame) {
+        Screen.mse = p;
+    }
+
+    for(int i = 0;
+        i < Screen.manageNut.countNut[currentState];
+        i++) {
+
+        Screen.manageNut.heThongNut[currentState][i]
+            .updateMouse(p.x, p.y);
+    }
+}
 
 
 
@@ -409,5 +409,8 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 	}
 
 
+
+	
 	
 }
+	

@@ -1,4 +1,5 @@
 import java.awt.*; 
+import java.awt.image.BufferedImage;
 
 public class Block extends Rectangle {
 	int groundID;
@@ -16,6 +17,9 @@ public class Block extends Rectangle {
 	boolean shotingMob1 = false;
 	boolean shotingMob2 = false;
 	boolean shotingMob3 = false;
+
+	public static BufferedImage m1;
+
 
 
 	Block(int x, int y, int width, int height, int groundID, int towerID) { // kule menzillerinin oyunun içinde tanımlanması
@@ -53,23 +57,27 @@ public class Block extends Rectangle {
 		}
 	}
 
-	void drawGround(Graphics g) {
-		int groundTile = groundID >= 1 && groundID <= 4 ? Value.groundRoad : groundID;
-		g.drawImage(Screen.tileset_ground[groundTile], x, y, width, height, null);
-	}
+	// void drawGround(Graphics g) {
+	// 	int groundTile = groundID >= 1 && groundID <= 4 ? Value.groundRoad : groundID;
+	// 	g.drawImage(Screen.tileset_ground[groundTile], x, y, width, height, null);
+
+	// 	// g.drawImage(Screen.tiles.m1, 0, 0, 1200, 600, null);
+	// }
+
+	
 
 	void drawTower(Graphics g) {
         SetTower(); // Cập nhật liên tục trong vòng lặp
         if (currentTower != null) {
             currentTower.draw(g); 
         } 
-		else if (towerID != Value.PLACEHOLDER && towerID != Value.TOWER_OCCUPIED && towerID >= 0) {
+		else if (towerID != Value.PLACEHOLDER && towerID != Value.TOWER_OCCUPIED && towerID != Value.SPELL_BLACK_HOLE && towerID >= 0 && towerID < Screen.tileset_air.length) {
             g.drawImage(Screen.tileset_air[towerID], x, y, width, height, null);
         }
 	}
 
 	void draw(Graphics g) {
-		drawGround(g);
+		// drawGround(g);
 		drawTower(g);
 	}
 	
