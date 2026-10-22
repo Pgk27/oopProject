@@ -29,14 +29,15 @@ public class Sound {
     // map này để chống sfx chồng chéo lên nhau --> nhiễu tai
     private Map<URL, Long> lastPlayTimes = new ConcurrentHashMap<>();
 
-    URL themeSong; // nhạc nền, 
+    public URL themeSong; // nhạc nền, 
     public URL sfxSlash;
-    URL sfxClaw;
+    public URL sfxClaw;
     public URL sfxBite;
     public URL sfxDeath;
     public URL sfxPierce;
     public URL bowRelease;
     public URL spellCast;
+    public URL boomShot;
 
     public Sound(){
         try{
@@ -48,6 +49,7 @@ public class Sound {
             sfxPierce = readAudio("sfx/zapsplat_warfare_spear_land_ground_004_43629.wav");
             bowRelease = readAudio("sfx/bow-release.wav");
             spellCast = readAudio("sfx/04_Fire_explosion_04_medium.wav");
+            boomShot = readAudio("sfx/boom.wav");
 
             preloadSfx(sfxBite, 3);
             preloadSfx(sfxClaw, 3);
@@ -56,6 +58,7 @@ public class Sound {
             preloadSfx(sfxPierce, 3);
             preloadSfx(bowRelease, 3);
             preloadSfx(spellCast, 3);
+            preloadSfx(boomShot, 3);
 
         } catch(Exception e){
             e.printStackTrace();
@@ -139,7 +142,7 @@ public class Sound {
         try{
             stopMusic(); // dừng bài cũ
 
-            AudioInputStream ais = AudioSystem.getAudioInputStream(soundURL);
+            AudioInputStream ais = getPlayableStream(soundURL);
             musicClip = AudioSystem.getClip();
             musicClip.open(ais);
 

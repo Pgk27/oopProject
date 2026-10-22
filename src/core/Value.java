@@ -25,7 +25,6 @@ public class Value { // CẤM ĐƯỢC THAY ĐỔI
 	static public final int SPELL_BOMBER_PLANE = nextId(); 
 	static public final int SPELL_MERCENARY = nextId();
 
-
 	static public final int ORC_MONSTER = nextId();
 	static public final int BLOOD_DEMON_MONSTER = nextId();	
 	static public final int SLIME_MONSTER = nextId();
@@ -44,6 +43,7 @@ public class Value { // CẤM ĐƯỢC THAY ĐỔI
 	static public final int NOTI = nextId();
 	static public final int VICTORY_SCREEN = nextId();
 	static public final int DEFEAT_SCREEN = nextId();
+	static public final int UPDATE_HERO = nextId();
 	
 	
 	static int[] deathReward = {5, 10, 15, 0}; // öldüğünde moblar ne kadar para veriyor
