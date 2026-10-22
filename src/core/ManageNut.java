@@ -8,51 +8,56 @@ import entity.mob.MinionStats;
 
 
 public class ManageNut {
-    public static int[] countNut = new int[25];
-    public static NutBamVip[][] heThongNut = new NutBamVip[15][15];
+    public static int[] countNut = new int[35]; // Mở rộng từ 25 -> 35
+    public static NutBamVip[][] heThongNut = new NutBamVip[35][20]; // Mở rộng từ [15][15] -> [35][20]
 	public Screen screen;
 
     public ManageNut(Screen screen) {
 		this.screen = screen;
-        for(int i=0; i<25; i++) {
-            this.countNut[i]=0;
+        for(int i = 0; i < countNut.length; i++) {
+            countNut[i] = 0;
         }
 
-		addNut(playgame, 0);
-		addNut(store, 0);
-		addNut(updateHero, 0);
-		addNut(quitgame, 0);
+		// Title Screen
+		addNut(playgame, Value.TITLE_SCREEN);
+		addNut(store, Value.TITLE_SCREEN);
+		addNut(updateHero, Value.TITLE_SCREEN);
+		addNut(quitgame, Value.TITLE_SCREEN);
 
-		addNut(backInGameShop, 4);
+		// Shop
+		addNut(backInGameShop, Value.SHOP);
 
-		addNut(in4gacha, 6);
-		addNut(shardShop, 6);
-		addNut(backInGacha, 6);
-		addNut(gachaBH, 6);
-		addNut(gachaEnhance, 6);
-		addNut(gachaMer, 6);
-		addNut(summon, 6);
+		// Gacha
+		addNut(in4gacha, Value.GACHA);
+		addNut(shardShop, Value.GACHA);
+		addNut(backInGacha, Value.GACHA);
+		addNut(gachaBH, Value.GACHA);
+		addNut(gachaEnhance, Value.GACHA);
+		addNut(gachaMer, Value.GACHA);
+		addNut(summon, Value.GACHA);
 
+		// Shard Shop
+		addNut(shardShopBigFramee, Value.SHARD_SHOP);
+		addNut(doiBH, Value.SHARD_SHOP);
+		addNut(doiEnhance, Value.SHARD_SHOP);
+		addNut(doiMer, Value.SHARD_SHOP);
+		addNut(doiEC, Value.SHARD_SHOP);
 		
-
-		addNut(shardShopBigFramee, 7);
-		addNut(doiBH, 7);
-		addNut(doiEnhance, 7);
-		addNut(doiMer, 7);
-		addNut(doiEC, 7);
+		// Thông báo
+		addNut(thongBaoFrame, Value.NOTI);
 		
-		addNut(thongBaoFrame, 8);
-		
-		addNut(gachaRateFrame, 9);
+		// Gacha Rate
+		addNut(gachaRateFrame, Value.GACHA_RATE);
 
-		addNut(backInGameShop, 12);
-		addNut(levelUp, 12);
-		addNut(expBar, 12);
-		addNut(add1, 12);
-		addNut(add2, 12);
-		addNut(add3, 12);
-		addNut(add4, 12);
-		addNut(add5, 12);
+		// Update Hero
+		addNut(backInGameShop, Value.UPDATE_HERO);
+		addNut(levelUp, Value.UPDATE_HERO);
+		addNut(expBar, Value.UPDATE_HERO);
+		addNut(add1, Value.UPDATE_HERO);
+		addNut(add2, Value.UPDATE_HERO);
+		addNut(add3, Value.UPDATE_HERO);
+		addNut(add4, Value.UPDATE_HERO);
+		addNut(add5, Value.UPDATE_HERO);
     }
    
     public static void addNut(NutBamVip x, int gState) {

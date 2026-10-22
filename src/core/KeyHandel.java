@@ -217,7 +217,6 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		Point p = Screen.toVirtualPoint(e.getX(), e.getY());
 		int currentState = Screen.gameState;
 		Screen.mse = p;
-		Screen.store.click(e.getButton());
 		
 		for(int i = 0; i < Screen.manageNut.countNut[currentState]; i++) {
     	    Screen.manageNut.heThongNut[currentState][i].mousePressed(p.x, p.y);
