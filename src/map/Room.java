@@ -8,6 +8,7 @@ public class Room {
 	public int worldWidth = 40; 	//số cột
 	public int worldHeight = 20;  	//số hàng
 	public int blockSize = 30;		//độ dài cạnh tính theo pixel
+
 	
 	public Block[][] block;
 	
@@ -33,13 +34,17 @@ public class Room {
 			  }
 		  }
 	}
+	private void drawMapDanhNhau(Graphics g) {
+		g.drawImage(Screen.tiles.mapDanhNhau[Screen.level], 10, 0, 1200, 600, null);
+	}
 	
 	public void draw(Graphics g) { // kuleler ve groundları çiziyor.
-		for(int y=0;y<block.length;y++) {
-			for(int x=0;x<block[0].length;x++) {
-				block[y][x].drawGround(g);
-			}
-		}
+		// for(int y=0;y<block.length;y++) {
+		// 	for(int x=0;x<block[0].length;x++) {
+		// 		block[y][x].drawGround(g);
+		// 	}
+		// }
+		drawMapDanhNhau(g);
 		for(int y=0;y<block.length;y++) {
 			for(int x=0;x<block[0].length;x++) {
 				block[y][x].drawTower(g);

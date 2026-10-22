@@ -14,7 +14,7 @@ import map.Block;
 public class Mob extends Rectangle{
 
 	int xC, yC; //  x,y kordinatları for mob
-	protected int health;
+	public int health;
 	protected int maxHealth;
 	protected int healthSpace = 3, healthHeight = 6;
 	protected int mobSize = 32;
@@ -71,12 +71,16 @@ public class Mob extends Rectangle{
 		this.spawnTime = 1600;
 		this.renderScale = 1.5;
 		this.dmgReduction = 0;
+<<<<<<< HEAD:src/entity/mob/Mob.java
 		this.attackDmg = 1;
 		this.attackSpeed = 0.75;
 		this.totalCombatFrames = Screen.mobOrcAttack1Anim.length;
 		this.hitFrame = Screen.mobOrcAttack1Anim.length - 1;
 		this.attackSound = Screen.sound.sfxSlash;
 		this.deathSound = Screen.sound.sfxDeath;
+=======
+		this.attackDmg = 10;
+>>>>>>> ba2cf561138ec7d01121418d25fc306e12d7f1dd:src/Mob.java
 	}
     
 	public void spawnMob(int mobID) { //full con này đơn giản chỉ spawn mob ở 1 trong 3 ô 1,2,3 tại cột đầu tiên
@@ -115,8 +119,8 @@ public class Mob extends Rectangle{
 		yC = spawnY;
 
 		this.mobID = mobID;
-		this.health = mobSize;
-		this.maxHealth = health;
+		this.health = 100;
+		this.maxHealth = 100;
 
 		// set ngẫu nhiên frame cho từng con mob (ngẫu nhiên hóa chuyển động)
 		this.animFrame = Screen.rand.nextInt(8);
@@ -431,9 +435,15 @@ public class Mob extends Rectangle{
 			// 	int coinX = x + (width / 2) - (Store.iconSize / 2);
 			// 	int coinY = (y - coinOffsetY);
 
+<<<<<<< HEAD:src/entity/mob/Mob.java
 			// 	// g.drawImage(Screen.tileset_res[2], coinX, coinY, Store.iconSize, Store.iconSize, null);
 			// 	// xphpe la k ve dong xu bay len nua nhe
 			// }
+=======
+				// g.drawImage(Screen.tileset_res[2], coinX, coinY, Store.iconSize, Store.iconSize, null);
+				// xphpe la k ve dong xu bay len nua nhe
+			}
+>>>>>>> ba2cf561138ec7d01121418d25fc306e12d7f1dd:src/Mob.java
 			return;
 		}
 		

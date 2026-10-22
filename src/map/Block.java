@@ -1,3 +1,4 @@
+<<<<<<< HEAD:src/map/Block.java
 package map;
 import java.awt.*;
 
@@ -8,6 +9,10 @@ import tower.Cannon;
 import tower.GoldMiner;
 import tower.MageTower;
 import tower.Tower; 
+=======
+import java.awt.*; 
+import java.awt.image.BufferedImage;
+>>>>>>> ba2cf561138ec7d01121418d25fc306e12d7f1dd:src/Block.java
 
 public class Block extends Rectangle {
 	public int groundID;
@@ -25,6 +30,9 @@ public class Block extends Rectangle {
 	boolean shotingMob1 = false;
 	boolean shotingMob2 = false;
 	boolean shotingMob3 = false;
+
+	public static BufferedImage m1;
+
 
 
 	Block(int x, int y, int width, int height, int groundID, int towerID) { // kule menzillerinin oyunun içinde tanımlanması
@@ -62,10 +70,14 @@ public class Block extends Rectangle {
 		}
 	}
 
-	void drawGround(Graphics g) {
-		int groundTile = groundID >= 1 && groundID <= 4 ? Value.groundRoad : groundID;
-		g.drawImage(Screen.tileset_ground[groundTile], x, y, width, height, null);
-	}
+	// void drawGround(Graphics g) {
+	// 	int groundTile = groundID >= 1 && groundID <= 4 ? Value.groundRoad : groundID;
+	// 	g.drawImage(Screen.tileset_ground[groundTile], x, y, width, height, null);
+
+	// 	// g.drawImage(Screen.tiles.m1, 0, 0, 1200, 600, null);
+	// }
+
+	
 
 	void drawTower(Graphics g) {
         SetTower(); // Cập nhật liên tục trong vòng lặp
@@ -78,7 +90,7 @@ public class Block extends Rectangle {
 	}
 
 	void draw(Graphics g) {
-		drawGround(g);
+		// drawGround(g);
 		drawTower(g);
 	}
 	

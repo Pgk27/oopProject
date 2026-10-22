@@ -16,8 +16,13 @@ public class Store {
 	public static int itemIn = 4;   // khi vào trong game thì mỗi cạnh được ép xuống 4 pixel
 	public static int heldID = -1;
 	public static int realID = -1;
+<<<<<<< HEAD:src/core/Store.java
 	public static int[] buttonID = {Value.ARCHER_TOWER, Value.MAGE_TOWER ,Value.CANNON_TOWER ,Value.GOLD_MINER ,Value.SPELL_BLACK_HOLE ,Value.SPELL_BOMBER_PLANE ,Value.SPELL_MERCENARY ,Value.TRASH_CAN  };  //thứ tự hiển thị trong shop
 	public static int[] buttonPrice = {10,30,75,40,50,75,100,0};
+=======
+	public static int[] buttonID = {Value.ARCHER_TOWER, Value.MAGE_TOWER ,Value.CANNON_TOWER ,Value.GOLD_MINER ,Value.SPELL_BLACK_HOLE ,Value.SPELL_BOMBER_PLANE ,Value.PLACEHOLDER ,Value.TRASH_CAN  };  //thứ tự hiển thị trong shop
+	public static int[] buttonPrice = {10,30,75,40,50,75,0,0};
+>>>>>>> ba2cf561138ec7d01121418d25fc306e12d7f1dd:src/Store.java
 	
 	public Rectangle[] button = new Rectangle[shopWidth]; // chắc là dùng cho eventListener
 	public Rectangle[] secondButtonRow = new Rectangle[shopWidth];
@@ -126,6 +131,7 @@ public class Store {
 					else {
 						for(int y= 0; y < Screen.room.block.length; y++) {
 							for(int x = 0; x < Screen.room.block[0].length; x++) {
+<<<<<<< HEAD:src/core/Store.java
 								if(Screen.room.block[y][x].contains(Screen.mse) && 
 									y >= 1 && y < Screen.room.worldHeight && x >= 1 && x < Screen.room.worldWidth) {
 									// nếu là spell mercenary thì  khi đặt, nó chỉ được chiếm 1 ô
@@ -151,6 +157,12 @@ public class Store {
 										}
 										continue;
 									}
+=======
+							if(Screen.room.block[y][x].contains(Screen.mse)) {
+								// Ô (y, x) là Ô DƯỚI - BÊN PHẢI của tháp 2x2
+								// Cụm 2x2 gồm: (y - 1, x - 1), (y - 1, x), (y, x - 1), (y, x)
+								if(y >= 1 && y < Screen.room.worldHeight && x >= 1 && x < Screen.room.worldWidth) {
+>>>>>>> ba2cf561138ec7d01121418d25fc306e12d7f1dd:src/Store.java
 									boolean canPlace = true;
 									for(int dy = 0; dy < 2; dy++) {
 										for(int dx = 0; dx < 2; dx++) {
@@ -206,6 +218,7 @@ public class Store {
 				}
 			}
 		}
+		}
 
 		// stop holding item when pressing right click
 		else if (mouseButton == 3){
@@ -217,7 +230,11 @@ public class Store {
 	
 	private boolean isCellPlaceable(Block b, int itemID) {
 		if (b.towerID == Value.PLACEHOLDER) {
+<<<<<<< HEAD:src/core/Store.java
 			if (itemID == Value.SPELL_BLACK_HOLE || itemID == Value.SPELL_MERCENARY) {
+=======
+			if (itemID == Value.SPELL_BLACK_HOLE) {
+>>>>>>> ba2cf561138ec7d01121418d25fc306e12d7f1dd:src/Store.java
 				return b.isRoad();
 			}
 			return !b.isRoad();
@@ -335,6 +352,7 @@ public class Store {
 				}
 			}
 
+<<<<<<< HEAD:src/core/Store.java
 			if (buttonID[i] == Value.SPELL_MERCENARY){
 				if (Screen.mercenaryIdleAnim != null){
 					g.drawImage(
@@ -348,6 +366,8 @@ public class Store {
 				}
 			}
 
+=======
+>>>>>>> ba2cf561138ec7d01121418d25fc306e12d7f1dd:src/Store.java
 			if (buttonID[i] != Value.PLACEHOLDER && buttonID[i] != Value.SPELL_BLACK_HOLE && buttonID[i] != Value.SPELL_BOMBER_PLANE && i > 3) {
 				g.drawImage(
 					Screen.tileset_air[buttonID[i]],
@@ -436,6 +456,7 @@ public class Store {
 				g.drawLine(Screen.mse.x, Screen.mse.y + 8, Screen.mse.x, Screen.mse.y + r + 12);
 				g.fillOval(Screen.mse.x - 3, Screen.mse.y - 3, 6, 6);
 			}
+<<<<<<< HEAD:src/core/Store.java
 			else if (heldID == Value.SPELL_MERCENARY){ // vẽ 1 ô only
 				Image holdingItem = Screen.mercenaryIdleAnim[0];
 				for(int y = 0; y < Screen.room.block.length; y++) {
@@ -464,6 +485,8 @@ public class Store {
 					}
 				}
 			}
+=======
+>>>>>>> ba2cf561138ec7d01121418d25fc306e12d7f1dd:src/Store.java
 			else {
 				Image holdingItem = null;
 				if (heldID == Value.MAGE_TOWER) {
