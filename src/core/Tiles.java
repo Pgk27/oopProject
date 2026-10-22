@@ -8,8 +8,6 @@ import java.io.FileNotFoundException;
 import javax.imageio.ImageIO;
 
 public class Tiles {
-    public ManageNut buttonManager = Screen.manageNut;
-
     public BufferedImage cursorNormal;
     public BufferedImage cursorHover;
     public BufferedImage cursorPressed;
@@ -98,6 +96,7 @@ public class Tiles {
     public Font pixelFontMini;
     public Font pixelFontMedi;
     public Font pixelFontHeroRequire;
+    public Font pixelFont32f;
     public Font sproutLandsFont32f;
 
     public Color darkSilver;
@@ -137,64 +136,59 @@ public class Tiles {
             longPressedButton = readImage("res/ui/setting/longPressedButton.png");
 
             // gs tileScreen
-            buttonManager.playgame.ima[0] = readImage("res/tileImage/playgame.png");
-            buttonManager.playgame.ima[1] = readImage("res/tileImage/playgameS.png");
+            ManageNut.playgame.ima[0] = readImage("res/tileImage/playgame.png");
+            ManageNut.playgame.ima[1] = readImage("res/tileImage/playgameS.png");
           
-            buttonManager.store.ima[0] = readImage("res/tileImage/store.png");
-            buttonManager.store.ima[1] = readImage("res/tileImage/storeS.png");
+            ManageNut.store.ima[0] = readImage("res/tileImage/store.png");
+            ManageNut.store.ima[1] = readImage("res/tileImage/storeS.png");
 
-            buttonManager.updateHero.ima[0] = readImage("res/tileImage/updateHero.png");
-            buttonManager.updateHero.ima[1] = readImage("res/tileImage/updateHeroS.png");
+            ManageNut.updateHero.ima[0] = readImage("res/tileImage/updateHero.png");
+            ManageNut.updateHero.ima[1] = readImage("res/tileImage/updateHeroS.png");
 
 
-            buttonManager.quitgame.ima[0] = readImage("res/tileImage/quitgame.png");
-            buttonManager.quitgame.ima[1] = readImage("res/tileImage/quitgameS.png");
+            ManageNut.quitgame.ima[0] = readImage("res/tileImage/quitgame.png");
+            ManageNut.quitgame.ima[1] = readImage("res/tileImage/quitgameS.png");
 
             //gs gameShop
+            ManageNut.backInGameShop.ima[0]= readImage("res/tileImage/back.png");
+            ManageNut.backInGameShop.ima[1]= readImage("res/tileImage/backS.png");
 
-            buttonManager.backInGameShop.ima[0]= readImage("res/tileImage/back.png");
-            buttonManager.backInGameShop.ima[1]= readImage("res/tileImage/backS.png");
+            ManageNut.backInGacha.ima[0]= readImage("res/tileImage/back.png");
+            ManageNut.backInGacha.ima[1]= readImage("res/tileImage/backS.png");
 
-            buttonManager.backInGacha.ima[0]= readImage("res/tileImage/back.png");
-            buttonManager.backInGacha.ima[1]= readImage("res/tileImage/backS.png");
+            ManageNut.gachaBH.ima[0]= readImage("res/tileImage/gacha.png");
+            ManageNut.gachaBH.ima[1]= readImage("res/tileImage/gachaS.png");
 
-            buttonManager.gachaBH.ima[0]= readImage("res/tileImage/gacha.png");
-            buttonManager.gachaBH.ima[1]= readImage("res/tileImage/gachaS.png");
+            ManageNut.gachaEnhance.ima[0]= readImage("res/tileImage/gacha.png");
+            ManageNut.gachaEnhance.ima[1]= readImage("res/tileImage/gachaS.png");
 
-            buttonManager.gachaEnhance.ima[0]= readImage("res/tileImage/gacha.png");
-            buttonManager.gachaEnhance.ima[1]= readImage("res/tileImage/gachaS.png");
+            ManageNut.gachaMer.ima[0]= readImage("res/tileImage/gacha.png");
+            ManageNut.gachaMer.ima[1]= readImage("res/tileImage/gachaS.png");
 
-            buttonManager.gachaMer.ima[0]= readImage("res/tileImage/gacha.png");
-            buttonManager.gachaMer.ima[1]= readImage("res/tileImage/gachaS.png");
+            ManageNut.summon.ima[0] = readImage("res/tileImage/summon.png");
+            ManageNut.summon.ima[1] = readImage("res/tileImage/summonS.png");
 
-            buttonManager.summon.ima[0] = readImage("res/tileImage/summon.png");
-            buttonManager.summon.ima[1] = readImage("res/tileImage/summonS.png");
-            
-            
-            
+            ManageNut.doiBH.ima[0]= readImage("res/tileImage/awake.png");
+            ManageNut.doiBH.ima[1]= readImage("res/tileImage/awakeS.png");
 
+            ManageNut.doiEnhance.ima[0]= readImage("res/tileImage/awake.png");
+            ManageNut.doiEnhance.ima[1]= readImage("res/tileImage/awakeS.png");
 
-            buttonManager.doiBH.ima[0]= readImage("res/tileImage/awake.png");
-            buttonManager.doiBH.ima[1]= readImage("res/tileImage/awakeS.png");
+            ManageNut.doiMer.ima[0]= readImage("res/tileImage/awake.png");
+            ManageNut.doiMer.ima[1]= readImage("res/tileImage/awakeS.png");
 
-            buttonManager.doiEnhance.ima[0]= readImage("res/tileImage/awake.png");
-            buttonManager.doiEnhance.ima[1]= readImage("res/tileImage/awakeS.png");
+            ManageNut.doiEC.ima[0] = readImage("res/tileImage/purchase.png");
+            ManageNut.doiEC.ima[1] = readImage("res/tileImage/purchaseS.png");
 
-            buttonManager.doiMer.ima[0]= readImage("res/tileImage/awake.png");
-            buttonManager.doiMer.ima[1]= readImage("res/tileImage/awakeS.png");
+            ManageNut.levelUp.ima[0] = readImage("res/tileImage/levelUp.png");
+            ManageNut.levelUp.ima[1] = readImage("res/tileImage/levelUpS.png");
 
-            buttonManager.doiEC.ima[0] = readImage("res/tileImage/purchase.png");
-            buttonManager.doiEC.ima[1] = readImage("res/tileImage/purchaseS.png");
+            ManageNut.expBar.ima[0] = readImage("res/tileImage/expBar.png");
+            ManageNut.expBar.ima[1] = readImage("res/tileImage/expBarS.png");
 
-            buttonManager.levelUp.ima[0] = readImage("res/tileImage/levelUp.png");
-            buttonManager.levelUp.ima[1] = readImage("res/tileImage/levelUpS.png");
-
-            buttonManager.expBar.ima[0] = readImage("res/tileImage/expBar.png");
-            buttonManager.expBar.ima[1] = readImage("res/tileImage/expBarS.png");
-
-
-
-           
+            tileUpdateHero = readImage("res/tileImage/tileUpdateHero.png");
+            nenExpBlack = readImage("res/tileImage/nenExpBlack.png");
+            nenExpGreen = readImage("res/tileImage/nenExpGreen.png");
             purchaseT = readImage("res/tileImage/purchaseT.png");
             awakeT = readImage("res/tileImage/awakeT.png");
             awaken = readImage("res/tileImage/awaken.png");
@@ -206,12 +200,7 @@ public class Tiles {
             addPointT = readImage("res/tileImage/addPointT.png");
             max = readImage("res/tileImage/max.png");
 
-
-
-            
-
-
-            buttonManager.thongBaoFrame.ima[0] = readImage("res/tileImage/awake.png");
+            ManageNut.thongBaoFrame.ima[0] = readImage("res/tileImage/awake.png");
 
             titleScreen = readImage("res/tileImage/game_tilee.png");
             newGameButton = readImage("res/tileImage/playgame2.png");
@@ -279,7 +268,8 @@ public class Tiles {
             pixelFontv2 = baseFont.deriveFont(22f);
             pixelFontvSmall = baseFont.deriveFont(13f);
             pixelFontMini = baseFont.deriveFont(11f);
-            pixelFontMedi = baseFont.deriveFont(32f);
+            pixelFont32f = baseFont.deriveFont(32f);
+            pixelFontMedi = baseFont.deriveFont(24f);
             pixelFontHeroRequire = baseFont.deriveFont(20f);
         } catch (Exception e) {
             e.printStackTrace();

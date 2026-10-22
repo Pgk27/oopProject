@@ -138,10 +138,10 @@ public class GameRender {
         
 
 
-        Screen.manageNut.playgame.renderNut(g);
-        Screen.manageNut.store.renderNut(g);
-        Screen.manageNut.updateHero.renderNut(g);
-        Screen.manageNut.quitgame.renderNut(g);
+        ManageNut.playgame.renderNut(g);
+        ManageNut.store.renderNut(g);
+        ManageNut.updateHero.renderNut(g);
+        ManageNut.quitgame.renderNut(g);
 
         
 
@@ -154,7 +154,7 @@ public class GameRender {
 
     private void drawStore(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.storeTile, 0, 0, width, height, null);
-        Screen.manageNut.backInGameShop.renderNut(g);
+        ManageNut.backInGameShop.renderNut(g);
         g.drawImage(Screen.tiles.storeOptions, 550, 20, 650, height-50, null);
         g.setColor(new Color(0, 0, 0, 200));
     }    
@@ -181,7 +181,7 @@ public class GameRender {
         g.drawImage(Screen.tiles.settingMenu, menuX, menuY, menuWidth, menuHeight, null);
         
         // vẽ các nút
-        g.setFont(Screen.tiles.pixelFontMedi);
+        g.setFont(Screen.tiles.pixelFont32f);
         g.drawString("MUSIC", menuX + awayFromLeftEdge, menuY + awayFromTopEdge + 35);
         if (!KeyHandel.isMusicMuted)
             g.drawImage(Screen.tiles.buttonSliderOn, menuX + awayFromLeftEdge + 350, menuY + awayFromTopEdge - 25 + space * count, buttonSize, buttonSize, null);
@@ -230,7 +230,7 @@ public class GameRender {
 
     private void drawGachaScreen(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.gachaTile, 0, 0, width, height, null);
-        Screen.manageNut.backInGacha.renderNut(g);
+        ManageNut.backInGacha.renderNut(g);
 
 
         g.drawImage(Screen.tiles.BlackHoleC, 470, 310, 135, 30, null);
@@ -242,10 +242,10 @@ public class GameRender {
         // g.drawImage(Screen.tiles.gachaButt, 500, 475,  85, 50, null);
         // g.drawImage(Screen.tiles.gachaButt, 500, 610,  90, 53, null);
         // g.drawImage(Screen.tiles.summonHeroButt, 800, 545, 125, 104, null);
-        Screen.manageNut.gachaBH.renderNut(g);
-        Screen.manageNut.gachaEnhance.renderNut(g);
-        Screen.manageNut.gachaMer.renderNut(g);
-        Screen.manageNut.summon.renderNut(g);
+        ManageNut.gachaBH.renderNut(g);
+        ManageNut.gachaEnhance.renderNut(g);
+        ManageNut.gachaMer.renderNut(g);
+        ManageNut.summon.renderNut(g);
 
 
         g.drawImage(Screen.tiles.in4Butt, 1110, 20, 40, 40, null);
@@ -267,10 +267,10 @@ public class GameRender {
         g.drawImage(Screen.tiles.MercenaryC, 470, 565, 140, 38, null);
 
 
-        Screen.manageNut.gachaBH.renderNut(g);
-        Screen.manageNut.gachaEnhance.renderNut(g);
-        Screen.manageNut.gachaMer.renderNut(g);
-        Screen.manageNut.summon.renderNut(g);
+        ManageNut.gachaBH.renderNut(g);
+        ManageNut.gachaEnhance.renderNut(g);
+        ManageNut.gachaMer.renderNut(g);
+        ManageNut.summon.renderNut(g);
        
 
 
@@ -334,10 +334,10 @@ public class GameRender {
         g.drawImage(Screen.tiles.MercenaryC, 470, 565, 140, 38, null);
 
 
-        Screen.manageNut.doiBH.renderNut(g);
-        Screen.manageNut.doiEnhance.renderNut(g);
-        Screen.manageNut.doiMer.renderNut(g);
-        Screen.manageNut.doiEC.renderNut(g);
+        ManageNut.doiBH.renderNut(g);
+        ManageNut.doiEnhance.renderNut(g);
+        ManageNut.doiMer.renderNut(g);
+        ManageNut.doiEC.renderNut(g);
 
 
         g.drawImage(Screen.tiles.in4Butt, 1110, 20, 40, 40, null);
@@ -399,10 +399,10 @@ public class GameRender {
         // drawButtTraoDoi(g, 670, 210, 95, 30, Screen.unlockBH);
         // drawButtTraoDoi(g, 670, 290, 95, 30, Screen.unlockEnhance);
         // drawButtTraoDoi(g, 670, 370, 95, 30, Screen.unlockMercenary);
-        Screen.manageNut.doiBH.renderNut(g);
-        Screen.manageNut.doiEnhance.renderNut(g);
-        Screen.manageNut.doiMer.renderNut(g);
-        Screen.manageNut.doiEC.renderNut(g);
+        ManageNut.doiBH.renderNut(g);
+        ManageNut.doiEnhance.renderNut(g);
+        ManageNut.doiMer.renderNut(g);
+        ManageNut.doiEC.renderNut(g);
 
 
         g.setFont(Screen.tiles.pixelFontv2);
@@ -427,10 +427,10 @@ public class GameRender {
         g.drawImage(Screen.tiles.MercenaryC, 470, 565, 140, 38, null);
 
 
-        Screen.manageNut.gachaBH.renderNut(g);
-        Screen.manageNut.gachaEnhance.renderNut(g);
-        Screen.manageNut.gachaMer.renderNut(g);
-        Screen.manageNut.summon.renderNut(g);
+        ManageNut.gachaBH.renderNut(g);
+        ManageNut.gachaEnhance.renderNut(g);
+        ManageNut.gachaMer.renderNut(g);
+        ManageNut.summon.renderNut(g);
 
 
         g.drawImage(Screen.tiles.in4Butt, 1110, 20, 40, 40, null);
@@ -608,7 +608,7 @@ public class GameRender {
 
         g.drawImage(Screen.tiles.nenExpBlack, 735, 185, 220, 36, null);
         drawexpGreen(g);
-        Screen.manageNut.expBar.renderNut(g);
+        ManageNut.expBar.renderNut(g);
         
 
 
@@ -702,24 +702,21 @@ public class GameRender {
         
 
 
-        Screen.manageNut.levelUp.renderNut(g);
-        Screen.manageNut.backInGameShop.renderNut(g);
-        Screen.manageNut.add1.renderNut(g);
-        Screen.manageNut.add2.renderNut(g);
-        Screen.manageNut.add3.renderNut(g);
-        Screen.manageNut.add4.renderNut(g);
-        Screen.manageNut.add5.renderNut(g);
+        ManageNut.levelUp.renderNut(g);
+        ManageNut.backInGameShop.renderNut(g);
+        ManageNut.add1.renderNut(g);
+        ManageNut.add2.renderNut(g);
+        ManageNut.add3.renderNut(g);
+        ManageNut.add4.renderNut(g);
+        ManageNut.add5.renderNut(g);
     }
 
     private void drawTongKetWin(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.tongKetWin, 0, 0, width, height, null);
-
     }
     
     private void drawTongKetLose(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.tongKetLose, 0, 0, width, height, null);
-
-        
     }
 
     /** 
@@ -743,10 +740,6 @@ public class GameRender {
             else
                 g.drawImage(Screen.tiles.volumeBarOff, x, startY, barW, barH, null);
         }
-    }
-
-    private void drawBuyItem(Graphics g, int width, int height) {
-        g.drawImage(Screen.tiles.tileBuy, 0, 0, width, height, null);
     }
     
     private void drawexpGreen(Graphics g) {

@@ -109,12 +109,6 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		else if(Screen.gameState == Value.SHARD_SHOP) {
 
 		}
-		else if(Screen.gameState == Value.NOTI) {
-			if(!thongBaoFrame.contains(mouseX, mouseY)) {
-				Screen.gameState = Value.GACHA;
-				e.getComponent().repaint();
-			}
-		}
 		else if(Screen.gameState == Value.VICTORY_SCREEN) {
 			mouseX = e.getX();
 			mouseY = e.getY();
@@ -192,8 +186,8 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
     	int currentState = Screen.gameState;
 
     	for(int i = 0;
-    	    i < Screen.manageNut.countNut[currentState]; i++) {
-        	Screen.manageNut.heThongNut[currentState][i].mouseReleased(p.x, p.y);
+    	    i < ManageNut.countNut[currentState]; i++) {
+        	ManageNut.heThongNut[currentState][i].mouseReleased(p.x, p.y);
 		}
 		if (e.getButton() == MouseEvent.BUTTON1) isMousePressed = false;
 		if (Screen.gameState == Value.SETTING){
@@ -218,8 +212,8 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		int currentState = Screen.gameState;
 		Screen.mse = p;
 		
-		for(int i = 0; i < Screen.manageNut.countNut[currentState]; i++) {
-    	    Screen.manageNut.heThongNut[currentState][i].mousePressed(p.x, p.y);
+		for(int i = 0; i < ManageNut.countNut[currentState]; i++) {
+    	    ManageNut.heThongNut[currentState][i].mousePressed(p.x, p.y);
     	}
 		if (currentState == Value.SETTING){
 			if (musicSliderBox.contains(p.x, p.y)){
@@ -263,8 +257,8 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 	public void mouseDragged(MouseEvent e) {
 		Point p = Screen.toVirtualPoint(e.getX(), e.getY());
 		int currentState = Screen.gameState;
-		for(int i = 0; i < Screen.manageNut.countNut[currentState]; i++) {
-			Screen.manageNut.heThongNut[currentState][i].updateMouse(p.x, p.y);
+		for(int i = 0; i < ManageNut.countNut[currentState]; i++) {
+			ManageNut.heThongNut[currentState][i].updateMouse(p.x, p.y);
 		}
 
 		Screen.mse = p;
@@ -290,8 +284,8 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 		Screen.mse = p;
 
-		for(int i = 0; i < Screen.manageNut.countNut[currentState]; i++) {
-			Screen.manageNut.heThongNut[currentState][i].updateMouse(p.x, p.y);
+		for(int i = 0; i < ManageNut.countNut[currentState]; i++) {
+			ManageNut.heThongNut[currentState][i].updateMouse(p.x, p.y);
 		}
 	}
 

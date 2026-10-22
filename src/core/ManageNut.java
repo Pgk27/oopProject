@@ -105,7 +105,7 @@ public class ManageNut {
         }
     };
 
-	public NutBamVip backInGameShop = new NutBamVip( 5, 5, 50, 35 ) {
+	public static NutBamVip backInGameShop = new NutBamVip( 5, 5, 50, 35 ) {
         @Override
         public void onClick() {
             Screen.gameState = Value.TITLE_SCREEN;
@@ -113,7 +113,7 @@ public class ManageNut {
         }
     };
     
-    public NutBamVip backInGacha = new NutBamVip( 5, 5, 50, 35 ) {
+    public static NutBamVip backInGacha = new NutBamVip( 5, 5, 50, 35 ) {
         @Override
         public void onClick() {
             Screen.gameState = Value.SHOP;
@@ -121,7 +121,7 @@ public class ManageNut {
         }
     };
     
-    public NutBamVip in4gacha = new NutBamVip( 1110, 20, 40, 40 ) {
+    public static NutBamVip in4gacha = new NutBamVip( 1110, 20, 40, 40 ) {
         @Override
         public void onClick() {
             Screen.gameState = Value.GACHA_RATE;
@@ -129,7 +129,7 @@ public class ManageNut {
         }
     };
     
-    public NutBamVip shardShop = new NutBamVip( 1100, 80, 65, 65 ) {
+    public static NutBamVip shardShop = new NutBamVip( 1100, 80, 65, 65 ) {
         @Override
         public void onClick() {
             Screen.gameState = Value.SHARD_SHOP;
@@ -138,7 +138,7 @@ public class ManageNut {
     };
     
     
-    public NutBamVip gachaBH = new NutBamVip( 500, 345,  85, 50 ) {
+    public static NutBamVip gachaBH = new NutBamVip( 500, 345,  85, 50 ) {
         @Override
         public void onClick() {
             Screen.gameState = Value.NOTI;
@@ -148,7 +148,7 @@ public class ManageNut {
         }
     };
     
-    public NutBamVip gachaEnhance = new NutBamVip( 500, 475,  85, 50 ) {
+    public static NutBamVip gachaEnhance = new NutBamVip( 500, 475,  85, 50 ) {
         @Override
         public void onClick() {
             Screen.gameState = Value.NOTI;
@@ -158,7 +158,7 @@ public class ManageNut {
         }
     };
 
-    public NutBamVip gachaMer = new NutBamVip( 500, 610,  90, 53 ) {
+    public static NutBamVip gachaMer = new NutBamVip( 500, 610,  90, 53 ) {
         @Override
         public void onClick() {
             Screen.gameState = Value.NOTI;
@@ -168,7 +168,7 @@ public class ManageNut {
         }
     };
 
-    public NutBamVip summon = new NutBamVip( 800, 545, 125, 104 ) {
+    public static NutBamVip summon = new NutBamVip( 800, 545, 125, 104 ) {
         @Override
         public void onClick() {
             Screen.gameState = Value.NOTI;
@@ -178,7 +178,7 @@ public class ManageNut {
         }
     };
   
-    public NutBamVip gachaRateFrame = new NutBamVip( 300, 5, 600, 750 ) {
+    public static NutBamVip gachaRateFrame = new NutBamVip( 300, 5, 600, 750 ) {
         @Override
         public boolean contains(int mouseX, int mouseY) {
         if( mouseX >= x && mouseX <= x + dx && mouseY >= y && mouseY < y + dy){
@@ -189,9 +189,6 @@ public class ManageNut {
         public void onClick() {
             Screen.gameState = Value.GACHA;
         }
-		public void render(Graphics g) {
-			g.drawImage(Screen.manageNut.gachaRateFrame.ima[0], x, y, dx, dy, null);
-		}
     };
 
 
@@ -213,7 +210,7 @@ public class ManageNut {
 
 
     
-    public  NutBamVip doiBH = new NutBamVip( 670, 210, 95, 30 ) {
+    public static NutBamVip doiBH = new NutBamVip( 670, 210, 95, 30 ) {
         @Override
         public void onClick() {
             if(Screen.coinage >= 100 && Screen.shard >=100  && Screen.unlockBH == false) {
@@ -244,7 +241,7 @@ public class ManageNut {
 		}
     };
 
-    public NutBamVip doiEnhance = new NutBamVip( 670, 290, 95, 30 ) {
+    public static NutBamVip doiEnhance = new NutBamVip( 670, 290, 95, 30 ) {
         @Override
         public void onClick() {
             if(Screen.coinage >= 100 && Screen.shard >=100  && Screen.unlockEnhance == false) {
@@ -274,7 +271,7 @@ public class ManageNut {
 			}
 		}
     };
-    public NutBamVip doiMer = new NutBamVip( 670, 370, 95, 30 ) {
+    public static NutBamVip doiMer = new NutBamVip( 670, 370, 95, 30 ) {
         @Override
         public void onClick() {
             if(Screen.coinage >= 100 && Screen.shard >=100  && Screen.unlockMercenary == false) {
@@ -305,7 +302,7 @@ public class ManageNut {
 		}
     };
 
-    public NutBamVip doiEC = new NutBamVip( 670, 450, 95, 30 ) {
+    public static NutBamVip doiEC = new NutBamVip( 670, 450, 95, 30 ) {
         @Override
         public void onClick() {
             if(Screen.coinage >= 200 && Screen.shard >=200 ) {
@@ -348,7 +345,7 @@ public class ManageNut {
         }
     };
 
-	public NutBamVip levelUp = new NutBamVip ( 980, 180, 110, 40 ) {
+	public static NutBamVip levelUp = new NutBamVip ( 980, 180, 110, 40 ) {
 		@Override
 		public void onClick() {
 			logicLevelUp();
@@ -375,7 +372,7 @@ public class ManageNut {
 		}
 	};
 
-	public NutBamVip expBar = new NutBamVip( 700, 170, 280, 60 ){
+	public static NutBamVip expBar = new NutBamVip( 700, 170, 280, 60 ){
 		@Override
 		public void renderNut(Graphics g) {
 			if(state == 0) {
@@ -394,7 +391,7 @@ public class ManageNut {
 
 	};
 
-	public NutBamVip add1 = new NutBamVip( 1090, 340, 25, 25 ) {
+	public static NutBamVip add1 = new NutBamVip( 1090, 340, 25, 25 ) {
 		@Override
 		public void onClick() {
 			if(Screen.buffHp <Screen.maxBuff && Screen.remainingPoint > 0) {
@@ -424,7 +421,7 @@ public class ManageNut {
 		}
 	};
 
-	public NutBamVip add2 = new NutBamVip( 1090, 370, 25, 25 ) {
+	public static NutBamVip add2 = new NutBamVip( 1090, 370, 25, 25 ) {
 		@Override
 		public void onClick() {
 			if(Screen.buffHpRe <Screen.maxBuff && Screen.remainingPoint > 0) {
@@ -455,7 +452,7 @@ public class ManageNut {
 		}
 	};
 
-	public NutBamVip add3 = new NutBamVip( 1090, 400, 25, 25 ) {
+	public static NutBamVip add3 = new NutBamVip( 1090, 400, 25, 25 ) {
 		@Override
 		public void onClick() {
 			if(Screen.buffShield <Screen.maxBuff && Screen.remainingPoint > 0) {
@@ -485,7 +482,7 @@ public class ManageNut {
 		}
 	};
 
-	public NutBamVip add4 = new NutBamVip( 1090, 430, 25, 25 ) {
+	public static NutBamVip add4 = new NutBamVip( 1090, 430, 25, 25 ) {
 		@Override
 		public void onClick() {
 			if(Screen.buffADmg <Screen.maxBuff && Screen.remainingPoint > 0) {
@@ -515,7 +512,7 @@ public class ManageNut {
 		}
 	};
 
-	public NutBamVip add5 = new NutBamVip( 1090, 460, 25, 25 ) {
+	public static NutBamVip add5 = new NutBamVip( 1090, 460, 25, 25 ) {
 		@Override
 		public void onClick() {
 			if(Screen.buffSDmg <Screen.maxBuff && Screen.remainingPoint > 0) {
@@ -546,7 +543,7 @@ public class ManageNut {
 	};
 
     //Hàm phụ xử lí logic, thằng nào đụng vào bố chặt tay
-	private void logicGachaBH() {
+	private static void logicGachaBH() {
 		if(Screen.coinage >=11) {
 			Screen.coinage = Screen.coinage - 1;
 			Screen.ok=true;
@@ -582,7 +579,7 @@ public class ManageNut {
 		}
 	}
 
-	private void logicGachaEnhance() {
+	private static void logicGachaEnhance() {
 		if(Screen.coinage >=11) {
 			Screen.coinage = Screen.coinage - 1;
 			Screen.ok=true;
@@ -618,7 +615,7 @@ public class ManageNut {
 		}
 	}
 
-	private void logicGachaMercenary() {
+	private static void logicGachaMercenary() {
 		if(Screen.coinage >=11) {
 			Screen.coinage = Screen.coinage - 1;
 			Screen.ok=true;
@@ -654,7 +651,7 @@ public class ManageNut {
 		}
 	}
 
-	private void logicSummon() {
+	private static void logicSummon() {
 		if(Screen.coinage >=12) {
 			Screen.coinage = Screen.coinage - 2;
 			Screen.ok=true;
@@ -690,7 +687,7 @@ public class ManageNut {
 		}
 	}
 
-	private void logicLevelUp() {
+	private static void logicLevelUp() {
 		if(Screen.heroLevel>=25) {
 			return;
 		}

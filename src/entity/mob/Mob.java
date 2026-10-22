@@ -12,7 +12,6 @@ import map.Block;
  */
 
 public class Mob extends Rectangle{
-
 	int xC, yC; //  x,y kordinatları for mob
 	public int health;
 	protected int maxHealth;
@@ -422,6 +421,8 @@ public class Mob extends Rectangle{
 		if (Sprite != null){
             g.drawImage(Sprite, drawX, drawY, drawW, drawH, null);
 		}
+
+		if (isDying) return;
 
 		int barY = y - (healthSpace + healthHeight);
 		double healthPercent = (double) health / maxHealth;
