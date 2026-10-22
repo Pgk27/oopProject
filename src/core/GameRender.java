@@ -748,6 +748,7 @@ public class GameRender {
     private void drawBuyItem(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.tileBuy, 0, 0, width, height, null);
     }
+    
     private void drawexpGreen(Graphics g) {
         int dx1 = 725, dy1 = 185;
         int dx2;

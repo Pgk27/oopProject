@@ -25,7 +25,6 @@ public class Value { // CẤM ĐƯỢC THAY ĐỔI
 	static public final int SPELL_BOMBER_PLANE = nextId(); 
 	static public final int SPELL_MERCENARY = nextId();
 
-
 	static public final int ORC_MONSTER = nextId();
 	static public final int BLOOD_DEMON_MONSTER = nextId();	
 	static public final int SLIME_MONSTER = nextId();
