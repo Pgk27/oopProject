@@ -30,6 +30,11 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 	static Rectangle TKLtoMenu = new Rectangle(375, 487, 220, 45);
 	static Rectangle TKLtoPlay = new Rectangle(625, 487, 220, 45);
 
+	static Rectangle gachaTornadoButt = new Rectangle(500, 345,  85, 50);
+	static Rectangle gachaEnhanceButt = new Rectangle(500, 475,  85, 50);
+	static Rectangle gachaMercenaryButt = new Rectangle(500, 610,  90, 53);
+	static Rectangle summonButt = new Rectangle(800, 545, 125, 104);
+	static Rectangle thongBaoFrame = new Rectangle(360, 140, 500, 400);
 
 	static Rectangle startGame = new Rectangle(950, 450, 144, 72);
 	static Rectangle quitGame = new Rectangle(950, 590, 144, 72);
