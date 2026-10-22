@@ -131,7 +131,7 @@ public class Screen extends JPanel implements Runnable {
 	static BufferedImage blankCursorImg;
 	static Cursor blankCursor;
 
-	public static int musicVolume = 0;
+	public static int musicVolume = 2;
 	public static int sfxVolume = 5;
 
 	// SYSTEM

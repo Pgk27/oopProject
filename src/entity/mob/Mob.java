@@ -115,7 +115,7 @@ public class Mob extends Rectangle{
 		yC = spawnY;
 
 		this.mobID = mobID;
-		this.health = mobSize;
+		this.health = 1000;
 		this.maxHealth = health;
 
 		// set ngẫu nhiên frame cho từng con mob (ngẫu nhiên hóa chuyển động)

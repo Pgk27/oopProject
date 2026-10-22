@@ -393,10 +393,6 @@ public class GameRender {
     }
 
     private void drawThongBao(Graphics g, int width, int height) {
-
-        
-        
-        
         g.drawImage(Screen.tiles.gachaTile, 0, 0, width, height, null);
         g.drawImage(Screen.tiles.backButton, 5, 5, 50, 35, null);
 
@@ -595,6 +591,7 @@ public class GameRender {
             }
         }
     }  
+
     private void drawButtTraoDoi(Graphics g, int x, int y, int dx, int dy) {
         if(Screen.coinage >= 200 && Screen.shard >=200) {
             g.drawImage(Screen.tiles.purchaseSang, x, y, dx, dy, null);
@@ -604,11 +601,11 @@ public class GameRender {
         }
     } 
 
-
     private void drawTongKetWin(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.tongKetWin, 0, 0, width, height, null);
 
     }
+    
     private void drawTongKetLose(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.tongKetLose, 0, 0, width, height, null);
 
