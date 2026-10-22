@@ -138,81 +138,81 @@ public class Tiles {
             longPressedButton = readImage("res/ui/setting/longPressedButton.png");
 
             // gs tileScreen
-            buttonManager.playgame.ima[0] = readImage("tileImage/playgame.png");
-            buttonManager.playgame.ima[1] = readImage("tileImage/playgameS.png");
+            buttonManager.playgame.ima[0] = readImage("res/tileImage/playgame.png");
+            buttonManager.playgame.ima[1] = readImage("res/tileImage/playgameS.png");
           
-            buttonManager.store.ima[0] = readImage("tileImage/store.png");
-            buttonManager.store.ima[1] = readImage("tileImage/storeS.png");
+            buttonManager.store.ima[0] = readImage("res/tileImage/store.png");
+            buttonManager.store.ima[1] = readImage("res/tileImage/storeS.png");
 
-            buttonManager.updateHero.ima[0] = readImage("tileImage/updateHero.png");
-            buttonManager.updateHero.ima[1] = readImage("tileImage/updateHeroS.png");
+            buttonManager.updateHero.ima[0] = readImage("res/tileImage/updateHero.png");
+            buttonManager.updateHero.ima[1] = readImage("res/tileImage/updateHeroS.png");
 
 
-            buttonManager.quitgame.ima[0] = readImage("tileImage/quitgame.png");
-            buttonManager.quitgame.ima[1] = readImage("tileImage/quitgameS.png");
+            buttonManager.quitgame.ima[0] = readImage("res/tileImage/quitgame.png");
+            buttonManager.quitgame.ima[1] = readImage("res/tileImage/quitgameS.png");
 
             //gs gameShop
 
-            buttonManager.backInGameShop.ima[0]= readImage("tileImage/back.png");
-            buttonManager.backInGameShop.ima[1]= readImage("tileImage/backS.png");
+            buttonManager.backInGameShop.ima[0]= readImage("res/tileImage/back.png");
+            buttonManager.backInGameShop.ima[1]= readImage("res/tileImage/backS.png");
 
-            buttonManager.backInGacha.ima[0]= readImage("tileImage/back.png");
-            buttonManager.backInGacha.ima[1]= readImage("tileImage/backS.png");
+            buttonManager.backInGacha.ima[0]= readImage("res/tileImage/back.png");
+            buttonManager.backInGacha.ima[1]= readImage("res/tileImage/backS.png");
 
-            buttonManager.gachaBH.ima[0]= readImage("tileImage/gacha.png");
-            buttonManager.gachaBH.ima[1]= readImage("tileImage/gachaS.png");
+            buttonManager.gachaBH.ima[0]= readImage("res/tileImage/gacha.png");
+            buttonManager.gachaBH.ima[1]= readImage("res/tileImage/gachaS.png");
 
-            buttonManager.gachaEnhance.ima[0]= readImage("tileImage/gacha.png");
-            buttonManager.gachaEnhance.ima[1]= readImage("tileImage/gachaS.png");
+            buttonManager.gachaEnhance.ima[0]= readImage("res/tileImage/gacha.png");
+            buttonManager.gachaEnhance.ima[1]= readImage("res/tileImage/gachaS.png");
 
-            buttonManager.gachaMer.ima[0]= readImage("tileImage/gacha.png");
-            buttonManager.gachaMer.ima[1]= readImage("tileImage/gachaS.png");
+            buttonManager.gachaMer.ima[0]= readImage("res/tileImage/gacha.png");
+            buttonManager.gachaMer.ima[1]= readImage("res/tileImage/gachaS.png");
 
-            buttonManager.summon.ima[0] = readImage("tileImage/summon.png");
-            buttonManager.summon.ima[1] = readImage("tileImage/summonS.png");
+            buttonManager.summon.ima[0] = readImage("res/tileImage/summon.png");
+            buttonManager.summon.ima[1] = readImage("res/tileImage/summonS.png");
             
             
             
 
 
-            buttonManager.doiBH.ima[0]= readImage("tileImage/awake.png");
-            buttonManager.doiBH.ima[1]= readImage("tileImage/awakeS.png");
+            buttonManager.doiBH.ima[0]= readImage("res/tileImage/awake.png");
+            buttonManager.doiBH.ima[1]= readImage("res/tileImage/awakeS.png");
 
-            buttonManager.doiEnhance.ima[0]= readImage("tileImage/awake.png");
-            buttonManager.doiEnhance.ima[1]= readImage("tileImage/awakeS.png");
+            buttonManager.doiEnhance.ima[0]= readImage("res/tileImage/awake.png");
+            buttonManager.doiEnhance.ima[1]= readImage("res/tileImage/awakeS.png");
 
-            buttonManager.doiMer.ima[0]= readImage("tileImage/awake.png");
-            buttonManager.doiMer.ima[1]= readImage("tileImage/awakeS.png");
+            buttonManager.doiMer.ima[0]= readImage("res/tileImage/awake.png");
+            buttonManager.doiMer.ima[1]= readImage("res/tileImage/awakeS.png");
 
-            buttonManager.doiEC.ima[0] = readImage("tileImage/purchase.png");
-            buttonManager.doiEC.ima[1] = readImage("tileImage/purchaseS.png");
+            buttonManager.doiEC.ima[0] = readImage("res/tileImage/purchase.png");
+            buttonManager.doiEC.ima[1] = readImage("res/tileImage/purchaseS.png");
 
-            buttonManager.levelUp.ima[0] = readImage("tileImage/levelUp.png");
-            buttonManager.levelUp.ima[1] = readImage("tileImage/levelUpS.png");
+            buttonManager.levelUp.ima[0] = readImage("res/tileImage/levelUp.png");
+            buttonManager.levelUp.ima[1] = readImage("res/tileImage/levelUpS.png");
 
-            buttonManager.expBar.ima[0] = readImage("tileImage/expBar.png");
-            buttonManager.expBar.ima[1] = readImage("tileImage/expBarS.png");
+            buttonManager.expBar.ima[0] = readImage("res/tileImage/expBar.png");
+            buttonManager.expBar.ima[1] = readImage("res/tileImage/expBarS.png");
 
 
 
            
-            purchaseT = readImage("tileImage/purchaseT.png");
-            awakeT = readImage("tileImage/awakeT.png");
-            awaken = readImage("tileImage/awaken.png");
-            maxLevel = readImage("tileImage/maxLevel.png");
-            levelUpT = readImage("tileImage/levelUpT.png");
+            purchaseT = readImage("res/tileImage/purchaseT.png");
+            awakeT = readImage("res/tileImage/awakeT.png");
+            awaken = readImage("res/tileImage/awaken.png");
+            maxLevel = readImage("res/tileImage/maxLevel.png");
+            levelUpT = readImage("res/tileImage/levelUpT.png");
 
-            addPoint = readImage("tileImage/addPoint.png");
-            addPointS = readImage("tileImage/addPointS.png");
-            addPointT = readImage("tileImage/addPointT.png");
-            max = readImage("tileImage/max.png");
+            addPoint = readImage("res/tileImage/addPoint.png");
+            addPointS = readImage("res/tileImage/addPointS.png");
+            addPointT = readImage("res/tileImage/addPointT.png");
+            max = readImage("res/tileImage/max.png");
 
 
 
             
 
 
-            buttonManager.thongBaoFrame.ima[0] = readImage("tileImage/awake.png");
+            buttonManager.thongBaoFrame.ima[0] = readImage("res/tileImage/awake.png");
 
             titleScreen = readImage("res/tileImage/game_tilee.png");
             newGameButton = readImage("res/tileImage/playgame2.png");
@@ -263,7 +263,7 @@ public class Tiles {
             buttonSliderOff = readImage("res/ui/setting/buttonSliderOff.png");
             buttonSliderOn = readImage("res/ui/setting/buttonSliderOn.png");
 
-            mapDanhNhau[3] = readImage("tileImage/mapMa1.png");
+            mapDanhNhau[3] = readImage("res/tileImage/mapMa1.png");
         } catch (Exception e) {
             e.printStackTrace();
         }

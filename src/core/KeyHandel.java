@@ -45,6 +45,11 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 	static Rectangle iconShardShop = new Rectangle(1100, 80, 65, 65);
 	static Rectangle shardShopBigFramee = new Rectangle(160, 30, 900, 680);
 
+	static Rectangle doiBHButt = new Rectangle(670, 210, 95, 30);
+	static Rectangle doiEnhanceButt = new Rectangle(670, 290, 95, 30);
+	static Rectangle doiMercenaryButt = new Rectangle(670, 370, 95, 30);
+	static Rectangle doiECButt = new Rectangle(670, 450, 95, 30);
+
 	static Rectangle musicSliderBox = new Rectangle();
 	static Rectangle musicMuteSlider = new Rectangle(735, 240, 100, 100);
 	static Rectangle sfxSliderBox = new Rectangle();
