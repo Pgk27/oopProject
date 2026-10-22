@@ -382,7 +382,7 @@ public class Screen extends JPanel implements Runnable {
 		// mục đích để chèn "skin" con trỏ khác lên
 		blankCursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 		blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(blankCursorImg, new Point(0,0), "blank cursor");
-		// this.setCursor(blankCursor);
+		this.setCursor(blankCursor);
 		
 		for(int i = 0; i < tileset_ground.length; i++) {
 			tileset_ground[i] = new ImageIcon("res/tileset_ground.png").getImage();

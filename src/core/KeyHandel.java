@@ -216,25 +216,22 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		if (e.getButton() == MouseEvent.BUTTON1) isMousePressed = true;
 		Point p = Screen.toVirtualPoint(e.getX(), e.getY());
 		int currentState = Screen.gameState;
-		if (currentState == Value.IN_GAME){
-			Screen.mse = p;
-			Screen.store.click(e.getButton());
-		}
+		Screen.mse = p;
+		Screen.store.click(e.getButton());
+		
 		for(int i = 0; i < Screen.manageNut.countNut[currentState]; i++) {
     	    Screen.manageNut.heThongNut[currentState][i].mousePressed(p.x, p.y);
     	}
-		Screen.mse = Screen.toVirtualPoint(e.getX(), e.getY());
-		Point mse = Screen.mse;
 		if (currentState == Value.SETTING){
-			if (musicSliderBox.contains(mse)){
-				updateSlider(mse.x, musicSliderBox, true);
+			if (musicSliderBox.contains(p.x, p.y)){
+				updateSlider(p.x, musicSliderBox, true);
 				if (Screen.musicVolume > 0) isMusicMuted = false;
 			}
-			else if (sfxSliderBox.contains(mse)){
-				updateSlider(mse.x, sfxSliderBox, false);
+			else if (sfxSliderBox.contains(p.x, p.y)){
+				updateSlider(p.x, sfxSliderBox, false);
 				if (Screen.sfxVolume > 0) isSfxMuted = false;
 			}
-			else if (settingConfirmButton.contains(mse)){
+			else if (settingConfirmButton.contains(p)){
 				// update giá trị trước (prev) nếu confirm
 				prevMusicMuteState = isMusicMuted;
 				prevSfxMuteState = isSfxMuted;
@@ -243,7 +240,7 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 				prevSfxVolume = Screen.sfxVolume;
 				isSettingConfirmPressed = true;
 			}
-			else if (settingCancelButton.contains(mse)){
+			else if (settingCancelButton.contains(p.x, p.y)){
 				// trao trả các giá trị về giá trị ban đầu
 				isMusicMuted = (isMusicMuted == prevMusicMuteState) ? isMusicMuted : !isMusicMuted;
 				isSfxMuted = (isSfxMuted == prevSfxMuteState) ? isSfxMuted : !isSfxMuted;
@@ -271,6 +268,8 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 			Screen.manageNut.heThongNut[currentState][i].updateMouse(p.x, p.y);
 		}
 
+		Screen.mse = p;
+
 		if (currentState == Value.SETTING){
 			if (musicSliderBox.contains(p.x, p.y) || 
 				(p.y >= musicSliderBox.y && 
@@ -290,16 +289,10 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 
 		int currentState = Screen.gameState;
 
-		if(currentState == Value.IN_GAME) {
-			Screen.mse = p;
-		}
+		Screen.mse = p;
 
-		for(int i = 0;
-			i < Screen.manageNut.countNut[currentState];
-			i++) {
-
-			Screen.manageNut.heThongNut[currentState][i]
-				.updateMouse(p.x, p.y);
+		for(int i = 0; i < Screen.manageNut.countNut[currentState]; i++) {
+			Screen.manageNut.heThongNut[currentState][i].updateMouse(p.x, p.y);
 		}
 	}
 
@@ -359,154 +352,7 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 			Screen.sound.setSfxVolume(level);
 		}
 	}
-
-	/**
-	 * Hàm xử lí logic cho Gacha Hố Đen (BlackHole)
-	 */
-	private void logicGachaBH() {
-		if(Screen.coinage >=11) {
-			Screen.coinage = Screen.coinage - 1;
-			Screen.ok=true;
-			Screen.randomNum = Screen.rand.nextInt(100) + 1;
-					
-			if (Screen.randomNum <=2) {
-				Screen.unlockBH = true;
-			}
-			else if(Screen.randomNum <=5) {
-				Screen.shard = Screen.shard + 50;
-			}
-			else if(Screen.randomNum <=10) {
-				Screen.shard = Screen.shard + 20;
-			}
-			else if(Screen.randomNum <=20) {
-				Screen.shard = Screen.shard + 10;
-			}
-			else if(Screen.randomNum <=30) {
-				Screen.shard = Screen.shard + 5;
-			}
-			else if(Screen.randomNum <=45) {
-				Screen.shard = Screen.shard + 3;
-			}
-			else if(Screen.randomNum <=65) {
-				Screen.shard = Screen.shard + 2;
-			}
-			else {
-				Screen.shard = Screen.shard + 1;
-			}
-		}
-		else{
-			Screen.ok=false;
-		}
-	}
-
-	private void logicGachaEnhance() {
-		if(Screen.coinage >=11) {
-			Screen.coinage = Screen.coinage - 1;
-			Screen.ok=true;
-			Screen.randomNum = Screen.rand.nextInt(100) + 1;
-					
-			if (Screen.randomNum <=2) {
-				Screen.unlockEnhance = true;
-			}
-			else if(Screen.randomNum <=5) {
-				Screen.shard = Screen.shard + 50;
-			}
-			else if(Screen.randomNum <=10) {
-				Screen.shard = Screen.shard + 20;
-			}
-			else if(Screen.randomNum <=20) {
-				Screen.shard = Screen.shard + 10;
-			}
-			else if(Screen.randomNum <=30) {
-				Screen.shard = Screen.shard + 5;
-			}
-			else if(Screen.randomNum <=45) {
-				Screen.shard = Screen.shard + 3;
-			}
-			else if(Screen.randomNum <=65) {
-				Screen.shard = Screen.shard + 2;
-			}
-			else {
-				Screen.shard = Screen.shard + 1;
-			}
-		}
-		else{
-			Screen.ok=false;
-		}
-	}
-
-	private void logicGachaMercenary() {
-		if(Screen.coinage >=11) {
-			Screen.coinage = Screen.coinage - 1;
-			Screen.ok=true;
-			Screen.randomNum = Screen.rand.nextInt(100) + 1;
-					
-			if (Screen.randomNum <=2) {
-				Screen.unlockMercenary = true;
-			}
-			else if(Screen.randomNum <=5) {
-				Screen.shard = Screen.shard + 50;
-			}
-			else if(Screen.randomNum <=10) {
-				Screen.shard = Screen.shard + 20;
-			}
-			else if(Screen.randomNum <=20) {
-				Screen.shard = Screen.shard + 10;
-			}
-			else if(Screen.randomNum <=30) {
-				Screen.shard = Screen.shard + 5;
-			}
-			else if(Screen.randomNum <=45) {
-				Screen.shard = Screen.shard + 3;
-			}
-			else if(Screen.randomNum <=65) {
-				Screen.shard = Screen.shard + 2;
-			}
-			else {
-				Screen.shard = Screen.shard + 1;
-			}
-		}
-		else{
-			Screen.ok=false;
-		}
-	}
-
-	private void logicSummon() {
-		if(Screen.coinage >=12) {
-			Screen.coinage = Screen.coinage - 2;
-			Screen.ok=true;
-			Screen.randomNum = Screen.rand.nextInt(100) + 1;
-
-			if (Screen.randomNum ==1) {
-				Screen.energyCore++;
-			}
-			else if(Screen.randomNum ==2) {
-				Screen.shard = Screen.shard + 100;
-			}
-			else if(Screen.randomNum <=5) {
-				Screen.shard = Screen.shard + 50;
-			}
-			else if(Screen.randomNum <=20) {
-				Screen.shard = Screen.shard + 35;
-			}
-			else if(Screen.randomNum <=40) {
-				Screen.shard = Screen.shard + 20;
-			}
-			else if(Screen.randomNum <=60) {
-				Screen.shard = Screen.shard + 10;
-			}
-			else if(Screen.randomNum <=80) {
-				Screen.shard = Screen.shard + 5;
-			}
-			else {
-				Screen.shard = Screen.shard + 3;
-			}
-		}
-		else{
-			Screen.ok=false;
-		}
-	}
-
+	
 	private void xuLyOutGame() {
 		if(Screen.coinDauTran >=60) {
 			Screen.coinage = Screen.coinDauTran - 50;

@@ -4,7 +4,6 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.Buffer;
 
 import javax.imageio.ImageIO;
 
