@@ -8,8 +8,8 @@ import entity.Projectiles;
 import map.Block;
 
 public class Minion extends Mob {
-	private final long HEAL_COOL_DOWN = 1000; // bỏ final nếu sau này muốn chỉnh cooldown xuống bằng gacha!?
-	private int healAmount = 5;
+	private long HEAL_COOL_DOWN = MinionStats.HEAL_COOL_DOWN; //tgian giữa các lần hồi hp
+	private int healAmount = MinionStats.healAmount;  //lượng hp hồi 1 cục
 	private long lastHealTime = 0;
 
 	private long lastShootTime;
@@ -18,7 +18,7 @@ public class Minion extends Mob {
 	private boolean isShooting = false;
 	private boolean hasShotArrow = false;
 	private Mob shootTarget = null;
-	private double arrowDmg = 10;
+	private double arrowDmg = MinionStats.arrowDmg;  //st cung
 	private int shootRange = 300;
 	private Rectangle rangeBox = new Rectangle();
 
@@ -26,9 +26,10 @@ public class Minion extends Mob {
 
     public Minion(){    
 		this.renderScale = 1.8;
-		this.dmgReduction = 0;
-		this.attackDmg = 20;
-		this.attackSpeed = 1.0;
+		this.dmgReduction = MinionStats.dmgReduction; //giảm st trừ thẳng
+		this.attackDmg = MinionStats.swordDmg; //st kiếm
+		this.maxHealth = MinionStats.maxHealth;
+		this.health = maxHealth;
 		this.mobSize = 80;
 		this.totalCombatFrames = Screen.minionAttack1Anim.length;
 		this.hitFrame = Screen.minionAttack1Anim.length - 1;
@@ -92,7 +93,7 @@ public class Minion extends Mob {
 
 		this.mobID = mobID;
 		this.health = mobSize;
-		this.maxHealth = health;
+		this.maxHealth = MinionStats.maxHealth;
 
 		// set ngẫu nhiên frame cho từng con mob (ngẫu nhiên hóa chuyển động)
 		this.animFrame = Screen.rand.nextInt(8);
