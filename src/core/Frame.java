@@ -1,3 +1,4 @@
+package core;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -5,10 +6,13 @@ import javax.swing.*;
 public class Frame extends JFrame{
 	public static String title = "FINAL KINGDOM";
 	public static Dimension size = new Dimension(1220, 780);
-	private boolean isFullscreen = false;
+	public static Frame instance;
+	public static boolean isFullscreen = true;
 	private Screen screen;
 	
 	public Frame() {
+		instance = this;
+
 		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -59,7 +63,14 @@ public class Frame extends JFrame{
 		}
 		setVisible(true);
 	}
+
+	public static void setFullscreen(boolean enable){
+		if (instance != null && isFullscreen != enable){
+			instance.toggleFullscreen();
+		}
+	}
 	
+
 	public static void main(String args[]) {
         new Frame();
     }

@@ -1,3 +1,4 @@
+package spell;
 import java.awt.Graphics;
 
 /**

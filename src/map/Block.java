@@ -1,9 +1,18 @@
-import java.awt.*; 
+package map;
+import java.awt.*;
+
+import core.Screen;
+import core.Value;
+import tower.CacherTower;
+import tower.Cannon;
+import tower.GoldMiner;
+import tower.MageTower;
+import tower.Tower; 
 import java.awt.image.BufferedImage;
 
 public class Block extends Rectangle {
-	int groundID;
-	int towerID;
+	public int groundID;
+	public int towerID;
 	public int rootX = -1;
 	public int rootY = -1;
 	
@@ -30,7 +39,7 @@ public class Block extends Rectangle {
 		SetTower();
 	} 
 
-	boolean isRoad() {
+	public boolean isRoad() {
 		return groundID >= Value.groundRoad && groundID <= 4;
 	}
 
@@ -46,7 +55,7 @@ public class Block extends Rectangle {
 				currentTower = new MageTower(x, y, width * 2, height * 2);
 			}
 			else if(towerID == Value.CANNON_TOWER){
-				currentTower = new Canon(x, y, width * 2, height * 2);
+				currentTower = new Cannon(x, y, width * 2, height * 2);
 			}
 			else if(towerID == Value.GOLD_MINER){
 				currentTower = new GoldMiner(x, y, width * 2, height * 2);

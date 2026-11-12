@@ -1,3 +1,7 @@
+package wave;
+import core.Screen;
+import core.Value;
+
 /**
  * Lớp quản lý toàn bộ hệ thống sinh quái (Wave Management).
  * Hoạt động độc lập bằng cách đếm số frame (globalTick) trong Game Loop.

@@ -1,5 +1,8 @@
+package map;
 import java.io.*;
 import java.util.*;
+
+import core.Screen;
 
 public class Save {
 	public void loadSave(File loadPath) {

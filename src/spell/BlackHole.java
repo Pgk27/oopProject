@@ -1,4 +1,9 @@
+package spell;
 import java.awt.*;
+
+import core.Screen;
+import core.Value;
+import entity.mob.Mob;
 
 public class BlackHole extends Spell {
     private int width;

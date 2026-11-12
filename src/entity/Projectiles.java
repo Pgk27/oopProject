@@ -1,7 +1,12 @@
+package entity;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
+
+import core.Screen;
+import core.Value;
+import entity.mob.Mob;
 
 public class Projectiles {
     double x, y;
@@ -10,7 +15,7 @@ public class Projectiles {
     Mob target;
     int towerID = -1; // ID của tower
     double speed = 1.5; // Tốc độ bay của mũi tên
-    boolean hasRemoved = false;
+    public boolean hasRemoved = false;
     
     public Projectiles(double startX, double startY, Mob target, double damage, int towerID) {
         this.x = startX;

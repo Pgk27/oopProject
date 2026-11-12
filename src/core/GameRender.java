@@ -1,64 +1,83 @@
+package core;
+import entity.Projectiles;
+import entity.mob.MinionStats;
+import entity.mob.Mob;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Comparator;
+import spell.BomberPlane;
+import spell.Spell;
 
 public class GameRender {
     
     public void render(Graphics g, int width, int height) {
-        switch (Screen.gameState) {
-            case Screen.tileScreen:
-                drawTileScreen(g, width, height);
-                break;
-            case Screen.playGame:
-                drawPlayGame(g, width, height);
-                break;
-            case Screen.gameShop:
-                drawStore(g, width, height);
-                break;
-            case Screen.settings:
-                
-                break;
-            case Screen.selectSkill:
-                
-                break;
-            case Screen.buyItem:
-                drawBuyItem(g, width, height);
-                break;
-            case Screen.gacha:
-                drawGachaScreen(g, width, height);
-                break;
-            case Screen.gachaRate:
-                drawGachaRateScreen(g, width, height);
-                break;
-            case Screen.shardShop:
-                drawShardShop(g, width, height);
-                break;
-            case Screen.thongBao:
-                drawThongBao(g, width, height);
-                break;
-            case Screen.tongKetWin:
-                drawTongKetWin(g, width, height);
-                break;
-            case Screen.tongKetLose:
-                drawTongKetLose(g, width, height);
-                break;
-            case Screen.updateHero:
-                drawUpdateHero(g, width, height);
-                break;
+        int state = Screen.gameState;
+
+        if (state == Value.TITLE_SCREEN) {
+            drawTitleScreen(g, width, height);
+        } else if (state == Value.IN_GAME) {
+            drawInGame(g, width, height);
+        } else if (state == Value.SKILL_SELECT) {
+            drawSelectSkill(g, width, height);
+        } else if (state == Value.SETTING) {
+            drawSetting(g, width, height);
+        } else if (state == Value.GACHA) {
+            drawGachaScreen(g, width, height);
+        } else if (state == Value.GACHA_RATE) {
+            drawGachaRateScreen(g, width, height);
+        } else if (state == Value.SHARD_SHOP) {
+            drawShardShop(g, width, height);
+        } else if (state == Value.NOTI) {
+            drawThongBao(g, width, height);
+        } else if (state == Value.VICTORY_SCREEN) {
+            drawTongKetWin(g, width, height);
+        } else if (state == Value.DEFEAT_SCREEN) {
+            drawTongKetLose(g, width, height);
+        }
+        else if (state == Value.UPDATE_HERO){
+            drawUpdateHero(g, width, height);
+        }
+        else if (state == Value.ITEM_SHOP){
+            drawItemShop(g, width, height);
+        }
+
+        // vẽ con trỏ chuột custom vào game
+        boolean isHover = KeyHandel.isHoveringButton(Screen.mse.x, Screen.mse.y);
+        boolean overDisabledButton = KeyHandel.isOverDisabledGameButton(Screen.mse.x, Screen.mse.y);
+        BufferedImage currentCursor;
+
+        if (KeyHandel.isMousePressed && !overDisabledButton) {
+            // 1. Đang click vào button
+            currentCursor = Screen.tiles.cursorPressed;
+        } else if (isHover) {
+            // 2. Đang hover trên button
+            currentCursor = Screen.tiles.cursorHover;
+        } else {
+            // 3. Chuột bình thường
+            currentCursor = Screen.tiles.cursorNormal;
+        }
+
+        if (currentCursor != null){
+            int cursorSize = 32;
+            g.drawImage(currentCursor, Screen.mse.x, Screen.mse.y, cursorSize, cursorSize, null);
         }
     }
 
-    private void drawPlayGame(Graphics g, int width, int height) {
+    private void drawInGame(Graphics g, int width, int height) {
         
         g.setColor(new Color(70, 70, 70)); 
         g.fillRect(0, 0, width, height);
         
-        Screen.room.draw(g); 
+        Screen.room.draw(g);
 
-        g.drawImage(Screen.tiles.backButton, 5, 700, 50, 35, null);
-        
+        Rectangle optionFrame = Store.OPTION_FRAME_BOUNDS;
+        g.drawImage(Screen.tiles.khungOption, optionFrame.x, optionFrame.y,
+                optionFrame.width, optionFrame.height, null);
+
         // Vẽ Spell mặt đất (như BlackHole) trước quái
         for (Spell s : Screen.activeSpells) {
             if (!(s instanceof BomberPlane)) {
@@ -89,6 +108,12 @@ public class GameRender {
             }
         }
 
+        for (int i = 0; i < Screen.merc.length; i++){
+            if (Screen.merc[i] != null && Screen.merc[i].inGame){
+                renderMobs.add(Screen.merc[i]);
+            }
+        }
+
         // sắp xếp quái theo tọa độ y --> con nào có tọa độ y nhỏ hơn thì được vẽ trước
         // tránh trường hợp con ở trên đè lên con ở dưới
         renderMobs.sort(Comparator.comparingInt(m -> m.y));
@@ -109,19 +134,105 @@ public class GameRender {
         for (Projectiles a : Screen.pjt) {
             a.draw(g);
         }
+
+        ManageNut.GoldenPickaxeButton.renderNut(g);
+        ManageNut.fireSwordButton.renderNut(g);
+        ManageNut.cursedSkullButton.renderNut(g);
+        ManageNut.bomberButton.renderNut(g);
+        ManageNut.skillButton.renderNut(g);
+        ManageNut.backToMenu.renderNut(g);
+
+        g.setColor(Screen.tiles.darkSilver);
+        g.setFont(Screen.tiles.pixelFontv1);
+        g.drawImage(Screen.tiles.iconHeart, 185, 663, 25, 25, null);
+        g.drawString(": "+ Screen.health, 210, 683);
+        g.drawImage(Screen.tiles.iconCoin, 185, 693, 25, 25, null);
+        g.drawString(": " + Screen.coinage, 210, 713);
         
     }
 
-    private void drawTileScreen(Graphics g, int width, int height) {
-        g.drawImage(Screen.tiles.tileScreen, 0, 0, width, height, null);
-        g.drawImage(Screen.tiles.settingsButton, 5, 5, 35 , 35, null);
+    private void drawTitleScreen(Graphics g, int width, int height) {
+        g.drawImage(Screen.tiles.titleScreen, 0, 0, width, height, null);        
+
+        ManageNut.playgame.renderNut(g);
+        ManageNut.store.renderNut(g);
+        ManageNut.updateHero.renderNut(g);
+        ManageNut.quitgame.renderNut(g);
+        ManageNut.setting.renderNut(g);
+        ManageNut.toGacha.renderNut(g);
         
+        g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
+        g.setFont(Screen.tiles.pixelFontv1);
+        g.setColor(Screen.tiles.darkSilver);
+        g.drawString(": " + Screen.coinage, 45, 760);
+
+    }
+
+    private void drawSelectSkill(Graphics g, int width, int height) {
+        g.drawImage(Screen.tiles.titleScreen, 0, 0, width, height, null);        
+
+        ManageNut.playgame.renderNut(g);
+        ManageNut.store.renderNut(g);
+        ManageNut.updateHero.renderNut(g);
+        ManageNut.quitgame.renderNut(g);
+        ManageNut.setting.renderNut(g);
+        ManageNut.toGacha.renderNut(g);
+        
+        g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
+        g.setFont(Screen.tiles.pixelFontv1);
+        g.setColor(Screen.tiles.darkSilver);
+        g.drawString(": " + Screen.coinage, 45, 760);
+
+        g.setColor(new Color(0, 0, 0, 200));
+        g.fillRect(0, 0, width, height);
+        
+        ManageNut.selectSkillFrame.renderNut(g);
+
+        // g.drawImage(Screen.tiles.selectSkill, 50, 50, width -100, height-100, null);
+        // g.drawImage(Screen.tiles.cardBH, 140, 200, 300, 415, null);
+        // g.drawImage(Screen.tiles.cardEnh, 460, 200, 300, 415, null);
+        // g.drawImage(Screen.tiles.cardMer, 780, 200, 300, 415, null);
 
 
-        Screen.manageNut.playgame.renderNut(g);
-        Screen.manageNut.store.renderNut(g);
-        Screen.manageNut.updateHero.renderNut(g);
-        Screen.manageNut.quitgame.renderNut(g);
+        ManageNut.selectBH.renderNut(g);
+        ManageNut.selectEnh.renderNut(g);
+        ManageNut.selectMer.renderNut(g);
+
+    }
+
+    private void drawStore(Graphics g, int width, int height) {
+        g.drawImage(Screen.tiles.storeTile, 0, 0, width, height, null);
+        ManageNut.backInGameShop.renderNut(g);
+        g.drawImage(Screen.tiles.storeOptions, 550, 20, 650, height-50, null);
+        g.setColor(new Color(0, 0, 0, 200));
+    }    
+
+    private void drawSetting(Graphics g, int width, int height){
+        int offsetFromCenterX = 300;
+        int offsetFromCenterY = 375;
+        int buttonSize = 100;
+        int buttonWidth = 72;
+        int buttonHeight = 80;
+        int longButtonHeight = 70;
+        int longButtonWidth = 240;
+        int awayFromLeftEdge = 75;
+        int awayFromTopEdge = 250;
+        int count = 0;
+        int space = 100;
+
+        int menuX = width / 2 - offsetFromCenterX; // 310
+        int menuY = height / 2 - offsetFromCenterY; // 15
+        int menuWidth = 2 * offsetFromCenterX;
+        int menuHeight = 2 * offsetFromCenterY; 
+
+        g.drawImage(Screen.tiles.titleScreen, 0, 0, width, height, null);        
+
+
+        ManageNut.playgame.renderNut(g);
+        ManageNut.store.renderNut(g);
+        ManageNut.updateHero.renderNut(g);
+        ManageNut.quitgame.renderNut(g);
+        ManageNut.setting.renderNut(g);
 
         
 
@@ -130,20 +241,63 @@ public class GameRender {
         g.setColor(Screen.tiles.darkSilver);
         g.drawString(": " + Screen.coinage, 45, 760);
 
-    }
+        g.setColor(new Color (0, 0, 0, 200));
+        g.fillRect(0, 0, width, height);
 
-    private void drawStore(Graphics g, int width, int height) {
-        g.drawImage(Screen.tiles.storeTile, 0, 0, width, height, null);
-        Screen.manageNut.backInGameShop.renderNut(g);
-        g.drawImage(Screen.tiles.storeOptions, 550, 20, 650, height-50, null);
-        g.setColor(new Color(0, 0, 0, 200));
+        // vẽ background menu setting
+        g.drawImage(Screen.tiles.settingMenu, menuX, menuY, menuWidth, menuHeight, null);
         
+        // vẽ các nút
+        g.setFont(Screen.tiles.pixelFont32f);
+        g.drawString("MUSIC", menuX + awayFromLeftEdge, menuY + awayFromTopEdge + 35);
+        if (!KeyHandel.isMusicMuted)
+            g.drawImage(Screen.tiles.buttonSliderOn, menuX + awayFromLeftEdge + 350, menuY + awayFromTopEdge - 25 + space * count, buttonSize, buttonSize, null);
+        else
+            g.drawImage(Screen.tiles.buttonSliderOff, menuX + awayFromLeftEdge + 350, menuY + awayFromTopEdge - 25 + space * count, buttonSize, buttonSize, null);
+        drawSlider(g, menuX + awayFromLeftEdge + 125, menuY + awayFromTopEdge + space * (count++), Screen.musicVolume, KeyHandel.musicSliderBox);
+        
+        g.drawString("SFX", menuX + awayFromLeftEdge, menuY + awayFromTopEdge + space*count + 35);
+        if (!KeyHandel.isSfxMuted)
+            g.drawImage(Screen.tiles.buttonSliderOn, menuX + awayFromLeftEdge + 350, menuY + awayFromTopEdge - 25 + space * count, buttonSize, buttonSize, null);
+        else
+            g.drawImage(Screen.tiles.buttonSliderOff, menuX + awayFromLeftEdge + 350, menuY + awayFromTopEdge - 25 + space * count, buttonSize, buttonSize, null);
+        drawSlider(g, menuX + awayFromLeftEdge + 125, menuY + awayFromTopEdge + space * (count++), Screen.sfxVolume, KeyHandel.sfxSliderBox);
 
-    }    
+        g.drawString("FULLSCREEN", menuX + awayFromLeftEdge, menuY + awayFromTopEdge + space * count + 35);
+        if (Frame.isFullscreen){
+            g.drawImage(Screen.tiles.tickPressedButton, menuX + awayFromLeftEdge + 200, menuY + awayFromTopEdge - 15 + space * count, buttonWidth, buttonHeight, null);
+            g.drawImage(Screen.tiles.xButton, menuX + awayFromLeftEdge + 300, menuY + awayFromTopEdge - 15 + space * count, buttonWidth, buttonHeight, null);
+        }
+        else{
+            g.drawImage(Screen.tiles.tickButton, menuX + awayFromLeftEdge + 200, menuY + awayFromTopEdge - 15 + space * count, buttonWidth, buttonHeight, null);
+            g.drawImage(Screen.tiles.xPressedButton, menuX + awayFromLeftEdge + 300, menuY + awayFromTopEdge - 15 + space * count, buttonWidth, buttonHeight, null);
+        }
+
+        
+        if (!KeyHandel.isSettingCancelPressed){
+            g.drawImage(Screen.tiles.longButton, menuX + 40, menuY + 630, longButtonWidth, longButtonHeight, null);
+            g.drawString("CANCEL", menuX + 115, menuY + 638 + longButtonHeight / 2);
+        }
+        else{
+            g.drawImage(Screen.tiles.longPressedButton, menuX + 40, menuY + 630, longButtonWidth, longButtonHeight, null);
+            g.drawString("CANCEL", menuX + 115, menuY + 640 + longButtonHeight / 2);
+        }
+        
+        if (!KeyHandel.isSettingConfirmPressed){
+            g.drawImage(Screen.tiles.longButton, menuX + 40 + longButtonWidth + 40, menuY + 630, longButtonWidth, longButtonHeight, null);
+            g.drawString("CONFIRM", menuX + longButtonWidth + 140, menuY + 638 + longButtonHeight / 2);
+        }
+        else{
+            g.drawImage(Screen.tiles.longPressedButton, menuX + 40 + longButtonWidth + 40, menuY + 630, longButtonWidth, longButtonHeight, null);
+            g.drawString("CONFIRM", menuX + longButtonWidth + 140, menuY + 640 + longButtonHeight / 2);
+        }
+        
+        
+    }
 
     private void drawGachaScreen(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.gachaTile, 0, 0, width, height, null);
-        Screen.manageNut.backInGacha.renderNut(g);
+        ManageNut.backInGacha.renderNut(g);
 
 
         g.drawImage(Screen.tiles.BlackHoleC, 470, 310, 135, 30, null);
@@ -155,14 +309,13 @@ public class GameRender {
         // g.drawImage(Screen.tiles.gachaButt, 500, 475,  85, 50, null);
         // g.drawImage(Screen.tiles.gachaButt, 500, 610,  90, 53, null);
         // g.drawImage(Screen.tiles.summonHeroButt, 800, 545, 125, 104, null);
-        Screen.manageNut.gachaBH.renderNut(g);
-        Screen.manageNut.gachaEnhance.renderNut(g);
-        Screen.manageNut.gachaMer.renderNut(g);
-        Screen.manageNut.summon.renderNut(g);
+        ManageNut.gachaBH.renderNut(g);
+        ManageNut.gachaEnhance.renderNut(g);
+        ManageNut.gachaMer.renderNut(g);
+        ManageNut.summon.renderNut(g);
 
-
-        g.drawImage(Screen.tiles.in4Butt, 1110, 20, 40, 40, null);
-        g.drawImage(Screen.tiles.iconShardShop, 1100, 80, 65, 65, null);
+        ManageNut.info.renderNut(g);
+        ManageNut.iconShardShop.renderNut(g);
 
         g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
         g.setFont(Screen.tiles.pixelFontv1);
@@ -180,15 +333,15 @@ public class GameRender {
         g.drawImage(Screen.tiles.MercenaryC, 470, 565, 140, 38, null);
 
 
-        Screen.manageNut.gachaBH.renderNut(g);
-        Screen.manageNut.gachaEnhance.renderNut(g);
-        Screen.manageNut.gachaMer.renderNut(g);
-        Screen.manageNut.summon.renderNut(g);
+        ManageNut.gachaBH.renderNut(g);
+        ManageNut.gachaEnhance.renderNut(g);
+        ManageNut.gachaMer.renderNut(g);
+        ManageNut.summon.renderNut(g);
        
 
 
-        g.drawImage(Screen.tiles.in4Butt, 1110, 20, 40, 40, null);
-        g.drawImage(Screen.tiles.iconShardShop, 1100, 80, 65, 65, null);
+        ManageNut.info.renderNut(g);
+        ManageNut.iconShardShop.renderNut(g);
 
         g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
         g.setFont(Screen.tiles.pixelFontv1);
@@ -247,15 +400,15 @@ public class GameRender {
         g.drawImage(Screen.tiles.MercenaryC, 470, 565, 140, 38, null);
 
 
-        Screen.manageNut.doiBH.renderNut(g);
-        Screen.manageNut.doiEnhance.renderNut(g);
-        Screen.manageNut.doiMer.renderNut(g);
-        Screen.manageNut.doiEC.renderNut(g);
+        ManageNut.doiBH.renderNut(g);
+        ManageNut.doiEnhance.renderNut(g);
+        ManageNut.doiMer.renderNut(g);
+        ManageNut.doiEC.renderNut(g);
 
 
-        g.drawImage(Screen.tiles.in4Butt, 1110, 20, 40, 40, null);
-        g.drawImage(Screen.tiles.iconShardShop, 1100, 80, 65, 65, null);
-
+        ManageNut.info.renderNut(g);
+        // g.drawImage(Screen.tiles.iconShardShop, 1100, 80, 65, 65, null);
+        ManageNut.iconShardShop.renderNut(g);
         g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
         g.setFont(Screen.tiles.pixelFontv1);
         g.setColor(Screen.tiles.darkSilver);
@@ -300,22 +453,22 @@ public class GameRender {
         g.drawImage(Screen.tiles.iconCore, 590, 440, 50, 50, null);
 
        
-        g.setColor(Screen.tiles.timMaMi);
+        g.setColor(Screen.tiles.gloomyPurple);
         g.drawString("Black Hole", 585, 260);
         g.setColor(Screen.tiles.enhanceRed);
         g.drawString("Enhancement", 580, 340);
         g.setColor(Screen.tiles.mercBlue);
         g.drawString("Mercenary", 585, 420);
-        g.setColor(Screen.tiles.timMaMi);
+        g.setColor(Screen.tiles.gloomyPurple);
         g.drawString("Energy Core", 580, 500);
 
         // drawButtTraoDoi(g, 670, 210, 95, 30, Screen.unlockBH);
         // drawButtTraoDoi(g, 670, 290, 95, 30, Screen.unlockEnhance);
         // drawButtTraoDoi(g, 670, 370, 95, 30, Screen.unlockMercenary);
-        Screen.manageNut.doiBH.renderNut(g);
-        Screen.manageNut.doiEnhance.renderNut(g);
-        Screen.manageNut.doiMer.renderNut(g);
-        Screen.manageNut.doiEC.renderNut(g);
+        ManageNut.doiBH.renderNut(g);
+        ManageNut.doiEnhance.renderNut(g);
+        ManageNut.doiMer.renderNut(g);
+        ManageNut.doiEC.renderNut(g);
 
 
         g.setFont(Screen.tiles.pixelFontv2);
@@ -331,10 +484,6 @@ public class GameRender {
     }
 
     private void drawThongBao(Graphics g, int width, int height) {
-
-        
-        
-        
         g.drawImage(Screen.tiles.gachaTile, 0, 0, width, height, null);
         g.drawImage(Screen.tiles.backButton, 5, 5, 50, 35, null);
 
@@ -344,14 +493,15 @@ public class GameRender {
         g.drawImage(Screen.tiles.MercenaryC, 470, 565, 140, 38, null);
 
 
-        Screen.manageNut.gachaBH.renderNut(g);
-        Screen.manageNut.gachaEnhance.renderNut(g);
-        Screen.manageNut.gachaMer.renderNut(g);
-        Screen.manageNut.summon.renderNut(g);
+        ManageNut.gachaBH.renderNut(g);
+        ManageNut.gachaEnhance.renderNut(g);
+        ManageNut.gachaMer.renderNut(g);
+        ManageNut.summon.renderNut(g);
 
 
-        g.drawImage(Screen.tiles.in4Butt, 1110, 20, 40, 40, null);
-        g.drawImage(Screen.tiles.iconShardShop, 1100, 80, 65, 65, null);
+        ManageNut.info.renderNut(g);
+        // g.drawImage(Screen.tiles.iconShardShop, 1100, 80, 65, 65, null);
+        ManageNut.iconShardShop.renderNut(g);
 
         g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
         g.setFont(Screen.tiles.pixelFontv1);
@@ -388,7 +538,7 @@ public class GameRender {
             if(Screen.gachaType == Screen.summon) {
                 if(Screen.randomNum == 1) {
                     g.drawImage(Screen.tiles.iconCore, 559, 329, 102, 102, null);
-                    g.setColor(Screen.tiles.timMaMi);
+                    g.setColor(Screen.tiles.gloomyPurple);
                     g.setFont(Screen.tiles.pixelFontMedi);
                     g.drawString("Energy Core", 542, 455);
                 }
@@ -446,7 +596,7 @@ public class GameRender {
                 if(Screen.randomNum <= 2) {
                     if(Screen.gachaType == Screen.gachaBH) {
                         g.drawImage(Screen.tiles.iconBH, 559, 329, 102, 102, null);
-                        g.setColor(Screen.tiles.timMaMi);
+                        g.setColor(Screen.tiles.gloomyPurple);
                         g.setFont(Screen.tiles.pixelFontMedi);
                         g.drawString("Black Hole", 550, 455);
                     }
@@ -525,35 +675,44 @@ public class GameRender {
 
         g.drawImage(Screen.tiles.nenExpBlack, 735, 185, 220, 36, null);
         drawexpGreen(g);
-        Screen.manageNut.expBar.renderNut(g);
-        
+        ManageNut.expBar.renderNut(g);
 
 
-        g.setFont(Screen.tiles.pixelFontHeroRequire);
         g.setColor(Screen.tiles.royalGold);
-        g.drawString("Next Level Requires: ", 710, 250);
-
         g.setFont(Screen.tiles.pixelFontv1);
         g.drawString("Level: "+Screen.heroLevel, 740, 180);
 
+        if (Screen.heroLevel < Screen.maxHeroLevel) {
+            
+            g.setFont(Screen.tiles.pixelFontHeroRequire);
+            g.setColor(Screen.tiles.royalGold);
+            g.drawString("Next Level Requires: ", 710, 250);
 
-        g.setFont(Screen.tiles.pixelFontvSmall);
-        g.setColor(Screen.tiles.darkSilver);
+            
 
 
-        g.drawImage(Screen.tiles.iconCoin, 913, 230, 25, 25, null);
-        g.setColor(checkMau(1));
-        g.drawString("x"+Screen.upHeroCoin[Screen.heroLevel], 938, 250);
+            g.setFont(Screen.tiles.pixelFontvSmall);
+            g.setColor(Screen.tiles.darkSilver);
 
-        g.drawImage(Screen.tiles.mysteryShard, 975, 230, 25, 25, null);
-        g.setColor(checkMau(2));
-        g.drawString("x"+Screen.upHeroShard[Screen.heroLevel], 1000, 250);
 
-        g.drawImage(Screen.tiles.iconCore, 1037, 230, 25, 25, null);
-        g.setColor(checkMau(3));
-        g.drawString("x"+Screen.upHeroECore[Screen.heroLevel], 1062, 250);
+            g.drawImage(Screen.tiles.iconCoin, 913, 230, 25, 25, null);
+            g.setColor(checkMau(1));
+            g.drawString("x"+Screen.upHeroCoin[Screen.heroLevel], 938, 250);
+
+            g.drawImage(Screen.tiles.mysteryShard, 975, 230, 25, 25, null);
+            g.setColor(checkMau(2));
+            g.drawString("x"+Screen.upHeroShard[Screen.heroLevel], 1000, 250);
+
+            g.drawImage(Screen.tiles.iconCore, 1037, 230, 25, 25, null);
+            g.setColor(checkMau(3));
+            g.drawString("x"+Screen.upHeroECore[Screen.heroLevel], 1062, 250);
         
-
+        }
+        else {
+            g.setFont(Screen.tiles.pixelFontHeroRequire);
+            g.setColor(Screen.tiles.royalGold);
+            g.drawString("Legendary Status Achieved!", 708, 250);
+        }
         
 
 
@@ -613,36 +772,153 @@ public class GameRender {
 
 
         g.drawImage(Screen.tiles.iconCore, 10, 735, 30, 30, null);
-        g.drawString(": " + Screen.eCore, 45, 760);
+        g.drawString(": " + Screen.energyCore, 45, 760);
 
 
         
 
 
-        Screen.manageNut.levelUp.renderNut(g);
-        Screen.manageNut.backInGameShop.renderNut(g);
-        Screen.manageNut.add1.renderNut(g);
-        Screen.manageNut.add2.renderNut(g);
-        Screen.manageNut.add3.renderNut(g);
-        Screen.manageNut.add4.renderNut(g);
-        Screen.manageNut.add5.renderNut(g);
+        ManageNut.levelUp.renderNut(g);
+        ManageNut.backInGameShop.renderNut(g);
+        ManageNut.add1.renderNut(g);
+        ManageNut.add2.renderNut(g);
+        ManageNut.add3.renderNut(g);
+        ManageNut.add4.renderNut(g);
+        ManageNut.add5.renderNut(g);
     }
-
 
     private void drawTongKetWin(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.tongKetWin, 0, 0, width, height, null);
+        g.setFont(Screen.tiles.pixelFontv2);
+        g.setColor(Screen.tiles.darkSilver);
 
+        g.drawString("Chosen Skill: " + Screen.strChosenCard, 225, 410);
+        g.drawString("Wave survived: "+ Screen.waveManager.getTotalWaves() + "/" + Screen.waveManager.getTotalWaves(), 225, 435);
+        g.drawString("Battle Duration: " + Screen.gameTime +" seconds", 225, 460);
+        g.drawString("Enermy Killed: " + Screen.killed, 225, 485);
+        g.drawString("Enermy Esscaped: " + (-Screen.health + Screen.healthDauTran), 225, 510);
+        g.drawString("Remaining Health: "+ Screen.health, 225, 535);
+
+        g.drawImage(Screen.tiles.iconCoin, 630, 390, 100, 100, null);
+        g.drawImage(Screen.tiles.iconEXP, 880, 390, 100, 100, null );
+
+        drawRssTK(g, Screen.coinDauTran, Screen.coinage, 80, 8, 695, 530);
+        drawRssTK(g, Screen.heroXpDauTran, Screen.heroXp, 80, 8, 940, 530);
+        
+        ManageNut.menuWin.renderNut(g);
+        ManageNut.next.renderNut(g);
+        
     }
+    
     private void drawTongKetLose(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.tongKetLose, 0, 0, width, height, null);
+        g.setFont(Screen.tiles.pixelFontv2);
+        g.setColor(Screen.tiles.darkSilver);
 
+        g.drawString("Chosen Skill: " + Screen.strChosenCard, 225, 410);
+        g.drawString("Wave survived: "+ (Screen.waveManager.getCurrentWave() -1) + "/" + Screen.waveManager.getTotalWaves(), 225, 435);
+        g.drawString("Battle Duration: " + Screen.gameTime +" seconds", 225, 460);
+        g.drawString("Enermy Killed: " + Screen.killed, 225, 485);
+        g.drawString("Enermy Esscaped: " + Screen.healthDauTran, 225, 510);
+        g.drawString("Remaining Health: "+ Screen.health, 225, 535);
+
+        g.drawImage(Screen.tiles.iconCoin, 630, 390, 100, 100, null);
+        g.drawImage(Screen.tiles.iconEXP, 880, 390, 100, 100, null );
+
+        // g.setColor(Color.BLUE);
+        // g.fillRect(595, 500, 200, 50);
+        
+        drawRssTK(g, Screen.coinDauTran, Screen.coinage, 80, 8, 695, 530);
+        drawRssTK(g, Screen.heroXpDauTran, Screen.heroXp, 80, 8, 940, 530);
+      
+        ManageNut.menuLose.renderNut(g);
+        ManageNut.again.renderNut(g);
+
+        
+
+        
+
+    }
+
+    private void drawItemShop(Graphics g, int width, int height) {
+        g.drawImage(Screen.tiles.tileBuy, 0, 0, width, height, null);
+        g.setColor(Screen.tiles.darkSilver);
+        g.setFont(Screen.tiles.pixelFontvSmall);
+        g.drawString("gold mine +50%", 240, 479); 
+        g.drawString("in 2 minutes", 240, 491);
+
+        g.drawString("tower dps +50%", 512, 479);
+        g.drawString("in 2 minutes", 512, 491);
+
+        g.drawString ("monster speed ", 240, 662);
+        g.drawString("-30% in 2 minutes", 240, 674);
+
+        g.drawString("Boommmm", 512, 662);
+        g.drawString("Destroy all !!!", 512, 674);
+
+
+        ManageNut.backInGacha.renderNut(g);
+
+
+        
+        ManageNut.buyGoldenPickaxe.renderNut(g);
+        ManageNut.buyFireSword.renderNut(g);
+        ManageNut.buyCursedSkull.renderNut(g);
+        ManageNut.buyPaperPlane.renderNut(g);
+        ManageNut.buyHeart.renderNut(g);
+
+        g.setColor(Screen.tiles.royalGold);
+        g.setFont(Screen.tiles.pixelFontHeroRequire);
+        g.drawString("Remaining:", 10, 590);
+
+        g.setFont(Screen.tiles.pixelFontv1);
+        g.setColor(Screen.tiles.darkSilver);
+
+        g.drawImage(Screen.tiles.iconGoldenPickaxe, 10, 595, 30, 30, null);
+        g.drawString(": " + Screen.goldenPickaxe, 45, 620);
+
+        g.drawImage(Screen.tiles.iconFireSword, 10, 630, 30, 30, null);
+        g.drawString(": " + Screen.fireSword, 45, 655);
+
+        g.drawImage(Screen.tiles.iconCursedSkull, 10, 665, 30, 30, null);
+        g.drawString(": " + Screen.cursedSkull, 45, 690);
+        
+
+        g.drawImage(Screen.tiles.iconPaperPlane, 10, 700, 30, 30, null);
+        g.drawString(": " + Screen.paperPlane, 45, 725);
+
+
+        g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
+        g.drawString(": " + Screen.coinage, 45, 760);
+
+        g.drawImage(Screen.tiles.iconHeart, 1130, 735, 30, 30, null);
+        g.drawString(": " + Screen.health + "/" + Screen.maxHealth, 1162, 760);
         
     }
 
+    /** 
+     * Vẽ thanh slider (dành cho sfx và music)
+    */
+    private void drawSlider(Graphics g, int startX, int startY, int currentVolume, Rectangle outHitBox){
+        int barW = 16;
+        int barH = 48;
+        int spacing = 5; // giãn cách giữa các thanh 
+        int totalBar = 10; // tổng số thanh muốn vẽ
 
-    private void drawBuyItem(Graphics g, int width, int height) {
-        g.drawImage(Screen.tiles.tileBuy, 0, 0, width, height, null);
+        int totalWidth = totalBar * barW + (totalBar - 1) * spacing;
+        outHitBox.setBounds(startX, startY, totalWidth, barH);
+
+        for (int i = 0; i < totalBar; i++){
+            int x = startX + i * (barW + spacing);
+            
+            if (i < currentVolume){
+                g.drawImage(Screen.tiles.volumeBarOn, x, startY, barW, barH, null);
+            }
+            else
+                g.drawImage(Screen.tiles.volumeBarOff, x, startY, barW, barH, null);
+        }
     }
+    
     private void drawexpGreen(Graphics g) {
         int dx1 = 725, dy1 = 185;
         int dx2;
@@ -685,12 +961,49 @@ public class GameRender {
             }
         }
         else {
-            if(Screen.eCore >= Screen.upHeroECore[Screen.heroLevel]) {
+            if(Screen.energyCore >= Screen.upHeroECore[Screen.heroLevel]) {
                 return Screen.tiles.okOK;
             }
             else {
                 return Screen.tiles.notOK;
             }
+        }
+    }
+
+    private void drawRssTK(Graphics g, int dau, int cuoi, int widthMuiTen, int offSetX, int x, int y) {
+        g.setFont(Screen.tiles.pixelFontv2);
+        g.setColor(Screen.tiles.darkSilver);
+        FontMetrics fm = g.getFontMetrics();
+        int widthDau = fm.stringWidth(Integer.toString(dau));
+        g.drawString("" + dau , x-widthMuiTen/2-offSetX - widthDau, y);
+        int heightMuiTen = (int)(widthMuiTen*0.5);
+        g.drawImage(Screen.tiles.muiTen, x-widthMuiTen/2, y - 30 , widthMuiTen, heightMuiTen , null);
+
+        g.setColor(checkMau(dau, cuoi));
+        g.drawString("" + cuoi, x + widthMuiTen/2 + offSetX, y );
+        int change = cuoi - dau;
+        String strChange;
+        if(change >=0) {
+            strChange = "+" + change;
+        }
+        else {
+            strChange = "" + change;
+        }
+        int widthChange = fm.stringWidth(strChange);
+        g.setFont(Screen.tiles.pixelFontv1);
+        g.drawString(strChange, x-widthMuiTen/3-widthChange/2+10, y-22);
+
+    }
+
+    private Color checkMau(int x, int y) {
+        if(x == y) {
+            return Screen.tiles.darkSilver;
+        }
+        else if(x>y) {
+            return Screen.tiles.notOK;
+        }
+        else {
+            return Screen.tiles.okOK;
         }
     }
 

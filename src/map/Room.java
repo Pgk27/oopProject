@@ -1,4 +1,8 @@
+package map;
 import java.awt.Graphics;
+
+import core.Screen;
+import core.Value;
 
 public class Room {
 	public int worldWidth = 40; 	//số cột

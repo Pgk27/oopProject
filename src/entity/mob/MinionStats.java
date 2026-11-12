@@ -1,3 +1,7 @@
+package entity.mob;
+
+import core.Screen;
+
 public class MinionStats {
     public static int maxHealth = 1200 + 100 * Screen.buffHp;
     

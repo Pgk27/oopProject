@@ -1,4 +1,8 @@
+package spell;
 import java.awt.*;
+
+import core.Screen;
+import entity.mob.Mob;
 
 /**
  * Kỹ năng Máy Bay Thả Bom (BomberPlane extends Spell)

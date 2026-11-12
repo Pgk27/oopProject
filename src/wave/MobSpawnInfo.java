@@ -1,3 +1,4 @@
+package wave;
 /**
  * Lớp đại diện cho thông tin cấu hình sinh quái (spawn) của một loại quái vật cụ thể trong 1 Wave.
  * Hệ thống Data-Driven sử dụng lớp này để không phải hard-code logic sinh quái.
