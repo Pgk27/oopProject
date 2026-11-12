@@ -1,4 +1,7 @@
 package core;
+import entity.Projectiles;
+import entity.mob.MinionStats;
+import entity.mob.Mob;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -6,10 +9,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Comparator;
-
-import entity.Projectiles;
-import entity.mob.Mob;
-import entity.mob.MinionStats;
 import spell.BomberPlane;
 import spell.Spell;
 
@@ -22,8 +21,8 @@ public class GameRender {
             drawTitleScreen(g, width, height);
         } else if (state == Value.IN_GAME) {
             drawInGame(g, width, height);
-        } else if (state == Value.SHOP) {
-            drawStore(g, width, height);
+        } else if (state == Value.SKILL_SELECT) {
+            drawSelectSkill(g, width, height);
         } else if (state == Value.SETTING) {
             drawSetting(g, width, height);
         } else if (state == Value.GACHA) {
@@ -42,12 +41,16 @@ public class GameRender {
         else if (state == Value.UPDATE_HERO){
             drawUpdateHero(g, width, height);
         }
+        else if (state == Value.ITEM_SHOP){
+            drawItemShop(g, width, height);
+        }
 
         // vẽ con trỏ chuột custom vào game
         boolean isHover = KeyHandel.isHoveringButton(Screen.mse.x, Screen.mse.y);
+        boolean overDisabledButton = KeyHandel.isOverDisabledGameButton(Screen.mse.x, Screen.mse.y);
         BufferedImage currentCursor;
 
-        if (KeyHandel.isMousePressed) {
+        if (KeyHandel.isMousePressed && !overDisabledButton) {
             // 1. Đang click vào button
             currentCursor = Screen.tiles.cursorPressed;
         } else if (isHover) {
@@ -69,10 +72,12 @@ public class GameRender {
         g.setColor(new Color(70, 70, 70)); 
         g.fillRect(0, 0, width, height);
         
-        Screen.room.draw(g); 
+        Screen.room.draw(g);
 
-        g.drawImage(Screen.tiles.backButton, 5, 700, 50, 35, null);
-        
+        Rectangle optionFrame = Store.OPTION_FRAME_BOUNDS;
+        g.drawImage(Screen.tiles.khungOption, optionFrame.x, optionFrame.y,
+                optionFrame.width, optionFrame.height, null);
+
         // Vẽ Spell mặt đất (như BlackHole) trước quái
         for (Spell s : Screen.activeSpells) {
             if (!(s instanceof BomberPlane)) {
@@ -129,26 +134,69 @@ public class GameRender {
         for (Projectiles a : Screen.pjt) {
             a.draw(g);
         }
+
+        ManageNut.GoldenPickaxeButton.renderNut(g);
+        ManageNut.fireSwordButton.renderNut(g);
+        ManageNut.cursedSkullButton.renderNut(g);
+        ManageNut.bomberButton.renderNut(g);
+        ManageNut.skillButton.renderNut(g);
+        ManageNut.backToMenu.renderNut(g);
+
+        g.setColor(Screen.tiles.darkSilver);
+        g.setFont(Screen.tiles.pixelFontv1);
+        g.drawImage(Screen.tiles.iconHeart, 185, 663, 25, 25, null);
+        g.drawString(": "+ Screen.health, 210, 683);
+        g.drawImage(Screen.tiles.iconCoin, 185, 693, 25, 25, null);
+        g.drawString(": " + Screen.coinage, 210, 713);
         
     }
 
     private void drawTitleScreen(Graphics g, int width, int height) {
-        g.drawImage(Screen.tiles.titleScreen, 0, 0, width, height, null);
-        g.drawImage(Screen.tiles.settingsButton, 5, 5, 35 , 35, null);
-        
-
+        g.drawImage(Screen.tiles.titleScreen, 0, 0, width, height, null);        
 
         ManageNut.playgame.renderNut(g);
         ManageNut.store.renderNut(g);
         ManageNut.updateHero.renderNut(g);
         ManageNut.quitgame.renderNut(g);
-
+        ManageNut.setting.renderNut(g);
+        ManageNut.toGacha.renderNut(g);
         
-
         g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
         g.setFont(Screen.tiles.pixelFontv1);
         g.setColor(Screen.tiles.darkSilver);
         g.drawString(": " + Screen.coinage, 45, 760);
+
+    }
+
+    private void drawSelectSkill(Graphics g, int width, int height) {
+        g.drawImage(Screen.tiles.titleScreen, 0, 0, width, height, null);        
+
+        ManageNut.playgame.renderNut(g);
+        ManageNut.store.renderNut(g);
+        ManageNut.updateHero.renderNut(g);
+        ManageNut.quitgame.renderNut(g);
+        ManageNut.setting.renderNut(g);
+        ManageNut.toGacha.renderNut(g);
+        
+        g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
+        g.setFont(Screen.tiles.pixelFontv1);
+        g.setColor(Screen.tiles.darkSilver);
+        g.drawString(": " + Screen.coinage, 45, 760);
+
+        g.setColor(new Color(0, 0, 0, 200));
+        g.fillRect(0, 0, width, height);
+        
+        ManageNut.selectSkillFrame.renderNut(g);
+
+        // g.drawImage(Screen.tiles.selectSkill, 50, 50, width -100, height-100, null);
+        // g.drawImage(Screen.tiles.cardBH, 140, 200, 300, 415, null);
+        // g.drawImage(Screen.tiles.cardEnh, 460, 200, 300, 415, null);
+        // g.drawImage(Screen.tiles.cardMer, 780, 200, 300, 415, null);
+
+
+        ManageNut.selectBH.renderNut(g);
+        ManageNut.selectEnh.renderNut(g);
+        ManageNut.selectMer.renderNut(g);
 
     }
 
@@ -176,6 +224,25 @@ public class GameRender {
         int menuY = height / 2 - offsetFromCenterY; // 15
         int menuWidth = 2 * offsetFromCenterX;
         int menuHeight = 2 * offsetFromCenterY; 
+
+        g.drawImage(Screen.tiles.titleScreen, 0, 0, width, height, null);        
+
+
+        ManageNut.playgame.renderNut(g);
+        ManageNut.store.renderNut(g);
+        ManageNut.updateHero.renderNut(g);
+        ManageNut.quitgame.renderNut(g);
+        ManageNut.setting.renderNut(g);
+
+        
+
+        g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
+        g.setFont(Screen.tiles.pixelFontv1);
+        g.setColor(Screen.tiles.darkSilver);
+        g.drawString(": " + Screen.coinage, 45, 760);
+
+        g.setColor(new Color (0, 0, 0, 200));
+        g.fillRect(0, 0, width, height);
 
         // vẽ background menu setting
         g.drawImage(Screen.tiles.settingMenu, menuX, menuY, menuWidth, menuHeight, null);
@@ -247,9 +314,8 @@ public class GameRender {
         ManageNut.gachaMer.renderNut(g);
         ManageNut.summon.renderNut(g);
 
-
-        g.drawImage(Screen.tiles.in4Butt, 1110, 20, 40, 40, null);
-        g.drawImage(Screen.tiles.iconShardShop, 1100, 80, 65, 65, null);
+        ManageNut.info.renderNut(g);
+        ManageNut.iconShardShop.renderNut(g);
 
         g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
         g.setFont(Screen.tiles.pixelFontv1);
@@ -274,8 +340,8 @@ public class GameRender {
        
 
 
-        g.drawImage(Screen.tiles.in4Butt, 1110, 20, 40, 40, null);
-        g.drawImage(Screen.tiles.iconShardShop, 1100, 80, 65, 65, null);
+        ManageNut.info.renderNut(g);
+        ManageNut.iconShardShop.renderNut(g);
 
         g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
         g.setFont(Screen.tiles.pixelFontv1);
@@ -340,9 +406,9 @@ public class GameRender {
         ManageNut.doiEC.renderNut(g);
 
 
-        g.drawImage(Screen.tiles.in4Butt, 1110, 20, 40, 40, null);
-        g.drawImage(Screen.tiles.iconShardShop, 1100, 80, 65, 65, null);
-
+        ManageNut.info.renderNut(g);
+        // g.drawImage(Screen.tiles.iconShardShop, 1100, 80, 65, 65, null);
+        ManageNut.iconShardShop.renderNut(g);
         g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
         g.setFont(Screen.tiles.pixelFontv1);
         g.setColor(Screen.tiles.darkSilver);
@@ -433,8 +499,9 @@ public class GameRender {
         ManageNut.summon.renderNut(g);
 
 
-        g.drawImage(Screen.tiles.in4Butt, 1110, 20, 40, 40, null);
-        g.drawImage(Screen.tiles.iconShardShop, 1100, 80, 65, 65, null);
+        ManageNut.info.renderNut(g);
+        // g.drawImage(Screen.tiles.iconShardShop, 1100, 80, 65, 65, null);
+        ManageNut.iconShardShop.renderNut(g);
 
         g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
         g.setFont(Screen.tiles.pixelFontv1);
@@ -609,34 +676,43 @@ public class GameRender {
         g.drawImage(Screen.tiles.nenExpBlack, 735, 185, 220, 36, null);
         drawexpGreen(g);
         ManageNut.expBar.renderNut(g);
-        
 
 
-        g.setFont(Screen.tiles.pixelFontHeroRequire);
         g.setColor(Screen.tiles.royalGold);
-        g.drawString("Next Level Requires: ", 710, 250);
-
         g.setFont(Screen.tiles.pixelFontv1);
         g.drawString("Level: "+Screen.heroLevel, 740, 180);
 
+        if (Screen.heroLevel < Screen.maxHeroLevel) {
+            
+            g.setFont(Screen.tiles.pixelFontHeroRequire);
+            g.setColor(Screen.tiles.royalGold);
+            g.drawString("Next Level Requires: ", 710, 250);
 
-        g.setFont(Screen.tiles.pixelFontvSmall);
-        g.setColor(Screen.tiles.darkSilver);
+            
 
 
-        g.drawImage(Screen.tiles.iconCoin, 913, 230, 25, 25, null);
-        g.setColor(checkMau(1));
-        g.drawString("x"+Screen.upHeroCoin[Screen.heroLevel], 938, 250);
+            g.setFont(Screen.tiles.pixelFontvSmall);
+            g.setColor(Screen.tiles.darkSilver);
 
-        g.drawImage(Screen.tiles.mysteryShard, 975, 230, 25, 25, null);
-        g.setColor(checkMau(2));
-        g.drawString("x"+Screen.upHeroShard[Screen.heroLevel], 1000, 250);
 
-        g.drawImage(Screen.tiles.iconCore, 1037, 230, 25, 25, null);
-        g.setColor(checkMau(3));
-        g.drawString("x"+Screen.upHeroECore[Screen.heroLevel], 1062, 250);
+            g.drawImage(Screen.tiles.iconCoin, 913, 230, 25, 25, null);
+            g.setColor(checkMau(1));
+            g.drawString("x"+Screen.upHeroCoin[Screen.heroLevel], 938, 250);
+
+            g.drawImage(Screen.tiles.mysteryShard, 975, 230, 25, 25, null);
+            g.setColor(checkMau(2));
+            g.drawString("x"+Screen.upHeroShard[Screen.heroLevel], 1000, 250);
+
+            g.drawImage(Screen.tiles.iconCore, 1037, 230, 25, 25, null);
+            g.setColor(checkMau(3));
+            g.drawString("x"+Screen.upHeroECore[Screen.heroLevel], 1062, 250);
         
-
+        }
+        else {
+            g.setFont(Screen.tiles.pixelFontHeroRequire);
+            g.setColor(Screen.tiles.royalGold);
+            g.drawString("Legendary Status Achieved!", 708, 250);
+        }
         
 
 
@@ -713,10 +789,111 @@ public class GameRender {
 
     private void drawTongKetWin(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.tongKetWin, 0, 0, width, height, null);
+        g.setFont(Screen.tiles.pixelFontv2);
+        g.setColor(Screen.tiles.darkSilver);
+
+        g.drawString("Chosen Skill: " + Screen.strChosenCard, 225, 410);
+        g.drawString("Wave survived: "+ Screen.waveManager.getTotalWaves() + "/" + Screen.waveManager.getTotalWaves(), 225, 435);
+        g.drawString("Battle Duration: " + Screen.gameTime +" seconds", 225, 460);
+        g.drawString("Enermy Killed: " + Screen.killed, 225, 485);
+        g.drawString("Enermy Esscaped: " + (-Screen.health + Screen.healthDauTran), 225, 510);
+        g.drawString("Remaining Health: "+ Screen.health, 225, 535);
+
+        g.drawImage(Screen.tiles.iconCoin, 630, 390, 100, 100, null);
+        g.drawImage(Screen.tiles.iconEXP, 880, 390, 100, 100, null );
+
+        drawRssTK(g, Screen.coinDauTran, Screen.coinage, 80, 8, 695, 530);
+        drawRssTK(g, Screen.heroXpDauTran, Screen.heroXp, 80, 8, 940, 530);
+        
+        ManageNut.menuWin.renderNut(g);
+        ManageNut.next.renderNut(g);
+        
     }
     
     private void drawTongKetLose(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.tongKetLose, 0, 0, width, height, null);
+        g.setFont(Screen.tiles.pixelFontv2);
+        g.setColor(Screen.tiles.darkSilver);
+
+        g.drawString("Chosen Skill: " + Screen.strChosenCard, 225, 410);
+        g.drawString("Wave survived: "+ (Screen.waveManager.getCurrentWave() -1) + "/" + Screen.waveManager.getTotalWaves(), 225, 435);
+        g.drawString("Battle Duration: " + Screen.gameTime +" seconds", 225, 460);
+        g.drawString("Enermy Killed: " + Screen.killed, 225, 485);
+        g.drawString("Enermy Esscaped: " + Screen.healthDauTran, 225, 510);
+        g.drawString("Remaining Health: "+ Screen.health, 225, 535);
+
+        g.drawImage(Screen.tiles.iconCoin, 630, 390, 100, 100, null);
+        g.drawImage(Screen.tiles.iconEXP, 880, 390, 100, 100, null );
+
+        // g.setColor(Color.BLUE);
+        // g.fillRect(595, 500, 200, 50);
+        
+        drawRssTK(g, Screen.coinDauTran, Screen.coinage, 80, 8, 695, 530);
+        drawRssTK(g, Screen.heroXpDauTran, Screen.heroXp, 80, 8, 940, 530);
+      
+        ManageNut.menuLose.renderNut(g);
+        ManageNut.again.renderNut(g);
+
+        
+
+        
+
+    }
+
+    private void drawItemShop(Graphics g, int width, int height) {
+        g.drawImage(Screen.tiles.tileBuy, 0, 0, width, height, null);
+        g.setColor(Screen.tiles.darkSilver);
+        g.setFont(Screen.tiles.pixelFontvSmall);
+        g.drawString("gold mine +50%", 240, 479); 
+        g.drawString("in 2 minutes", 240, 491);
+
+        g.drawString("tower dps +50%", 512, 479);
+        g.drawString("in 2 minutes", 512, 491);
+
+        g.drawString ("monster speed ", 240, 662);
+        g.drawString("-30% in 2 minutes", 240, 674);
+
+        g.drawString("Boommmm", 512, 662);
+        g.drawString("Destroy all !!!", 512, 674);
+
+
+        ManageNut.backInGacha.renderNut(g);
+
+
+        
+        ManageNut.buyGoldenPickaxe.renderNut(g);
+        ManageNut.buyFireSword.renderNut(g);
+        ManageNut.buyCursedSkull.renderNut(g);
+        ManageNut.buyPaperPlane.renderNut(g);
+        ManageNut.buyHeart.renderNut(g);
+
+        g.setColor(Screen.tiles.royalGold);
+        g.setFont(Screen.tiles.pixelFontHeroRequire);
+        g.drawString("Remaining:", 10, 590);
+
+        g.setFont(Screen.tiles.pixelFontv1);
+        g.setColor(Screen.tiles.darkSilver);
+
+        g.drawImage(Screen.tiles.iconGoldenPickaxe, 10, 595, 30, 30, null);
+        g.drawString(": " + Screen.goldenPickaxe, 45, 620);
+
+        g.drawImage(Screen.tiles.iconFireSword, 10, 630, 30, 30, null);
+        g.drawString(": " + Screen.fireSword, 45, 655);
+
+        g.drawImage(Screen.tiles.iconCursedSkull, 10, 665, 30, 30, null);
+        g.drawString(": " + Screen.cursedSkull, 45, 690);
+        
+
+        g.drawImage(Screen.tiles.iconPaperPlane, 10, 700, 30, 30, null);
+        g.drawString(": " + Screen.paperPlane, 45, 725);
+
+
+        g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
+        g.drawString(": " + Screen.coinage, 45, 760);
+
+        g.drawImage(Screen.tiles.iconHeart, 1130, 735, 30, 30, null);
+        g.drawString(": " + Screen.health + "/" + Screen.maxHealth, 1162, 760);
+        
     }
 
     /** 
@@ -790,6 +967,43 @@ public class GameRender {
             else {
                 return Screen.tiles.notOK;
             }
+        }
+    }
+
+    private void drawRssTK(Graphics g, int dau, int cuoi, int widthMuiTen, int offSetX, int x, int y) {
+        g.setFont(Screen.tiles.pixelFontv2);
+        g.setColor(Screen.tiles.darkSilver);
+        FontMetrics fm = g.getFontMetrics();
+        int widthDau = fm.stringWidth(Integer.toString(dau));
+        g.drawString("" + dau , x-widthMuiTen/2-offSetX - widthDau, y);
+        int heightMuiTen = (int)(widthMuiTen*0.5);
+        g.drawImage(Screen.tiles.muiTen, x-widthMuiTen/2, y - 30 , widthMuiTen, heightMuiTen , null);
+
+        g.setColor(checkMau(dau, cuoi));
+        g.drawString("" + cuoi, x + widthMuiTen/2 + offSetX, y );
+        int change = cuoi - dau;
+        String strChange;
+        if(change >=0) {
+            strChange = "+" + change;
+        }
+        else {
+            strChange = "" + change;
+        }
+        int widthChange = fm.stringWidth(strChange);
+        g.setFont(Screen.tiles.pixelFontv1);
+        g.drawString(strChange, x-widthMuiTen/3-widthChange/2+10, y-22);
+
+    }
+
+    private Color checkMau(int x, int y) {
+        if(x == y) {
+            return Screen.tiles.darkSilver;
+        }
+        else if(x>y) {
+            return Screen.tiles.notOK;
+        }
+        else {
+            return Screen.tiles.okOK;
         }
     }
 

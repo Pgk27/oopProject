@@ -5,6 +5,7 @@ import core.Screen;
 import core.Value;
 
 public class GoldMiner extends Tower {
+	private static final int GOLD_PER_CYCLE = 4;
 
     private int goldMineTick = 0; // tichs danhf rieng cho coin
 
@@ -24,7 +25,8 @@ public class GoldMiner extends Tower {
 
         goldMineTick++;
         if (goldMineTick >= 1250) {
-            Screen.coinage += 4;
+            double multiplier = Screen.store == null ? 1.0 : Screen.store.getMineGoldMultiplier();
+            Screen.coinage += (int) Math.round(GOLD_PER_CYCLE * multiplier);
             goldMineTick = 0;
         }        
     }

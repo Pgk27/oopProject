@@ -21,34 +21,27 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 	static int currSfxVolume = Screen.sfxVolume;
 
 	static Rectangle backz = new Rectangle(5, 5, 50, 35);
-	static Rectangle backz2 = new Rectangle (5, 700, 50, 35);
 	static Rectangle toGacha = new Rectangle(680, 365, 170, 50);
 	static Rectangle toBuyItem = new Rectangle(950, 365, 170, 50);
 
-	static Rectangle TKWtoMenu = new Rectangle(375, 495, 220, 45);
-	static Rectangle TKWtoPlay = new Rectangle(625, 495, 220, 45);
-	static Rectangle TKLtoMenu = new Rectangle(375, 487, 220, 45);
-	static Rectangle TKLtoPlay = new Rectangle(625, 487, 220, 45);
+	// static Rectangle TKWtoMenu = new Rectangle(375, 495, 220, 45);
+	// static Rectangle TKWtoPlay = new Rectangle(625, 495, 220, 45);
+	// static Rectangle TKLtoMenu = new Rectangle(375, 487, 220, 45);
+	// static Rectangle TKLtoPlay = new Rectangle(625, 487, 220, 45);
 
 	static Rectangle gachaTornadoButt = new Rectangle(500, 345,  85, 50);
 	static Rectangle gachaEnhanceButt = new Rectangle(500, 475,  85, 50);
 	static Rectangle gachaMercenaryButt = new Rectangle(500, 610,  90, 53);
-	static Rectangle summonButt = new Rectangle(800, 545, 125, 104);
-	static Rectangle thongBaoFrame = new Rectangle(360, 140, 500, 400);
 
 	static Rectangle startGame = new Rectangle(950, 450, 144, 72);
 	static Rectangle quitGame = new Rectangle(950, 590, 144, 72);
 	static Rectangle settings = new Rectangle(5, 5, 35, 35);
 	static Rectangle store = new Rectangle(950, 520, 144, 72);
 	static Rectangle in4gacha = new Rectangle(1110, 20, 40, 40);
-	static Rectangle gachaRateFrame = new Rectangle(300, 5, 600, 750);
 	static Rectangle iconShardShop = new Rectangle(1100, 80, 65, 65);
-	static Rectangle shardShopBigFramee = new Rectangle(160, 30, 900, 680);
 
-	static Rectangle doiBHButt = new Rectangle(670, 210, 95, 30);
 	static Rectangle doiEnhanceButt = new Rectangle(670, 290, 95, 30);
 	static Rectangle doiMercenaryButt = new Rectangle(670, 370, 95, 30);
-	static Rectangle doiECButt = new Rectangle(670, 450, 95, 30);
 
 	static Rectangle musicSliderBox = new Rectangle();
 	static Rectangle musicMuteSlider = new Rectangle(735, 240, 100, 100);
@@ -70,9 +63,6 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 				Screen.startGame();
 				e.getComponent().repaint();
 			}
-			else if(settings.contains(mouseX, mouseY)) {
-				Screen.gameState = Value.SETTING;
-			}
 			else if(store.contains(mouseX, mouseY)) {
 				Screen.gameState = Value.SHOP;
 				e.getComponent().repaint();
@@ -80,16 +70,10 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 				System.exit(0);
 			}
 		}
-		else if(Screen.gameState == Value.IN_GAME) {
-			if(backz2.contains(mouseX, mouseY)) {
-				xuLyOutGame();
-				Screen.gameState = Value.TITLE_SCREEN;
-			}
-		}
 		else if(Screen.gameState == Value.SHOP) {
 			if(backz.contains(mouseX, mouseY)) {
-				Screen.gameState = Value.TITLE_SCREEN;
-				e.getComponent().repaint();
+				// Screen.gameState = Value.TITLE_SCREEN;
+				// e.getComponent().repaint();
 			}
 			else if(toGacha.contains(mouseX, mouseY)) {
 				Screen.gameState = Value.GACHA;
@@ -99,42 +83,38 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 			}
 		}
 		else if(Screen.gameState == Value.GACHA) {
-			if(backz.contains(mouseX, mouseY)) {
-				Screen.gameState = Value.SHOP;
-				e.getComponent().repaint();
-			}
 		}
 		else if(Screen.gameState == Value.GACHA_RATE) {
 		}
 		else if(Screen.gameState == Value.SHARD_SHOP) {
 
 		}
-		else if(Screen.gameState == Value.VICTORY_SCREEN) {
-			mouseX = e.getX();
-			mouseY = e.getY();
-			if(TKWtoMenu.contains(mouseX, mouseY)) {
-				Screen.gameState = Value.TITLE_SCREEN;
-				e.getComponent().repaint();
-			}
-			else if(TKWtoPlay.contains(mouseX, mouseY)) {
-				Screen.startGame();
-				e.getComponent().repaint();
-			}
-		}
-		else if(Screen.gameState == Value.DEFEAT_SCREEN) {
-			mouseX = e.getX();
-			mouseY = e.getY();
-			if(TKLtoMenu.contains(mouseX, mouseY)) {
-				Screen.gameState = Value.TITLE_SCREEN;
+		// else if(Screen.gameState == Value.VICTORY_SCREEN) {
+		// 	mouseX = e.getX();
+		// 	mouseY = e.getY();
+		// 	if(TKWtoMenu.contains(mouseX, mouseY)) {
+		// 		Screen.gameState = Value.TITLE_SCREEN;
+		// 		e.getComponent().repaint();
+		// 	}
+		// 	else if(TKWtoPlay.contains(mouseX, mouseY)) {
+		// 		Screen.startGame();
+		// 		e.getComponent().repaint();
+		// 	}
+		// }
+		// else if(Screen.gameState == Value.DEFEAT_SCREEN) {
+		// 	mouseX = e.getX();
+		// 	mouseY = e.getY();
+		// 	if(TKLtoMenu.contains(mouseX, mouseY)) {
+		// 		Screen.gameState = Value.TITLE_SCREEN;
 				
-				e.getComponent().repaint();
-			}
-			else if(TKLtoPlay.contains(mouseX, mouseY)) {
-				Screen.startGame();
+		// 		e.getComponent().repaint();
+		// 	}
+		// 	else if(TKLtoPlay.contains(mouseX, mouseY)) {
+		// 		Screen.startGame();
 				
-				e.getComponent().repaint();
-			}
-		}
+		// 		e.getComponent().repaint();
+		// 	}
+		// }
 		else if(Screen.gameState == Value.SETTING){
 			if(musicMuteSlider.contains(mouseX, mouseY)){
 				if (!isMusicMuted){
@@ -177,6 +157,7 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 	}
 	public void mouseReleased(MouseEvent e) {
 		Point p = Screen.toVirtualPoint(e.getX(), e.getY());
+		Screen.mse = p;
 
     	if(e.getButton() != MouseEvent.BUTTON1) {
     	    return;
@@ -212,9 +193,16 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		int currentState = Screen.gameState;
 		Screen.mse = p;
 		
-		for(int i = 0; i < ManageNut.countNut[currentState]; i++) {
-    	    ManageNut.heThongNut[currentState][i].mousePressed(p.x, p.y);
-    	}
+		boolean pressedGameButton = false;
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			for(int i = 0; i < ManageNut.countNut[currentState]; i++) {
+				NutBamVip button = ManageNut.heThongNut[currentState][i];
+				button.mousePressed(p.x, p.y);
+				if (currentState == Value.IN_GAME && button.contains(p.x, p.y)) {
+					pressedGameButton = true;
+				}
+			}
+		}
 		if (currentState == Value.SETTING){
 			if (musicSliderBox.contains(p.x, p.y)){
 				updateSlider(p.x, musicSliderBox, true);
@@ -245,7 +233,10 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 				isSettingCancelPressed = true;
 			}
 		}
-		Screen.store.click(e.getButton());
+		if (currentState == Value.IN_GAME && Screen.store != null
+				&& !pressedGameButton) {
+			Screen.store.click(e.getButton());
+		}
 	}
 	
 	//con vợ nào viết dòng này thì lúc nào gần xong nhớ xóa đi nhé:)))
@@ -289,6 +280,15 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		}
 	}
 
+	public static boolean isOverDisabledGameButton(int mouseX, int mouseY) {
+		if (Screen.gameState != Value.IN_GAME) return false;
+		for (int i = 0; i < ManageNut.countNut[Value.IN_GAME]; i++) {
+			NutBamVip button = ManageNut.heThongNut[Value.IN_GAME][i];
+			if (!button.isEnabled() && button.contains(mouseX, mouseY)) return true;
+		}
+		return false;
+	}
+
 	public static boolean isHoveringButton(int mouseX, int mouseY) {
 		if (Screen.gameState == Value.TITLE_SCREEN) 
 			return startGame.contains(mouseX, mouseY) 
@@ -309,11 +309,15 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		else if (Screen.gameState == Value.SHARD_SHOP)
 				return doiEnhanceButt.contains(mouseX, mouseY) 
 					|| doiMercenaryButt.contains(mouseX, mouseY);
-		else if (Screen.gameState == Value.VICTORY_SCREEN)
-				return TKWtoMenu.contains(mouseX, mouseY) || TKWtoPlay.contains(mouseX, mouseY);
-		else if (Screen.gameState == Value.DEFEAT_SCREEN)
-				return TKLtoMenu.contains(mouseX, mouseY) || TKLtoPlay.contains(mouseX, mouseY);
+		// else if (Screen.gameState == Value.VICTORY_SCREEN)
+		// 		return TKWtoMenu.contains(mouseX, mouseY) || TKWtoPlay.contains(mouseX, mouseY);
+		// else if (Screen.gameState == Value.DEFEAT_SCREEN)
+		// 		return TKLtoMenu.contains(mouseX, mouseY) || TKLtoPlay.contains(mouseX, mouseY);
 		else if (Screen.gameState == Value.IN_GAME){
+			for (int i = 0; i < ManageNut.countNut[Value.IN_GAME]; i++) {
+				NutBamVip button = ManageNut.heThongNut[Value.IN_GAME][i];
+				if (button.isEnabled() && button.contains(mouseX, mouseY)) return true;
+			}
 			if (Screen.store != null && Screen.store.button != null) {
 				for (Rectangle btn : Screen.store.button) {
 					if (btn != null && btn.contains(mouseX, mouseY)) return true;
@@ -346,20 +350,4 @@ public class KeyHandel implements MouseMotionListener, MouseListener {
 		}
 	}
 	
-	private void xuLyOutGame() {
-		if(Screen.coinDauTran >=60) {
-			Screen.coinage = Screen.coinDauTran - 50;
-		}
-		else {
-			Screen.coinage = 50;
-		}
-
-		if(Screen.healthDauTran >=2 ) {
-			Screen.health = Screen.healthDauTran - 1;
-		}
-		else {
-			Screen.health = 1;
-		}
-
-	}
 }

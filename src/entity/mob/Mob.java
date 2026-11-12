@@ -13,12 +13,13 @@ import map.Block;
 
 public class Mob extends Rectangle{
 	int xC, yC; //  x,y kordinatları for mob
-	public int health;
-	protected int maxHealth;
+	// Preserve fractional damage from armor and buffs instead of rounding every hit.
+	public double health;
+	protected double maxHealth;
 	protected int healthSpace = 3, healthHeight = 6;
 	protected int mobSize = 32;
 	protected int upward = 0, downward = 1, right = 2, left = 3;
-	protected int walkFrame = 0;
+	protected double walkFrame = 0;
 	protected int walkSpeed;
 	protected int spawnTime;
 	protected int mobWalk = 0;
@@ -220,7 +221,9 @@ public class Mob extends Rectangle{
 			lastAttackTime = 0;
 			hasDealtDamage = false;
 
-			if(walkFrame >= walkSpeed) {
+			// Keep fractional progress so every monster moves at 70% speed during Cursed Skull.
+			walkFrame += Screen.store == null ? 1.0 : Screen.store.getMonsterSpeedMultiplier();
+			if(walkFrame + 0.000001 >= walkSpeed + 1) {
 				if(direction == right){
 					x+=1;
 				}
@@ -255,10 +258,7 @@ public class Mob extends Rectangle{
 					direction = findNextDirection();
 					mobWalk = 0;
 				}
-				walkFrame=0;
-			}
-			else {
-				walkFrame+=1;
+				walkFrame = Math.max(0, walkFrame - (walkSpeed + 1));
 			}
 		}
 		else{
@@ -356,9 +356,13 @@ public class Mob extends Rectangle{
 		Screen.killed++;
 	}
 
+	protected double getAttackDamage() {
+		return attackDmg;
+	}
+
 	void attack(){
-		double dmg = attackDmg - (1*target.dmgReduction);
 		if (target != null){
+			double dmg = getAttackDamage() - (1*target.dmgReduction);
 			playAttackSound();
 			target.loseHealth(dmg);
 			if (target.isDead()){

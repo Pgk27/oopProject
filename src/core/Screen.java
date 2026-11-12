@@ -1,4 +1,10 @@
 package core;
+import entity.Projectiles;
+import entity.mob.Mercenary;
+import entity.mob.Minion;
+import entity.mob.Mob;
+import entity.mob.Mob2;
+import entity.mob.Mob3;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
@@ -7,13 +13,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.*;
-
-import entity.Projectiles;
-import entity.mob.Mercenary;
-import entity.mob.Minion;
-import entity.mob.Mob;
-import entity.mob.Mob2;
-import entity.mob.Mob3;
 import map.Room;
 import map.Save;
 import spell.Spell;
@@ -81,6 +80,9 @@ public class Screen extends JPanel implements Runnable {
 	public static Random rand = new Random();
 	public static int randomNum;
 
+	public static int gameState = Value.TITLE_SCREEN; // cho biết mình đang ở màn hình nào
+
+
 	public static int gachaType;
 	public static final int gachaBH=1;
 	public static final int gachaEnhance=2;
@@ -94,13 +96,21 @@ public class Screen extends JPanel implements Runnable {
 	public static int[] upHeroShard = new int[26];
 	public static int[] upHeroECore = new int[26];
 
+	public static double startGameTime;
+	public static double endGameTime;
+	public static int gameTime;
+
 	
 
-	public static boolean unlockBH = false;
-	public static boolean unlockEnhance = false;
+	public static boolean unlockBH = true;
+	public static boolean unlockEnhance = true;
 	public static boolean unlockMercenary = false;
 
-	public static int coinage = 999999;
+	public static int chosenCard = 0; // 1=BH, 2=Enhance, 3=Mercenary
+	public static String strChosenCard = "None";
+
+	public static int coinage = 9999;
+	public static int heroXpDauTran = 0;
 	public static int coinDauTran;
 	public static int healthDauTran;
 	public static int shard =99999;
@@ -116,6 +126,13 @@ public class Screen extends JPanel implements Runnable {
 	public static int buffSDmg=0;
 	public static int buffAtkSp=0;
 	public static int maxBuff = 25;
+	public static int maxHeroLevel = 25;
+
+	public static int goldenPickaxe = 0;
+	public static int fireSword = 0;
+	public static int cursedSkull = 0;
+	public static int paperPlane = 0;
+
 
 
 
@@ -135,16 +152,16 @@ public class Screen extends JPanel implements Runnable {
 	public static int offsetX = 0;
 	public static int offsetY = 0;
 
-	public static int health = 999999;
+	public static int health = 20;
+	public static int maxHealth = 20;
 	public static int killed = 0;
     public static int killsToWin = 0;
 
     public static int level = 1;
-    public static int rielLevel =3;
+    public static int rielLevel =2;
 	public static boolean isFirst = true;
 	public static boolean isWin = false;
 
-	public static int gameState = Value.TITLE_SCREEN; // cho biết mình đang ở màn hình nào
 
 	public static CopyOnWriteArrayList<Spell> activeSpells = new CopyOnWriteArrayList<>();
 
@@ -208,9 +225,12 @@ public class Screen extends JPanel implements Runnable {
 		gameState = Value.IN_GAME;
 		Screen.coinDauTran = coinage;
 		Screen.healthDauTran = health;
+		Screen.heroXpDauTran = Screen.heroXp;
+		Screen.startGameTime = System.currentTimeMillis();
 	}
 
 	public static void loadLevel() {
+		if (store != null) store.resetSkills();
 		room = new Room();
 		killed = 0;
 		isWin = false;
@@ -352,6 +372,9 @@ public class Screen extends JPanel implements Runnable {
 
 				}
 				if (health <= 0) {
+					endGameTime = System.currentTimeMillis();
+					gameTime = (int)((endGameTime - startGameTime)/1000);
+
 					gameState = Value.DEFEAT_SCREEN;
 					health = rand.nextInt(3) + 2; // reset health random ;)) // chịu em lực
 					int luckyNumber = rand.nextInt(3)+2;
@@ -359,7 +382,7 @@ public class Screen extends JPanel implements Runnable {
 					health = luckyNumber; // reset health random ;))
 					heroXp = (int)(heroXp *(100-3*luckyNumber)/100); // trừ heroXp theo % :)))))))))))))))))
 				} else if (isWin) {
-					rielLevel++;
+					// rielLevel++;
 					gameState = Value.VICTORY_SCREEN;
 					heroXp = heroXp + killed;
 				}

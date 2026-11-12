@@ -20,6 +20,15 @@ public class NutBamVip {
         this.dx = dx;
         this.dy = dy;
     }
+
+    public boolean isEnabled() {
+        return true;
+    }
+
+    protected void resetInteraction() {
+        state = 0;
+        startPressInNut = false;
+    }
     
 
     // Kiểm tra tọa độ chuột có nằm trong nút ko
@@ -32,6 +41,10 @@ public class NutBamVip {
 
     // Cập nhật trạng thái khi chuột di chuyển
     public void updateMouse(int mouseX, int mouseY) {
+        if (!isEnabled()) {
+            resetInteraction();
+            return;
+        }
         boolean inside = contains(mouseX, mouseY);
 
         if (startPressInNut) {
@@ -51,6 +64,10 @@ public class NutBamVip {
 
     // logic nhấn chuột
     public void mousePressed(int mouseX, int mouseY) {
+        if (!isEnabled()) {
+            resetInteraction();
+            return;
+        }
         if (contains(mouseX, mouseY)) {
             startPressInNut = true;
             state = 2;
@@ -59,6 +76,10 @@ public class NutBamVip {
 
     // logic thả chuột
     public void mouseReleased(int mouseX, int mouseY) {
+        if (!isEnabled()) {
+            resetInteraction();
+            return;
+        }
         // Chỉ kích hoạt nếu nhấn bên trong và thả bên trong
         boolean shouldClick;
         if (this.startPressInNut && this.contains(mouseX, mouseY)) {
@@ -76,6 +97,7 @@ public class NutBamVip {
         if (shouldClick) {
             onClick();
         }
+        if (!isEnabled()) resetInteraction();
     }
 
     // Hành động khi bấm nút

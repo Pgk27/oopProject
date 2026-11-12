@@ -4,7 +4,6 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-
 import javax.imageio.ImageIO;
 
 public class Tiles {
@@ -90,6 +89,30 @@ public class Tiles {
 
     public BufferedImage tileBuy;
 
+    public BufferedImage buyItem;
+    public BufferedImage buyItemS;
+    public BufferedImage buyItemT;
+    public BufferedImage iconGoldenPickaxe;
+    public BufferedImage iconFireSword;;
+    public BufferedImage iconCursedSkull;
+    public BufferedImage iconPaperPlane;
+    public BufferedImage iconHeart;
+    public BufferedImage buyHeart;
+    public BufferedImage buyHeartS;
+    public BufferedImage buyHeartT;
+    public BufferedImage fullHeart;
+    public BufferedImage iconEXP;
+
+    public BufferedImage selectSkill;
+    public BufferedImage cardBH;
+    public BufferedImage cardEnh;
+    public BufferedImage cardMer;
+    public BufferedImage lockedCard;
+    public BufferedImage selectCard;
+    public BufferedImage selectCardS;
+    public BufferedImage khungOption;
+
+
     public Font pixelFontv1;
     public Font pixelFontv2;
     public Font pixelFontvSmall;
@@ -149,9 +172,22 @@ public class Tiles {
             ManageNut.quitgame.ima[0] = readImage("res/tileImage/quitgame.png");
             ManageNut.quitgame.ima[1] = readImage("res/tileImage/quitgameS.png");
 
+            ManageNut.setting.ima[0] = readImage("res/tileImage/setting.png");
+            ManageNut.setting.ima[1] = readImage("res/tileImage/settingS.png");
+
+            ManageNut.toGacha.ima[0] = readImage("res/tileImage/toGacha.png");
+            ManageNut.toGacha.ima[1] = readImage("res/tileImage/toGachaS.png");
+
+
+
+
+
             //gs gameShop
             ManageNut.backInGameShop.ima[0]= readImage("res/tileImage/back.png");
             ManageNut.backInGameShop.ima[1]= readImage("res/tileImage/backS.png");
+
+            ManageNut.backToMenu.ima[0]= readImage("res/tileImage/back.png");
+            ManageNut.backToMenu.ima[1]= readImage("res/tileImage/backS.png");
 
             ManageNut.backInGacha.ima[0]= readImage("res/tileImage/back.png");
             ManageNut.backInGacha.ima[1]= readImage("res/tileImage/backS.png");
@@ -186,6 +222,12 @@ public class Tiles {
             ManageNut.expBar.ima[0] = readImage("res/tileImage/expBar.png");
             ManageNut.expBar.ima[1] = readImage("res/tileImage/expBarS.png");
 
+            ManageNut.iconShardShop.ima[0] = readImage("res/tileImage/iconShardShop.png");
+            ManageNut.iconShardShop.ima[1] = readImage("res/tileImage/iconShardShopS.png");
+
+            ManageNut.info.ima[0] = readImage("res/tileImage/info.png");
+            ManageNut.info.ima[1] = readImage("res/tileImage/infoS.png");
+
             tileUpdateHero = readImage("res/tileImage/tileUpdateHero.png");
             nenExpBlack = readImage("res/tileImage/nenExpBlack.png");
             nenExpGreen = readImage("res/tileImage/nenExpGreen.png");
@@ -194,6 +236,10 @@ public class Tiles {
             awaken = readImage("res/tileImage/awaken.png");
             maxLevel = readImage("res/tileImage/maxLevel.png");
             levelUpT = readImage("res/tileImage/levelUpT.png");
+
+            buyItem = readImage("res/tileImage/buyItem.png");
+            buyItemS = readImage("res/tileImage/buyItemS.png");
+            buyItemT = readImage("res/tileImage/buyItemT.png");
 
             addPoint = readImage("res/tileImage/addPoint.png");
             addPointS = readImage("res/tileImage/addPointS.png");
@@ -216,8 +262,7 @@ public class Tiles {
             BlackHoleC = readImage("res/tileImage/BHC4.png");
             MercenaryC = readImage("res/tileImage/MercenaryC3.png");
             EnhanceC = readImage("res/tileImage/EnhanceC3.png");
-            summonHeroButt = readImage("res/tileImage/SummonH3.png");
-            in4Butt = readImage("res/tileImage/infoButt3.png");
+            // summonHeroButt = readImage("res/tileImage/SummonH3.png");
             gachaInfoFrame = readImage("res/tileImage/gachaInfoFrame3.png");
             gachaRateText = readImage("res/tileImage/GachaRateText2.png");
             iconShardShop = readImage("res/tileImage/iconShardShop3.png");
@@ -241,8 +286,16 @@ public class Tiles {
             purchaseSang = readImage("res/tileImage/purchaseSang.png");
             purchaseToi = readImage("res/tileImage/purchaseToi.png");
 
-            tongKetWin = readImage("res/tileImage/tongKetWin4.png");
-            tongKetLose = readImage("res/tileImage/tongKetLose2.png");
+            tongKetWin = readImage("res/tileImage/tongKetWin.png");
+            tongKetLose = readImage("res/tileImage/tongKetLose.png");
+            ManageNut.menuLose.ima[0] = readImage("res/tileImage/menuThua.png");
+            ManageNut.menuLose.ima[1] = readImage("res/tileImage/menuThuaS.png");
+            ManageNut.menuWin.ima[0] = readImage("res/tileImage/menuWin.png");
+            ManageNut.menuWin.ima[1] = readImage("res/tileImage/menuWinS.png");
+            ManageNut.again.ima[0] = readImage("res/tileImage/againThua.png");
+            ManageNut.again.ima[1] = readImage("res/tileImage/againThuaS.png");
+            ManageNut.next.ima[0] = readImage("res/tileImage/nextWin.png");
+            ManageNut.next.ima[1] = readImage("res/tileImage/nextWinS.png");
 
             button = readImage("res/ui/button.png");
 		    touchedButton = readImage("res/ui/touchedButton.png");
@@ -251,6 +304,30 @@ public class Tiles {
             buttonSliderOff = readImage("res/ui/setting/buttonSliderOff.png");
             buttonSliderOn = readImage("res/ui/setting/buttonSliderOn.png");
 
+            tileBuy = readImage("res/tileImage/tileBuyItem1.png");
+            iconGoldenPickaxe = readImage("res/tileImage/iconGoldenPickaxe.png");
+            iconFireSword = readImage("res/tileImage/iconFireSword.png");
+            iconCursedSkull = readImage("res/tileImage/iconCursedSkull.png");
+            iconPaperPlane = readImage("res/tileImage/iconPaperPlane.png");
+            iconHeart = readImage("res/heart.png");
+            buyHeart = readImage("res/tileImage/buyHeart.png");
+            buyHeartS = readImage("res/tileImage/buyHeartS.png");
+            buyHeartT = readImage("res/tileImage/buyHeartT.png");
+            fullHeart = readImage("res/tileImage/fullHeart.png");
+            iconEXP = readImage("res/tileImage/iconEXP.png");
+
+            selectSkill = readImage("res/tileImage/selectSkill.png");
+            cardBH = readImage("res/tileImage/cardBH.png");
+            cardEnh = readImage("res/tileImage/cardEnh.png");
+            cardMer = readImage("res/tileImage/cardMer.png");
+            selectCard = readImage("res/tileImage/selectCard.png");
+            selectCardS = readImage("res/tileImage/selectCardS.png");
+            lockedCard = readImage("res/tileImage/lockedCard.png");
+            khungOption = readImage("res/tileImage/khungOption.png");
+
+         
+            mapDanhNhau[1] = readImage("res/tileImage/mapDongBang.png");
+            mapDanhNhau[2] = readImage("res/tileImage/mapGiangSinh.png");
             mapDanhNhau[3] = readImage("res/tileImage/mapMa1.png");
         } catch (Exception e) {
             e.printStackTrace();

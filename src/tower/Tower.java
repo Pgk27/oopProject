@@ -138,11 +138,11 @@ public abstract class Tower {
             else if (shotingMob2 && Screen.mobss[shotMob] != null) target = Screen.mobss[shotMob];
             else if (shotingMob3 && Screen.mobsss[shotMob] != null) target = Screen.mobsss[shotMob];
             if (towerAnimFrame == shootFrame) {
-                double finalDamage = damage * (1-target.dmgReduction);
-
                 double startX = x + width/2;
 				double startY = y + height/2;
                 if (target != null && !hasDealtDamage){
+                    double damageMultiplier = Screen.store == null ? 1.0 : Screen.store.getTowerDamageMultiplier();
+                    double finalDamage = damage * damageMultiplier * (1-target.dmgReduction);
                     playShootSound();
                     Screen.pjt.add(new Projectiles(startX, startY, target, finalDamage, id));
 					hasDealtDamage = true;

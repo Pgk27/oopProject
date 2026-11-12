@@ -210,8 +210,19 @@ public class Minion extends Mob {
 
 	}
 
+	private double getHeroDamageMultiplier() {
+		// Mercenary kế thừa Minion nhưng không nhận buff của hero.
+		return mobID == Value.MINION_SOLDIER && Screen.store != null
+			? Screen.store.getHeroDamageMultiplier() : 1.0;
+	}
+
+	@Override
+	protected double getAttackDamage() {
+		return super.getAttackDamage() * getHeroDamageMultiplier();
+	}
+
 	private void shootArrow(){
-		double finalDamage = arrowDmg * (1 - shootTarget.dmgReduction);
+		double finalDamage = arrowDmg * getHeroDamageMultiplier() * (1 - shootTarget.dmgReduction);
 		double startX = x + width / 2;
 		double startY = y + height / 2;
 		if (shootTarget != null && !hasShotArrow){
