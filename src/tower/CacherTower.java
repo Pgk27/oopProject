@@ -1,0 +1,54 @@
+package tower;
+import java.awt.*;
+
+import core.Screen;
+import core.Value;
+
+public class CacherTower extends Tower {
+
+    public CacherTower(int x, int y, int width, int height) {
+        // Truyền thông số: Tầm bắn 100, Sát thương 2, frame bắn 6, ID tháp
+        super(x, y, width, height, 1000, 1, 5, Value.ARCHER_TOWER); //check id
+    }
+
+    @Override
+    public void draw(Graphics g) {
+    
+        if (Screen.cacherTower == null || Screen.cacherTower.length == 0) {
+            return; 
+        }
+
+        towerAnimFrame = 0;
+        
+        // Chỉ chạy hoạt ảnh khi đang khóa mục tiêu, nếu không thì đứng im ở frame 0
+        if (shotingMob1 || shotingMob2 || shotingMob3) {
+            towerAnimFrame = animFrame % Screen.cacherTower.length;
+        }
+        
+        Image currentFrame = Screen.cacherTower[towerAnimFrame];
+        
+        // Tìm tọa độ mục tiêu để lật ảnh
+        int targetX = this.x + width / 2; 
+        if (shotMob != -1) {
+            if (shotingMob1 && shotMob < Screen.mobs.length && Screen.mobs[shotMob] != null) 
+                targetX = Screen.mobs[shotMob].x;
+            else if (shotingMob2 && shotMob < Screen.mobss.length && Screen.mobss[shotMob] != null) 
+                targetX = Screen.mobss[shotMob].x;
+            else if (shotingMob3 && shotMob < Screen.mobsss.length && Screen.mobsss[shotMob] != null) 
+                targetX = Screen.mobsss[shotMob].x;
+        }
+        
+        // Vẽ và lật ảnh dựa vào vị trí quái vật
+        if (targetX < this.x + width / 2) {
+            // lật bên trái
+            g.drawImage(currentFrame, x + width, y, -width, height, null);
+        } else {
+            // lật bên phải
+            g.drawImage(currentFrame, x, y, width, height, null);
+        }
+    }
+
+    @Override
+    public void fight(Graphics g) {
+    }
+}

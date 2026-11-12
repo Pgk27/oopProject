@@ -1,0 +1,363 @@
+package core;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import javax.imageio.ImageIO;
+
+public class Tiles {
+    public BufferedImage cursorNormal;
+    public BufferedImage cursorHover;
+    public BufferedImage cursorPressed;
+
+    // SETTING MENU
+    public BufferedImage volumeBarOn;
+    public BufferedImage volumeBarOff;
+    public BufferedImage tickButton;
+    public BufferedImage tickPressedButton;
+    public BufferedImage xButton;
+    public BufferedImage xPressedButton;
+    public BufferedImage longButton;
+    public BufferedImage longPressedButton;
+    public BufferedImage button;
+	public BufferedImage touchedButton;
+    public BufferedImage settingMenu;
+    public BufferedImage settingsButton;
+    public BufferedImage buttonSliderOff;
+    public BufferedImage buttonSliderOn;
+
+    // TITLE SCREEN
+    public BufferedImage titleScreen;
+    public BufferedImage newGameButton;
+    public BufferedImage quitGameButton;
+    public BufferedImage backButton;
+    public BufferedImage storeButton;
+    public BufferedImage storeTile;
+    public BufferedImage storeOptions;
+    public BufferedImage gachaButton;
+    public BufferedImage gachaTile;
+    public BufferedImage gachaButt;
+    public BufferedImage BlackHoleC;
+    public BufferedImage MercenaryC;
+    public BufferedImage EnhanceC;
+    public BufferedImage summonHeroButt;
+    public BufferedImage in4Butt;
+    public BufferedImage gachaInfoFrame;
+    public BufferedImage gachaRateText;
+    public BufferedImage iconShardShop;
+    public BufferedImage mysteryShard;
+    public BufferedImage shardShopBigFrame;
+    public BufferedImage awakeningText;
+
+    public BufferedImage[] mapDanhNhau = new BufferedImage[4];
+
+    public BufferedImage iconBH;
+    public BufferedImage iconEnhance;
+    public BufferedImage iconMercenary;
+    public BufferedImage iconFrame;
+    public BufferedImage dauCong;
+    public BufferedImage muiTen;
+    public BufferedImage iconCoin;
+    public BufferedImage iconCore;
+
+    public BufferedImage congra;
+    public BufferedImage oopss;
+    public BufferedImage awaButtV1;
+    public BufferedImage awaButtV2;
+    public BufferedImage awaButtV3;
+    public BufferedImage purchaseSang;
+    public BufferedImage purchaseToi;
+
+    public BufferedImage tongKetWin;
+    public BufferedImage tongKetLose;
+
+    public BufferedImage tileUpdateHero;
+    public BufferedImage upHeroFrame;
+    public BufferedImage nenExpBlack;
+    public BufferedImage nenExpGreen;
+    public BufferedImage expBar;
+    public BufferedImage maxLevel;
+    public BufferedImage levelUpT;
+    public BufferedImage addPoint;
+    public BufferedImage addPointS;
+    public BufferedImage addPointT;
+    public BufferedImage max;
+    public BufferedImage awakeT;
+    public BufferedImage awaken;
+    public BufferedImage purchaseT;
+
+    public BufferedImage tileBuy;
+
+    public BufferedImage buyItem;
+    public BufferedImage buyItemS;
+    public BufferedImage buyItemT;
+    public BufferedImage iconGoldenPickaxe;
+    public BufferedImage iconFireSword;;
+    public BufferedImage iconCursedSkull;
+    public BufferedImage iconPaperPlane;
+    public BufferedImage iconHeart;
+    public BufferedImage buyHeart;
+    public BufferedImage buyHeartS;
+    public BufferedImage buyHeartT;
+    public BufferedImage fullHeart;
+    public BufferedImage iconEXP;
+
+    public BufferedImage selectSkill;
+    public BufferedImage cardBH;
+    public BufferedImage cardEnh;
+    public BufferedImage cardMer;
+    public BufferedImage lockedCard;
+    public BufferedImage selectCard;
+    public BufferedImage selectCardS;
+    public BufferedImage khungOption;
+
+
+    public Font pixelFontv1;
+    public Font pixelFontv2;
+    public Font pixelFontvSmall;
+    public Font pixelFontMini;
+    public Font pixelFontMedi;
+    public Font pixelFontHeroRequire;
+    public Font pixelFont32f;
+    public Font sproutLandsFont32f;
+
+    public Color darkSilver;
+    public Color royalGold;
+    public Color purpleHole;
+    public Color enhanceRed;
+    public Color mercBlue;
+    public Color gloomyPurple;
+    public Color okOK;
+    public Color notOK;
+
+    private BufferedImage readImage(String relativePath) throws Exception {
+        File file = new File("src/" + relativePath);
+        if (!file.exists()) {
+            file = new File(relativePath);
+        }
+        if (!file.exists()) {
+            throw new FileNotFoundException("Missing asset: " + relativePath);
+        }
+        return ImageIO.read(file);
+    }
+
+    public Tiles() {
+        try {
+            
+            cursorNormal = readImage("res/ui/mouse/mouse1.png");
+            cursorHover = readImage("res/ui/mouse/mouse2.png");
+            cursorPressed = readImage("res/ui/mouse/mouse3.png");
+
+            volumeBarOn = readImage("res/ui/setting/volumeBarOn.png");
+            volumeBarOff = readImage("res/ui/setting/volumeBarOff.png");
+            tickButton = readImage("res/ui/setting/tickButton.png");
+            tickPressedButton = readImage("res/ui/setting/tickPressedButton.png");
+            xButton = readImage("res/ui/setting/XButton.png");
+            xPressedButton = readImage("res/ui/setting/XPressedButton.png");
+            longButton = readImage("res/ui/setting/longButton.png");
+            longPressedButton = readImage("res/ui/setting/longPressedButton.png");
+
+            // gs tileScreen
+            ManageNut.playgame.ima[0] = readImage("res/tileImage/playgame.png");
+            ManageNut.playgame.ima[1] = readImage("res/tileImage/playgameS.png");
+          
+            ManageNut.store.ima[0] = readImage("res/tileImage/store.png");
+            ManageNut.store.ima[1] = readImage("res/tileImage/storeS.png");
+
+            ManageNut.updateHero.ima[0] = readImage("res/tileImage/updateHero.png");
+            ManageNut.updateHero.ima[1] = readImage("res/tileImage/updateHeroS.png");
+
+
+            ManageNut.quitgame.ima[0] = readImage("res/tileImage/quitgame.png");
+            ManageNut.quitgame.ima[1] = readImage("res/tileImage/quitgameS.png");
+
+            ManageNut.setting.ima[0] = readImage("res/tileImage/setting.png");
+            ManageNut.setting.ima[1] = readImage("res/tileImage/settingS.png");
+
+            ManageNut.toGacha.ima[0] = readImage("res/tileImage/toGacha.png");
+            ManageNut.toGacha.ima[1] = readImage("res/tileImage/toGachaS.png");
+
+
+
+
+
+            //gs gameShop
+            ManageNut.backInGameShop.ima[0]= readImage("res/tileImage/back.png");
+            ManageNut.backInGameShop.ima[1]= readImage("res/tileImage/backS.png");
+
+            ManageNut.backToMenu.ima[0]= readImage("res/tileImage/back.png");
+            ManageNut.backToMenu.ima[1]= readImage("res/tileImage/backS.png");
+
+            ManageNut.backInGacha.ima[0]= readImage("res/tileImage/back.png");
+            ManageNut.backInGacha.ima[1]= readImage("res/tileImage/backS.png");
+
+            ManageNut.gachaBH.ima[0]= readImage("res/tileImage/gacha.png");
+            ManageNut.gachaBH.ima[1]= readImage("res/tileImage/gachaS.png");
+
+            ManageNut.gachaEnhance.ima[0]= readImage("res/tileImage/gacha.png");
+            ManageNut.gachaEnhance.ima[1]= readImage("res/tileImage/gachaS.png");
+
+            ManageNut.gachaMer.ima[0]= readImage("res/tileImage/gacha.png");
+            ManageNut.gachaMer.ima[1]= readImage("res/tileImage/gachaS.png");
+
+            ManageNut.summon.ima[0] = readImage("res/tileImage/summon.png");
+            ManageNut.summon.ima[1] = readImage("res/tileImage/summonS.png");
+
+            ManageNut.doiBH.ima[0]= readImage("res/tileImage/awake.png");
+            ManageNut.doiBH.ima[1]= readImage("res/tileImage/awakeS.png");
+
+            ManageNut.doiEnhance.ima[0]= readImage("res/tileImage/awake.png");
+            ManageNut.doiEnhance.ima[1]= readImage("res/tileImage/awakeS.png");
+
+            ManageNut.doiMer.ima[0]= readImage("res/tileImage/awake.png");
+            ManageNut.doiMer.ima[1]= readImage("res/tileImage/awakeS.png");
+
+            ManageNut.doiEC.ima[0] = readImage("res/tileImage/purchase.png");
+            ManageNut.doiEC.ima[1] = readImage("res/tileImage/purchaseS.png");
+
+            ManageNut.levelUp.ima[0] = readImage("res/tileImage/levelUp.png");
+            ManageNut.levelUp.ima[1] = readImage("res/tileImage/levelUpS.png");
+
+            ManageNut.expBar.ima[0] = readImage("res/tileImage/expBar.png");
+            ManageNut.expBar.ima[1] = readImage("res/tileImage/expBarS.png");
+
+            ManageNut.iconShardShop.ima[0] = readImage("res/tileImage/iconShardShop.png");
+            ManageNut.iconShardShop.ima[1] = readImage("res/tileImage/iconShardShopS.png");
+
+            ManageNut.info.ima[0] = readImage("res/tileImage/info.png");
+            ManageNut.info.ima[1] = readImage("res/tileImage/infoS.png");
+
+            tileUpdateHero = readImage("res/tileImage/tileUpdateHero.png");
+            nenExpBlack = readImage("res/tileImage/nenExpBlack.png");
+            nenExpGreen = readImage("res/tileImage/nenExpGreen.png");
+            purchaseT = readImage("res/tileImage/purchaseT.png");
+            awakeT = readImage("res/tileImage/awakeT.png");
+            awaken = readImage("res/tileImage/awaken.png");
+            maxLevel = readImage("res/tileImage/maxLevel.png");
+            levelUpT = readImage("res/tileImage/levelUpT.png");
+
+            buyItem = readImage("res/tileImage/buyItem.png");
+            buyItemS = readImage("res/tileImage/buyItemS.png");
+            buyItemT = readImage("res/tileImage/buyItemT.png");
+
+            addPoint = readImage("res/tileImage/addPoint.png");
+            addPointS = readImage("res/tileImage/addPointS.png");
+            addPointT = readImage("res/tileImage/addPointT.png");
+            max = readImage("res/tileImage/max.png");
+
+            ManageNut.thongBaoFrame.ima[0] = readImage("res/tileImage/awake.png");
+
+            titleScreen = readImage("res/tileImage/game_tilee.png");
+            newGameButton = readImage("res/tileImage/playgame2.png");
+            backButton = readImage("res/tileImage/backk3.png");
+            quitGameButton = readImage("res/tileImage/quitgame2.png");
+            storeButton = readImage("res/tileImage/store2.png");
+            storeTile = readImage("res/tileImage/storeTile.png");
+            storeOptions = readImage("res/tileImage/storeOptionVip4.png");
+            gachaButton = readImage("res/tileImage/GachaButtonV2_3.png");
+            gachaTile = readImage("res/tileImage/GachaScreen2.png");
+
+            gachaButt = readImage("res/tileImage/GachaButt3.png");
+            BlackHoleC = readImage("res/tileImage/BHC4.png");
+            MercenaryC = readImage("res/tileImage/MercenaryC3.png");
+            EnhanceC = readImage("res/tileImage/EnhanceC3.png");
+            // summonHeroButt = readImage("res/tileImage/SummonH3.png");
+            gachaInfoFrame = readImage("res/tileImage/gachaInfoFrame3.png");
+            gachaRateText = readImage("res/tileImage/GachaRateText2.png");
+            iconShardShop = readImage("res/tileImage/iconShardShop3.png");
+            mysteryShard = readImage("res/tileImage/mysteryShard3.png");
+            shardShopBigFrame = readImage("res/tileImage/shardShopBigFrame3.png");
+            awakeningText = readImage("res/tileImage/awakeText4.png");
+
+            iconBH = readImage("res/tileImage/iconBH.png");
+            iconEnhance = readImage("res/tileImage/iconEnhance1.png");
+            iconMercenary = readImage("res/tileImage/iconMercenary1.png");
+            dauCong = readImage("res/tileImage/daucong2.png");
+            muiTen = readImage("res/tileImage/muiten2.png");
+            iconCoin = readImage("res/tileImage/coin4.png");
+            iconCore = readImage("res/tileImage/core1.png");
+            congra = readImage("res/tileImage/congra3.png");
+            oopss = readImage("res/tileImage/oopss6.png");
+
+            awaButtV1 = readImage("res/tileImage/awaken.png");
+            awaButtV2 = readImage("res/tileImage/awaButtV2.png");
+            awaButtV3 = readImage("res/tileImage/awaButtV3.png");
+            purchaseSang = readImage("res/tileImage/purchaseSang.png");
+            purchaseToi = readImage("res/tileImage/purchaseToi.png");
+
+            tongKetWin = readImage("res/tileImage/tongKetWin.png");
+            tongKetLose = readImage("res/tileImage/tongKetLose.png");
+            ManageNut.menuLose.ima[0] = readImage("res/tileImage/menuThua.png");
+            ManageNut.menuLose.ima[1] = readImage("res/tileImage/menuThuaS.png");
+            ManageNut.menuWin.ima[0] = readImage("res/tileImage/menuWin.png");
+            ManageNut.menuWin.ima[1] = readImage("res/tileImage/menuWinS.png");
+            ManageNut.again.ima[0] = readImage("res/tileImage/againThua.png");
+            ManageNut.again.ima[1] = readImage("res/tileImage/againThuaS.png");
+            ManageNut.next.ima[0] = readImage("res/tileImage/nextWin.png");
+            ManageNut.next.ima[1] = readImage("res/tileImage/nextWinS.png");
+
+            button = readImage("res/ui/button.png");
+		    touchedButton = readImage("res/ui/touchedButton.png");
+            settingMenu = readImage("res/ui/setting/menu.png");
+            settingsButton = readImage("res/ui/setting/icon.png");
+            buttonSliderOff = readImage("res/ui/setting/buttonSliderOff.png");
+            buttonSliderOn = readImage("res/ui/setting/buttonSliderOn.png");
+
+            tileBuy = readImage("res/tileImage/tileBuyItem1.png");
+            iconGoldenPickaxe = readImage("res/tileImage/iconGoldenPickaxe.png");
+            iconFireSword = readImage("res/tileImage/iconFireSword.png");
+            iconCursedSkull = readImage("res/tileImage/iconCursedSkull.png");
+            iconPaperPlane = readImage("res/tileImage/iconPaperPlane.png");
+            iconHeart = readImage("res/heart.png");
+            buyHeart = readImage("res/tileImage/buyHeart.png");
+            buyHeartS = readImage("res/tileImage/buyHeartS.png");
+            buyHeartT = readImage("res/tileImage/buyHeartT.png");
+            fullHeart = readImage("res/tileImage/fullHeart.png");
+            iconEXP = readImage("res/tileImage/iconEXP.png");
+
+            selectSkill = readImage("res/tileImage/selectSkill.png");
+            cardBH = readImage("res/tileImage/cardBH.png");
+            cardEnh = readImage("res/tileImage/cardEnh.png");
+            cardMer = readImage("res/tileImage/cardMer.png");
+            selectCard = readImage("res/tileImage/selectCard.png");
+            selectCardS = readImage("res/tileImage/selectCardS.png");
+            lockedCard = readImage("res/tileImage/lockedCard.png");
+            khungOption = readImage("res/tileImage/khungOption.png");
+
+         
+            mapDanhNhau[1] = readImage("res/tileImage/mapDongBang.png");
+            mapDanhNhau[2] = readImage("res/tileImage/mapGiangSinh.png");
+            mapDanhNhau[3] = readImage("res/tileImage/mapMa1.png");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    
+
+        try {
+            File fontFile = new File("res/font/SVN-Determination Sans.ttf");
+            if (!fontFile.exists()) {
+                throw new FileNotFoundException("Missing font: res/font/SVN-Determination Sans.ttf");
+            }
+
+            Font baseFont = Font.createFont(Font.TRUETYPE_FONT, new java.io.FileInputStream(fontFile));
+            pixelFontv1 = baseFont.deriveFont(16f);
+            pixelFontv2 = baseFont.deriveFont(22f);
+            pixelFontvSmall = baseFont.deriveFont(13f);
+            pixelFontMini = baseFont.deriveFont(11f);
+            pixelFont32f = baseFont.deriveFont(32f);
+            pixelFontMedi = baseFont.deriveFont(24f);
+            pixelFontHeroRequire = baseFont.deriveFont(20f);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        darkSilver = Color.decode("#BFC7D5");
+        enhanceRed = Color.decode("#FF4444");
+        mercBlue = Color.decode("#3399FF");
+        royalGold = Color.decode("#FFBF00");
+        gloomyPurple = Color.decode("#8A2BE2");
+        okOK = Color.decode("#4ADE80");
+        notOK = Color.decode("#FF0F0F");
+    }
+}
