@@ -22,7 +22,7 @@ public class LevelConfig {
         if (level == 1) {
             // LEVEL 1
             // Wave 1 (0:00 - 0:25): 10x Slime (Spawn mỗi 2s).
-            WaveData w1 = new WaveData(0); // 0s
+            WaveData w1 = new WaveData(5000); // 0s
             w1.addSpawn(new MobSpawnInfo(Value.BLOOD_DEMON_MONSTER, 1, 500, 1.0, 1.0, 1.0, 4));
             w1.addSpawn(new MobSpawnInfo(Value.SLIME_MONSTER, 1, 500, 1.0, 1.0, 1.0, 4)); // Slime
             config.waves.add(w1);
@@ -36,7 +36,7 @@ public class LevelConfig {
         } else if (level == 2) {
             // LEVEL 2
             // Wave 1 (0:00 - 0:45): 15x Slime + 5x Orc.
-            WaveData w1 = new WaveData(0);
+            WaveData w1 = new WaveData(5000);
             w1.addSpawn(new MobSpawnInfo(Value.SLIME_MONSTER, 35, 500, 1.0, 1.0, 1.0, 5));
             w1.addSpawn(new MobSpawnInfo(Value.ORC_MONSTER, 35, 500, 1.0, 1.0, 1.0, 5));
             config.waves.add(w1);
@@ -57,7 +57,7 @@ public class LevelConfig {
         } else {
             // LEVEL 3
             // Wave 1 (0:00 - 1:15): 20x Slime + 10x Orc.
-            WaveData w1 = new WaveData(0);
+            WaveData w1 = new WaveData(5000);
             w1.addSpawn(new MobSpawnInfo(Value.SLIME_MONSTER, 32, 500, 1.0, 1.0, 1.0, 4));
             w1.addSpawn(new MobSpawnInfo(Value.ORC_MONSTER, 32, 500, 1.0, 1.0, 1.0, 4));
             config.waves.add(w1);

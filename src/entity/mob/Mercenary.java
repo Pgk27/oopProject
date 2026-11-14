@@ -136,8 +136,8 @@ public class Mercenary extends Minion{
 				return Screen.mercenaryDeadAnim[deadFrame];
 			}
 		}
-		if (isMatching){
-			int frame = currentAttackFrame % Screen.mobOrcAttack1Anim.length;
+		if (isMatching && isAttacking){
+			int frame = currentAttackFrame % Screen.mercenaryAttackAnim.length;
 			if (Screen.mercenaryAttackAnim != null && Screen.mercenaryAttackAnim.length > 0){
 				return Screen.mercenaryAttackAnim[frame];
 			}

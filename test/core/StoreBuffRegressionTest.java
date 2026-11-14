@@ -43,6 +43,7 @@ public final class StoreBuffRegressionTest {
         unavailableSkillInteraction();
         enabledSelectionInteraction();
         System.out.println("StoreBuffRegressionTest: " + checks + " checks passed");
+        System.exit(0);
     }
 
     private static void setup() {

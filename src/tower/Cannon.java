@@ -13,20 +13,19 @@ public class Cannon extends Tower {
     }
 
     @Override
+    protected int getTotalAnimationFrames() {
+        return Screen.cannon != null ? Screen.cannon.length : 8;
+    }
+
+    @Override
     public void draw(Graphics g) {
     
         if (Screen.cannon == null || Screen.cannon.length == 0) {
             return; 
         }
 
-        towerAnimFrame = 0;
-        
-        // Chỉ chạy hoạt ảnh khi đang khóa mục tiêu, nếu không thì đứng im ở frame 0
-        if (shotingMob1 || shotingMob2 || shotingMob3) {
-            towerAnimFrame = animFrame % Screen.cannon.length;
-        }
-        
-        Image currentFrame = Screen.cannon[towerAnimFrame];
+        int frame = towerAnimFrame % Screen.cannon.length;
+        Image currentFrame = Screen.cannon[frame];
         
         // Tìm tọa độ mục tiêu để lật ảnh
         int targetX = this.x + width / 2; 

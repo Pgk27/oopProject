@@ -19,20 +19,25 @@ public class WaveManager {
     public void update() {
         globalTick++; // 1 tick = 1ms in Screen.java's Thread.sleep(1)
         
-        // Tự động tua nhanh thời gian đến Wave tiếp theo nếu đã diệt sạch quái
+        // Tự động tua nhanh thời gian đến Wave tiếp theo nếu đã diệt sạch quái của wave trước
         if (!isAnyMobAlive()) {
+            // check xem đã có wave nào chưa
+            boolean hasAnyStarted = false;
             boolean allStartedFinished = true;
             WaveData nextWave = null;
             for (WaveData wave : config.waves) {
-                if (wave.started && !wave.finished) {
-                    allStartedFinished = false;
-                    break;
-                }
-                if (!wave.started && nextWave == null) {
+                if (wave.started) {
+                    hasAnyStarted = true;
+                    if (!wave.finished) {
+                        allStartedFinished = false;
+                        break;
+                    }
+                } else if (nextWave == null) {
                     nextWave = wave;
                 }
             }
-            if (allStartedFinished && nextWave != null) {
+            // Chỉ tua nhanh khi ĐÃ CÓ ít nhất 1 wave diễn ra và toàn bộ quái đã bị tiêu diệt
+            if (hasAnyStarted && allStartedFinished && nextWave != null) {
                 if (globalTick < nextWave.startTime) {
                     globalTick = nextWave.startTime; // Tua nhanh!
                 }
@@ -114,9 +119,6 @@ public class WaveManager {
                 }
             }
         }
-        if (!Screen.mini[0].inGame){
-            Screen.mini[0].spawnMob(Value.MINION_SOLDIER);
-        }
     }
     
     public boolean isAllWavesFinished() {
@@ -127,14 +129,20 @@ public class WaveManager {
     }
     
     public boolean isAnyMobAlive() {
-        for(int i = 0; i < Screen.mobs.length; i++) {
-            if (Screen.mobs[i].inGame) return true;
+        if (Screen.mobs != null) {
+            for(int i = 0; i < Screen.mobs.length; i++) {
+                if (Screen.mobs[i] != null && Screen.mobs[i].inGame) return true;
+            }
         }
-        for(int i = 0; i < Screen.mobss.length; i++) {
-            if (Screen.mobss[i].inGame) return true;
+        if (Screen.mobss != null) {
+            for(int i = 0; i < Screen.mobss.length; i++) {
+                if (Screen.mobss[i] != null && Screen.mobss[i].inGame) return true;
+            }
         }
-        for(int i = 0; i < Screen.mobsss.length; i++) {
-            if (Screen.mobsss[i].inGame) return true;
+        if (Screen.mobsss != null) {
+            for(int i = 0; i < Screen.mobsss.length; i++) {
+                if (Screen.mobsss[i] != null && Screen.mobsss[i].inGame) return true;
+            }
         }
         return false;
     }

@@ -49,6 +49,7 @@ public class Mob extends Rectangle{
 	protected int currentAttackFrame = 0;
 	protected int totalCombatFrames;
 	protected int hitFrame;
+	protected boolean isAttacking = false;
 
 	// scale kích thước cho một số mob có frame ảnh rộng
 	protected double renderScale;
@@ -142,6 +143,9 @@ public class Mob extends Rectangle{
 		if (lastAttackTime == 0){
 			lastAttackTime = now;
 			hasDealtDamage = false;
+			isAttacking = true;
+			// Chọn kiểu đánh (attack1 hoặc attack2) một lần duy nhất cho mỗi đòn đánh
+			this.rand = (int) (Math.random() * 2);
 		}
 
 		long elapsed = now - lastAttackTime;
@@ -149,11 +153,23 @@ public class Mob extends Rectangle{
 			lastAttackTime = now;
 			hasDealtDamage = false;
 			elapsed = 0;
+			isAttacking = true;
+			this.rand = (int) (Math.random() * 2);
 		}
 
-		double progress = Math.min(1.0, (double) elapsed / cooldownMs);
-		currentAttackFrame = (int) (progress * totalFrames);
-		if (currentAttackFrame >= totalFrames){
+		// Thời gian hiển thị 1 frame hoạt ảnh đánh (ví dụ 100ms)
+		long frameDurationMs = animSpeed * 3; 
+		long attackAnimDurationMs = totalFrames * frameDurationMs;
+
+		if (elapsed < attackAnimDurationMs){
+			isAttacking = true;
+			currentAttackFrame = (int) (elapsed / frameDurationMs);
+			if (currentAttackFrame >= totalFrames){
+				currentAttackFrame = totalFrames - 1;
+			}
+		} else {
+			// Hết thời gian vung đòn -> quay về trạng thái nghỉ/idle chờ cooldown
+			isAttacking = false;
 			currentAttackFrame = totalFrames - 1;
 		}
 
@@ -220,6 +236,7 @@ public class Mob extends Rectangle{
 			// reset combat khi không còn tham chiến
 			lastAttackTime = 0;
 			hasDealtDamage = false;
+			isAttacking = false;
 
 			// Keep fractional progress so every monster moves at 70% speed during Cursed Skull.
 			walkFrame += Screen.store == null ? 1.0 : Screen.store.getMonsterSpeedMultiplier();
@@ -343,12 +360,14 @@ public class Mob extends Rectangle{
 		inGame = false;
 		direction = right;
 		mobWalk = 0;
+		isAttacking = false;
 	}
 
 	public void mobDead(){
 		playDeathSound();
 		mobWalk = 0;
 		isDying = true;
+		isAttacking = false;
 		deadFrame = 0;
 		deadTick = 0;
 		deadDelay = 0;
@@ -380,14 +399,19 @@ public class Mob extends Rectangle{
 			}
 		}
 		// fighting
-		if (isMatching){
+		if (isMatching && isAttacking){
 			int frame = currentAttackFrame % Screen.mobOrcAttack1Anim.length;
 			if (Screen.mobOrcAttack1Anim != null && Screen.mobOrcAttack1Anim.length > 0
 			&& Screen.mobOrcAttack2Anim != null && Screen.mobOrcAttack2Anim.length > 0){
-				if (animFrame % Screen.mobOrcAttack1Anim.length == 0) this.rand = (int) (Math.random()*2);
 				if (rand == 0)
 					return Screen.mobOrcAttack1Anim[frame];
 				return Screen.mobOrcAttack2Anim[frame];
+			}
+		}
+		// idle (when in combat but waiting for next attack, or idle animation)
+		if (isMatching){
+			if (Screen.mobOrcIdleAnim != null && Screen.mobOrcIdleAnim.length > 0 && Screen.mobOrcIdleAnim[0] != null){
+				return Screen.mobOrcIdleAnim[animFrame % Screen.mobOrcIdleAnim.length];
 			}
 		}
 		// walking
@@ -397,8 +421,6 @@ public class Mob extends Rectangle{
 		return Screen.mobOrcWalkAnim[0];
 	}
 	   
-	
-	
 	public void draw(Graphics g) {
 		if (!inGame) return;
         // Draws the current animation frame scaled to the tile/mob size
@@ -452,10 +474,6 @@ public class Mob extends Rectangle{
 		// 3. Static border around the entire bar
 		g.setColor(Color.BLACK);
 		g.drawRect(x, barY, width - 1, healthHeight - 1);
-	}
-
-	int getSpawnTime(){
-		return spawnTime;
 	}
 	
 	public void applyMultiplier(double hpMult, double speedMult) {

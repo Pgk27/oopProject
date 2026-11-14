@@ -3,7 +3,7 @@ import java.awt.*;
 
 import core.Screen;
 import core.Value;
-import tower.CacherTower;
+import tower.ArcherTower;
 import tower.Cannon;
 import tower.GoldMiner;
 import tower.MageTower;
@@ -49,7 +49,7 @@ public class Block extends Rectangle {
 			lastAirID = towerID;
 			
 			if(towerID == Value.ARCHER_TOWER){
-				currentTower = new CacherTower(x, y, width * 2, height * 2);
+				currentTower = new ArcherTower(x, y, width * 2, height * 2);
 			}
 			else if(towerID == Value.MAGE_TOWER){
 				currentTower = new MageTower(x, y, width * 2, height * 2);

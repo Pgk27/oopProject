@@ -23,14 +23,18 @@ public class Mob2 extends Mob {
 				return Screen.mobDemonDeadAnim[deadFrame];
 			}
 		}
-		if (isMatching){
+		if (isMatching && isAttacking){
 			int frame = currentAttackFrame % Screen.mobDemonAttack1Anim.length;
 			if (Screen.mobDemonAttack1Anim != null && Screen.mobDemonAttack1Anim.length > 0
 			&& Screen.mobDemonAttack2Anim != null && Screen.mobDemonAttack2Anim.length > 0){
-				if (animFrame % Screen.mobDemonAttack1Anim.length == 0) this.rand = (int) (Math.random()*2);
 				if (rand == 0)
 					return Screen.mobDemonAttack1Anim[frame];
 				return Screen.mobDemonAttack2Anim[frame];
+			}
+		}
+		if (isMatching){
+			if (Screen.mobDemonIdleAnim != null && Screen.mobDemonIdleAnim.length > 0 && Screen.mobDemonIdleAnim[0] != null){
+				return Screen.mobDemonIdleAnim[animFrame % Screen.mobDemonIdleAnim.length];
 			}
 		}
 		if (Screen.mobDemonWalkAnim != null && Screen.mobDemonWalkAnim.length > 0){

@@ -40,18 +40,21 @@ public class Screen extends JPanel implements Runnable {
 	// Orc
 	public static Image[] mobOrcWalkAnim = new Image[8]; // 8 walking frames
 	public static Image[] mobOrcDeadAnim = new Image[4];
+	public static Image[] mobOrcIdleAnim = new Image[6];
 	public static Image[] mobOrcAttack1Anim = new Image[6];
 	public static Image[] mobOrcAttack2Anim = new Image[6];
 
 	// Demon
 	public static Image[] mobDemonWalkAnim = new Image[8];
 	public static Image[] mobDemonDeadAnim = new Image[4];
+	public static Image[] mobDemonIdleAnim = new Image[6];
 	public static Image[] mobDemonAttack1Anim = new Image[8];
 	public static Image[] mobDemonAttack2Anim = new Image[8];
 
 	// Slime
 	public static Image[] mobSlimeWalkAnim = new Image[8];
 	public static Image[] mobSlimeDeadAnim = new Image[7];
+	public static Image[] mobSlimeIdleAnim = new Image[6];
 	public static Image[] mobSlimeAttack1Anim = new Image[8];
 	public static Image[] mobSlimeAttack2Anim = new Image[8];
 
@@ -152,14 +155,17 @@ public class Screen extends JPanel implements Runnable {
 	public static int offsetX = 0;
 	public static int offsetY = 0;
 
-	public static int health = 20;
+	public static int health = 20000000;
 	public static int maxHealth = 20;
 	public static int killed = 0;
     public static int killsToWin = 0;
 
     public static int level = 1;
-    public static int rielLevel =2;
-	public static boolean isFirst = true;
+    public static int rielLevel = 2;
+	public static volatile boolean isLoading = true;
+	public static volatile int loadProgress = 0;
+	public static volatile String loadStatus = "Initializing Final Kingdom...";
+	public static volatile boolean isFirst = true;
 	public static boolean isWin = false;
 
 
@@ -186,7 +192,7 @@ public class Screen extends JPanel implements Runnable {
 	public static Sound sound = new Sound();
 	private GameRender gameRender = new GameRender();
 
-	public static ManageNut manageNut;
+	public static UIManager manageNut;
 	
 	public static int ScreenCoNut=2;
 
@@ -205,11 +211,24 @@ public class Screen extends JPanel implements Runnable {
 	
 	Screen(Frame frame) {
 		this.frame = frame;
-		manageNut = new ManageNut(this);
-		addMouseListener(new KeyHandel());
-		addMouseMotionListener(new KeyHandel());
+		manageNut = new UIManager(this);
+		addMouseListener(new MouseHandler());
+		addMouseMotionListener(new MouseHandler());
 		sound.playMusic(sound.themeSong);
 		thread.start();
+
+		// Background asset loading thread
+		new Thread(() -> {
+			try {
+				define();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				isLoading = false;
+				isFirst = false;
+				SwingUtilities.invokeLater(() -> repaint());
+			}
+		}, "AssetLoaderThread").start();
 	}
 	
 	public static void hasWon() {
@@ -222,11 +241,11 @@ public class Screen extends JPanel implements Runnable {
 	static void startGame() {
 		level = (int) ((rielLevel - 1) % 3) + 1;
 		loadLevel();
-		gameState = Value.IN_GAME;
 		Screen.coinDauTran = coinage;
 		Screen.healthDauTran = health;
 		Screen.heroXpDauTran = Screen.heroXp;
 		Screen.startGameTime = System.currentTimeMillis();
+		gameState = Value.IN_GAME;
 	}
 
 	public static void loadLevel() {
@@ -236,10 +255,10 @@ public class Screen extends JPanel implements Runnable {
 		isWin = false;
 		activeSpells.clear();
 
-		save.loadSave(new File("res/map/map" + level)); //map ı yüklüyor
+		save.loadSave(new File("res/map/map" + level));
 		
 		
-		for( int i = 0 ; i < mobs.length;i++) { // mob class ındaki özellikleri moblara atıyor
+		for( int i = 0 ; i < mobs.length;i++) {
 			mobs[i] = new Mob(); 
 		}
 		
@@ -255,6 +274,10 @@ public class Screen extends JPanel implements Runnable {
 			mini[i] = new Minion();
 		}
 
+		if (mini.length > 0 && mini[0] != null) {
+			mini[0].spawnMob(Value.MINION_SOLDIER);
+		}
+
 		for (int i = 0; i < merc.length; i++){
 			merc[i] = new Mercenary();
 		}
@@ -264,13 +287,6 @@ public class Screen extends JPanel implements Runnable {
 	
 	@Override 
 	public void paintComponent(Graphics g) {  // Hàm vẽ chính --> đẩy sang gamerender.java
-		if(isFirst) { 
-            
-            define();
-            
-            isFirst = false;
-        }
-
 		super.paintComponent(g);
 
 		int screenWidth = getWidth();
@@ -279,6 +295,54 @@ public class Screen extends JPanel implements Runnable {
 		// 1. Fill entire screen with black (letterbox/pillarbox bars)
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, screenWidth, screenHeight);
+
+		if (isLoading) {
+			Graphics2D g2d = (Graphics2D) g.create();
+			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+			// Title
+			g2d.setFont(new Font("Segoe UI", Font.BOLD, 36));
+			FontMetrics fmTitle = g2d.getFontMetrics();
+			String title = "FINAL KINGDOM";
+			int tx = (screenWidth - fmTitle.stringWidth(title)) / 2;
+			int ty = screenHeight / 2 - 40;
+			g2d.setColor(new Color(245, 215, 110));
+			g2d.drawString(title, tx, ty);
+
+			// Status text
+			g2d.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+			FontMetrics fmStatus = g2d.getFontMetrics();
+			String status = loadStatus;
+			int sx = (screenWidth - fmStatus.stringWidth(status)) / 2;
+			int sy = ty + 40;
+			g2d.setColor(new Color(200, 200, 200));
+			g2d.drawString(status, sx, sy);
+
+			// Progress bar outline
+			int barWidth = 360;
+			int barHeight = 12;
+			int bx = (screenWidth - barWidth) / 2;
+			int by = sy + 25;
+			g2d.setColor(new Color(40, 40, 40));
+			g2d.fillRoundRect(bx, by, barWidth, barHeight, 6, 6);
+
+			// Progress fill
+			int progress = Math.min(100, Math.max(0, loadProgress));
+			int fillWidth = (int) (barWidth * (progress / 100.0));
+			if (fillWidth > 0) {
+				g2d.setColor(new Color(60, 160, 240));
+				g2d.fillRoundRect(bx, by, fillWidth, barHeight, 6, 6);
+			}
+
+			// Border
+			g2d.setColor(new Color(100, 100, 100));
+			g2d.drawRoundRect(bx, by, barWidth, barHeight, 6, 6);
+
+			g2d.dispose();
+			Toolkit.getDefaultToolkit().sync();
+			return;
+		}
 
 		// 2. Calculate aspect-ratio-preserving scale and center offsets
 		// Đcm hay vcl
@@ -318,9 +382,9 @@ public class Screen extends JPanel implements Runnable {
 
 	public void run() {
 		while(true) {
-			if(!isFirst && gameState == Value.IN_GAME) {
+			if(!isFirst && gameState == Value.IN_GAME && room != null && waveManager != null) {
 				if(health > 0 && !isWin) {
-					room.physic(); // oyunu ekrana veriyor
+					room.physic();
 
 					waveManager.update();
 					hasWon(); // Liên tục kiểm tra điều kiện thắng để bắt kịp lúc animation quái chết kết thúc
@@ -389,33 +453,55 @@ public class Screen extends JPanel implements Runnable {
 			}
 			repaint();
 			try {
-				Thread.sleep(1);// acılma süresi
+				Thread.sleep(1);
 			} catch(Exception e)  {}
 		}
 	}
 
 	// đẩy define xuống dưới vì nó kém quan trọng, phải lướt nhiều >:(
 	public void define() {
+		loadStatus = "Loading configurations...";
+		loadProgress = 10;
 		save = new Save();
+		
+		loadStatus = "Loading textures...";
+		loadProgress = 25;
 		Screen.tiles = new Tiles();
-		loadLevel();
+
+		loadStatus = "Loading game systems...";
+		loadProgress = 45;
 		store = new Store();
 		
 		// tạo con trỏ trong suốt
 		// mục đích để chèn "skin" con trỏ khác lên
 		blankCursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 		blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(blankCursorImg, new Point(0,0), "blank cursor");
-		this.setCursor(blankCursor);
+		SwingUtilities.invokeLater(() -> this.setCursor(blankCursor));
 		
-		for(int i = 0; i < tileset_ground.length; i++) {
-			tileset_ground[i] = new ImageIcon("res/tileset_ground.png").getImage();
-			tileset_ground[i] = createImage(new FilteredImageSource(tileset_ground[i].getSource(), new CropImageFilter(0, 26*i, 26, 26)));
-		}
-		for(int i = 0; i < tileset_air.length; i++) {
-			tileset_air[i] = new ImageIcon("res/tileset_air.png").getImage();
-			tileset_air[i] = createImage(new FilteredImageSource(tileset_air[i].getSource(), new CropImageFilter(0, 26*i, 26, 26)));
+		loadStatus = "Loading map tiles...";
+		loadProgress = 55;
+		try {
+			BufferedImage groundSheet = javax.imageio.ImageIO.read(new File("res/tileset_ground.png"));
+			int count = Math.min(tileset_ground.length, groundSheet.getHeight() / 26);
+			for(int i = 0; i < count; i++) {
+				tileset_ground[i] = groundSheet.getSubimage(0, 26 * i, 26, 26);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 
+		try {
+			BufferedImage airSheet = javax.imageio.ImageIO.read(new File("res/tileset_air.png"));
+			int count = Math.min(tileset_air.length, airSheet.getHeight() / 26);
+			for(int i = 0; i < count; i++) {
+				tileset_air[i] = airSheet.getSubimage(0, 26 * i, 26, 26);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+		loadStatus = "Loading tower frames...";
+		loadProgress = 70;
 		for (int i = 0; i < cacherTower.length; i++) {
 			cacherTower[i] = loadFrame("res/cacherTower/cacherTower" + i + ".png");
 		}
@@ -436,11 +522,12 @@ public class Screen extends JPanel implements Runnable {
 			explosion[i] = loadFrame("res/airplane/explosion" + i + ".png");
 		}
 
+		tileset_res[0] = loadFrame("res/cell.png");
+		tileset_res[1] = loadFrame("res/heart.png");
+		tileset_res[2] = loadFrame("res/coin.png");
 		
-		tileset_res[0] = new ImageIcon("res/cell.png").getImage();
-		tileset_res[1] = new ImageIcon("res/heart.png").getImage();
-		tileset_res[2] = new ImageIcon("res/coin.png").getImage();
-		
+		loadStatus = "Loading unit animations...";
+		loadProgress = 85;
 		for (int i = 0; i < mobOrcWalkAnim.length; i++){
 			mobOrcWalkAnim[i] = loadFrame("res/orc/walk00" + i + ".png");
 			mobDemonWalkAnim[i] = loadFrame("res/demon/walk00" + i + ".png");
@@ -449,6 +536,15 @@ public class Screen extends JPanel implements Runnable {
 		for (int i = 0; i < mobOrcDeadAnim.length; i++){
 			mobOrcDeadAnim[i] = loadFrame("res/orc/dead00" + i + ".png");
 			mobDemonDeadAnim[i] = loadFrame("res/demon/dead00" + i + ".png");
+		}
+		for (int i = 0; i < mobOrcIdleAnim.length; i++){
+			mobOrcIdleAnim[i] = loadFrame("res/orc/idle00" + i + ".png");
+		}
+		for (int i = 0; i < mobDemonIdleAnim.length; i++){
+			mobDemonIdleAnim[i] = loadFrame("res/demon/idle00" + i + ".png");
+		}
+		for (int i = 0; i < mobSlimeIdleAnim.length; i++){
+			mobSlimeIdleAnim[i] = loadFrame("res/slime/idle00" + i + ".png");
 		}
 		for(int i = 0; i < mobSlimeDeadAnim.length; i++){
 			mobSlimeDeadAnim[i] = loadFrame("res/slime/dead00" + i + ".png");
@@ -503,7 +599,8 @@ public class Screen extends JPanel implements Runnable {
 		projectiles.put(Value.CANNON_TOWER, loadFrame("res/cannon/cannonBall.png"));
 		projectiles.put(Value.MINION_SOLDIER, loadFrame("res/cacherTower/arrow002.png")); // bắn tên đỏ
 		
-		loadLevel();
+		loadStatus = "Ready to play!";
+		loadProgress = 100;
 	}
 
 	// crop frame by frame
@@ -517,6 +614,4 @@ public class Screen extends JPanel implements Runnable {
 			return null;
 		}
 	}
-
-	
 }

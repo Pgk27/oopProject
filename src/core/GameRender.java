@@ -46,11 +46,11 @@ public class GameRender {
         }
 
         // vẽ con trỏ chuột custom vào game
-        boolean isHover = KeyHandel.isHoveringButton(Screen.mse.x, Screen.mse.y);
-        boolean overDisabledButton = KeyHandel.isOverDisabledGameButton(Screen.mse.x, Screen.mse.y);
+        boolean isHover = MouseHandler.isHoveringButton(Screen.mse.x, Screen.mse.y);
+        boolean overDisabledButton = MouseHandler.isOverDisabledGameButton(Screen.mse.x, Screen.mse.y);
         BufferedImage currentCursor;
 
-        if (KeyHandel.isMousePressed && !overDisabledButton) {
+        if (MouseHandler.isMousePressed && !overDisabledButton) {
             // 1. Đang click vào button
             currentCursor = Screen.tiles.cursorPressed;
         } else if (isHover) {
@@ -72,7 +72,9 @@ public class GameRender {
         g.setColor(new Color(70, 70, 70)); 
         g.fillRect(0, 0, width, height);
         
-        Screen.room.draw(g);
+        if (Screen.room != null) {
+            Screen.room.draw(g);
+        }
 
         Rectangle optionFrame = Store.OPTION_FRAME_BOUNDS;
         g.drawImage(Screen.tiles.khungOption, optionFrame.x, optionFrame.y,
@@ -135,12 +137,12 @@ public class GameRender {
             a.draw(g);
         }
 
-        ManageNut.GoldenPickaxeButton.renderNut(g);
-        ManageNut.fireSwordButton.renderNut(g);
-        ManageNut.cursedSkullButton.renderNut(g);
-        ManageNut.bomberButton.renderNut(g);
-        ManageNut.skillButton.renderNut(g);
-        ManageNut.backToMenu.renderNut(g);
+        UIManager.GoldenPickaxeButton.renderNut(g);
+        UIManager.fireSwordButton.renderNut(g);
+        UIManager.cursedSkullButton.renderNut(g);
+        UIManager.bomberButton.renderNut(g);
+        UIManager.skillButton.renderNut(g);
+        UIManager.backToMenu.renderNut(g);
 
         g.setColor(Screen.tiles.darkSilver);
         g.setFont(Screen.tiles.pixelFontv1);
@@ -154,12 +156,12 @@ public class GameRender {
     private void drawTitleScreen(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.titleScreen, 0, 0, width, height, null);        
 
-        ManageNut.playgame.renderNut(g);
-        ManageNut.store.renderNut(g);
-        ManageNut.updateHero.renderNut(g);
-        ManageNut.quitgame.renderNut(g);
-        ManageNut.setting.renderNut(g);
-        ManageNut.toGacha.renderNut(g);
+        UIManager.playgame.renderNut(g);
+        UIManager.store.renderNut(g);
+        UIManager.updateHero.renderNut(g);
+        UIManager.quitgame.renderNut(g);
+        UIManager.setting.renderNut(g);
+        UIManager.toGacha.renderNut(g);
         
         g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
         g.setFont(Screen.tiles.pixelFontv1);
@@ -171,12 +173,12 @@ public class GameRender {
     private void drawSelectSkill(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.titleScreen, 0, 0, width, height, null);        
 
-        ManageNut.playgame.renderNut(g);
-        ManageNut.store.renderNut(g);
-        ManageNut.updateHero.renderNut(g);
-        ManageNut.quitgame.renderNut(g);
-        ManageNut.setting.renderNut(g);
-        ManageNut.toGacha.renderNut(g);
+        UIManager.playgame.renderNut(g);
+        UIManager.store.renderNut(g);
+        UIManager.updateHero.renderNut(g);
+        UIManager.quitgame.renderNut(g);
+        UIManager.setting.renderNut(g);
+        UIManager.toGacha.renderNut(g);
         
         g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
         g.setFont(Screen.tiles.pixelFontv1);
@@ -186,7 +188,7 @@ public class GameRender {
         g.setColor(new Color(0, 0, 0, 200));
         g.fillRect(0, 0, width, height);
         
-        ManageNut.selectSkillFrame.renderNut(g);
+        UIManager.selectSkillFrame.renderNut(g);
 
         // g.drawImage(Screen.tiles.selectSkill, 50, 50, width -100, height-100, null);
         // g.drawImage(Screen.tiles.cardBH, 140, 200, 300, 415, null);
@@ -194,18 +196,11 @@ public class GameRender {
         // g.drawImage(Screen.tiles.cardMer, 780, 200, 300, 415, null);
 
 
-        ManageNut.selectBH.renderNut(g);
-        ManageNut.selectEnh.renderNut(g);
-        ManageNut.selectMer.renderNut(g);
+        UIManager.selectBH.renderNut(g);
+        UIManager.selectEnh.renderNut(g);
+        UIManager.selectMer.renderNut(g);
 
-    }
-
-    private void drawStore(Graphics g, int width, int height) {
-        g.drawImage(Screen.tiles.storeTile, 0, 0, width, height, null);
-        ManageNut.backInGameShop.renderNut(g);
-        g.drawImage(Screen.tiles.storeOptions, 550, 20, 650, height-50, null);
-        g.setColor(new Color(0, 0, 0, 200));
-    }    
+    } 
 
     private void drawSetting(Graphics g, int width, int height){
         int offsetFromCenterX = 300;
@@ -228,11 +223,11 @@ public class GameRender {
         g.drawImage(Screen.tiles.titleScreen, 0, 0, width, height, null);        
 
 
-        ManageNut.playgame.renderNut(g);
-        ManageNut.store.renderNut(g);
-        ManageNut.updateHero.renderNut(g);
-        ManageNut.quitgame.renderNut(g);
-        ManageNut.setting.renderNut(g);
+        UIManager.playgame.renderNut(g);
+        UIManager.store.renderNut(g);
+        UIManager.updateHero.renderNut(g);
+        UIManager.quitgame.renderNut(g);
+        UIManager.setting.renderNut(g);
 
         
 
@@ -250,18 +245,18 @@ public class GameRender {
         // vẽ các nút
         g.setFont(Screen.tiles.pixelFont32f);
         g.drawString("MUSIC", menuX + awayFromLeftEdge, menuY + awayFromTopEdge + 35);
-        if (!KeyHandel.isMusicMuted)
+        if (!MouseHandler.isMusicMuted)
             g.drawImage(Screen.tiles.buttonSliderOn, menuX + awayFromLeftEdge + 350, menuY + awayFromTopEdge - 25 + space * count, buttonSize, buttonSize, null);
         else
             g.drawImage(Screen.tiles.buttonSliderOff, menuX + awayFromLeftEdge + 350, menuY + awayFromTopEdge - 25 + space * count, buttonSize, buttonSize, null);
-        drawSlider(g, menuX + awayFromLeftEdge + 125, menuY + awayFromTopEdge + space * (count++), Screen.musicVolume, KeyHandel.musicSliderBox);
+        drawSlider(g, menuX + awayFromLeftEdge + 125, menuY + awayFromTopEdge + space * (count++), Screen.musicVolume, MouseHandler.musicSliderBox);
         
         g.drawString("SFX", menuX + awayFromLeftEdge, menuY + awayFromTopEdge + space*count + 35);
-        if (!KeyHandel.isSfxMuted)
+        if (!MouseHandler.isSfxMuted)
             g.drawImage(Screen.tiles.buttonSliderOn, menuX + awayFromLeftEdge + 350, menuY + awayFromTopEdge - 25 + space * count, buttonSize, buttonSize, null);
         else
             g.drawImage(Screen.tiles.buttonSliderOff, menuX + awayFromLeftEdge + 350, menuY + awayFromTopEdge - 25 + space * count, buttonSize, buttonSize, null);
-        drawSlider(g, menuX + awayFromLeftEdge + 125, menuY + awayFromTopEdge + space * (count++), Screen.sfxVolume, KeyHandel.sfxSliderBox);
+        drawSlider(g, menuX + awayFromLeftEdge + 125, menuY + awayFromTopEdge + space * (count++), Screen.sfxVolume, MouseHandler.sfxSliderBox);
 
         g.drawString("FULLSCREEN", menuX + awayFromLeftEdge, menuY + awayFromTopEdge + space * count + 35);
         if (Frame.isFullscreen){
@@ -274,7 +269,7 @@ public class GameRender {
         }
 
         
-        if (!KeyHandel.isSettingCancelPressed){
+        if (!MouseHandler.isSettingCancelPressed){
             g.drawImage(Screen.tiles.longButton, menuX + 40, menuY + 630, longButtonWidth, longButtonHeight, null);
             g.drawString("CANCEL", menuX + 115, menuY + 638 + longButtonHeight / 2);
         }
@@ -283,7 +278,7 @@ public class GameRender {
             g.drawString("CANCEL", menuX + 115, menuY + 640 + longButtonHeight / 2);
         }
         
-        if (!KeyHandel.isSettingConfirmPressed){
+        if (!MouseHandler.isSettingConfirmPressed){
             g.drawImage(Screen.tiles.longButton, menuX + 40 + longButtonWidth + 40, menuY + 630, longButtonWidth, longButtonHeight, null);
             g.drawString("CONFIRM", menuX + longButtonWidth + 140, menuY + 638 + longButtonHeight / 2);
         }
@@ -297,7 +292,7 @@ public class GameRender {
 
     private void drawGachaScreen(Graphics g, int width, int height) {
         g.drawImage(Screen.tiles.gachaTile, 0, 0, width, height, null);
-        ManageNut.backInGacha.renderNut(g);
+        UIManager.backInGacha.renderNut(g);
 
 
         g.drawImage(Screen.tiles.BlackHoleC, 470, 310, 135, 30, null);
@@ -309,13 +304,13 @@ public class GameRender {
         // g.drawImage(Screen.tiles.gachaButt, 500, 475,  85, 50, null);
         // g.drawImage(Screen.tiles.gachaButt, 500, 610,  90, 53, null);
         // g.drawImage(Screen.tiles.summonHeroButt, 800, 545, 125, 104, null);
-        ManageNut.gachaBH.renderNut(g);
-        ManageNut.gachaEnhance.renderNut(g);
-        ManageNut.gachaMer.renderNut(g);
-        ManageNut.summon.renderNut(g);
+        UIManager.gachaBH.renderNut(g);
+        UIManager.gachaEnhance.renderNut(g);
+        UIManager.gachaMer.renderNut(g);
+        UIManager.summon.renderNut(g);
 
-        ManageNut.info.renderNut(g);
-        ManageNut.iconShardShop.renderNut(g);
+        UIManager.info.renderNut(g);
+        UIManager.iconShardShop.renderNut(g);
 
         g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
         g.setFont(Screen.tiles.pixelFontv1);
@@ -333,15 +328,15 @@ public class GameRender {
         g.drawImage(Screen.tiles.MercenaryC, 470, 565, 140, 38, null);
 
 
-        ManageNut.gachaBH.renderNut(g);
-        ManageNut.gachaEnhance.renderNut(g);
-        ManageNut.gachaMer.renderNut(g);
-        ManageNut.summon.renderNut(g);
+        UIManager.gachaBH.renderNut(g);
+        UIManager.gachaEnhance.renderNut(g);
+        UIManager.gachaMer.renderNut(g);
+        UIManager.summon.renderNut(g);
        
 
 
-        ManageNut.info.renderNut(g);
-        ManageNut.iconShardShop.renderNut(g);
+        UIManager.info.renderNut(g);
+        UIManager.iconShardShop.renderNut(g);
 
         g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
         g.setFont(Screen.tiles.pixelFontv1);
@@ -400,15 +395,15 @@ public class GameRender {
         g.drawImage(Screen.tiles.MercenaryC, 470, 565, 140, 38, null);
 
 
-        ManageNut.doiBH.renderNut(g);
-        ManageNut.doiEnhance.renderNut(g);
-        ManageNut.doiMer.renderNut(g);
-        ManageNut.doiEC.renderNut(g);
+        UIManager.doiBH.renderNut(g);
+        UIManager.doiEnhance.renderNut(g);
+        UIManager.doiMer.renderNut(g);
+        UIManager.doiEC.renderNut(g);
 
 
-        ManageNut.info.renderNut(g);
+        UIManager.info.renderNut(g);
         // g.drawImage(Screen.tiles.iconShardShop, 1100, 80, 65, 65, null);
-        ManageNut.iconShardShop.renderNut(g);
+        UIManager.iconShardShop.renderNut(g);
         g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
         g.setFont(Screen.tiles.pixelFontv1);
         g.setColor(Screen.tiles.darkSilver);
@@ -465,10 +460,10 @@ public class GameRender {
         // drawButtTraoDoi(g, 670, 210, 95, 30, Screen.unlockBH);
         // drawButtTraoDoi(g, 670, 290, 95, 30, Screen.unlockEnhance);
         // drawButtTraoDoi(g, 670, 370, 95, 30, Screen.unlockMercenary);
-        ManageNut.doiBH.renderNut(g);
-        ManageNut.doiEnhance.renderNut(g);
-        ManageNut.doiMer.renderNut(g);
-        ManageNut.doiEC.renderNut(g);
+        UIManager.doiBH.renderNut(g);
+        UIManager.doiEnhance.renderNut(g);
+        UIManager.doiMer.renderNut(g);
+        UIManager.doiEC.renderNut(g);
 
 
         g.setFont(Screen.tiles.pixelFontv2);
@@ -493,15 +488,15 @@ public class GameRender {
         g.drawImage(Screen.tiles.MercenaryC, 470, 565, 140, 38, null);
 
 
-        ManageNut.gachaBH.renderNut(g);
-        ManageNut.gachaEnhance.renderNut(g);
-        ManageNut.gachaMer.renderNut(g);
-        ManageNut.summon.renderNut(g);
+        UIManager.gachaBH.renderNut(g);
+        UIManager.gachaEnhance.renderNut(g);
+        UIManager.gachaMer.renderNut(g);
+        UIManager.summon.renderNut(g);
 
 
-        ManageNut.info.renderNut(g);
+        UIManager.info.renderNut(g);
         // g.drawImage(Screen.tiles.iconShardShop, 1100, 80, 65, 65, null);
-        ManageNut.iconShardShop.renderNut(g);
+        UIManager.iconShardShop.renderNut(g);
 
         g.drawImage(Screen.tiles.iconCoin, 10, 735, 30, 30, null);
         g.setFont(Screen.tiles.pixelFontv1);
@@ -675,7 +670,7 @@ public class GameRender {
 
         g.drawImage(Screen.tiles.nenExpBlack, 735, 185, 220, 36, null);
         drawexpGreen(g);
-        ManageNut.expBar.renderNut(g);
+        UIManager.expBar.renderNut(g);
 
 
         g.setColor(Screen.tiles.royalGold);
@@ -778,13 +773,13 @@ public class GameRender {
         
 
 
-        ManageNut.levelUp.renderNut(g);
-        ManageNut.backInGameShop.renderNut(g);
-        ManageNut.add1.renderNut(g);
-        ManageNut.add2.renderNut(g);
-        ManageNut.add3.renderNut(g);
-        ManageNut.add4.renderNut(g);
-        ManageNut.add5.renderNut(g);
+        UIManager.levelUp.renderNut(g);
+        UIManager.backInGameShop.renderNut(g);
+        UIManager.add1.renderNut(g);
+        UIManager.add2.renderNut(g);
+        UIManager.add3.renderNut(g);
+        UIManager.add4.renderNut(g);
+        UIManager.add5.renderNut(g);
     }
 
     private void drawTongKetWin(Graphics g, int width, int height) {
@@ -805,8 +800,8 @@ public class GameRender {
         drawRssTK(g, Screen.coinDauTran, Screen.coinage, 80, 8, 695, 530);
         drawRssTK(g, Screen.heroXpDauTran, Screen.heroXp, 80, 8, 940, 530);
         
-        ManageNut.menuWin.renderNut(g);
-        ManageNut.next.renderNut(g);
+        UIManager.menuWin.renderNut(g);
+        UIManager.next.renderNut(g);
         
     }
     
@@ -831,8 +826,8 @@ public class GameRender {
         drawRssTK(g, Screen.coinDauTran, Screen.coinage, 80, 8, 695, 530);
         drawRssTK(g, Screen.heroXpDauTran, Screen.heroXp, 80, 8, 940, 530);
       
-        ManageNut.menuLose.renderNut(g);
-        ManageNut.again.renderNut(g);
+        UIManager.menuLose.renderNut(g);
+        UIManager.again.renderNut(g);
 
         
 
@@ -857,15 +852,15 @@ public class GameRender {
         g.drawString("Destroy all !!!", 512, 674);
 
 
-        ManageNut.backInGacha.renderNut(g);
+        UIManager.backInGacha.renderNut(g);
 
 
         
-        ManageNut.buyGoldenPickaxe.renderNut(g);
-        ManageNut.buyFireSword.renderNut(g);
-        ManageNut.buyCursedSkull.renderNut(g);
-        ManageNut.buyPaperPlane.renderNut(g);
-        ManageNut.buyHeart.renderNut(g);
+        UIManager.buyGoldenPickaxe.renderNut(g);
+        UIManager.buyFireSword.renderNut(g);
+        UIManager.buyCursedSkull.renderNut(g);
+        UIManager.buyPaperPlane.renderNut(g);
+        UIManager.buyHeart.renderNut(g);
 
         g.setColor(Screen.tiles.royalGold);
         g.setFont(Screen.tiles.pixelFontHeroRequire);

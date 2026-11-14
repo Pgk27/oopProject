@@ -14,6 +14,7 @@ public class Minion extends Mob {
 
 	private long lastShootTime;
 	private int currentShootFrame;
+	private boolean isShootingArrow = false;
 
 	private boolean isShooting = false;
 	private boolean hasShotArrow = false;
@@ -21,6 +22,8 @@ public class Minion extends Mob {
 	private double arrowDmg = MinionStats.arrowDmg;  //st cung
 	private int shootRange = 300;
 	private Rectangle rangeBox = new Rectangle();
+
+	protected boolean hasSpawned = false;
 
 	private URL bowReleaseSound;
 
@@ -37,6 +40,11 @@ public class Minion extends Mob {
 	}
 
 	public void spawnMob(int mobID) {
+		if (this.hasSpawned) {
+			return; // Only allow spawning once per minion instance
+		}
+		this.hasSpawned = true;
+
 		Block destination = null;
 		int destinationX = -1;
 		int destinationY = -1;
@@ -92,8 +100,8 @@ public class Minion extends Mob {
 		this.attackRangeBox.setBounds(x, y, mobSize, mobSize); 
 
 		this.mobID = mobID;
-		this.health = mobSize;
 		this.maxHealth = MinionStats.maxHealth;
+		this.health = this.maxHealth;
 
 		// set ngẫu nhiên frame cho từng con mob (ngẫu nhiên hóa chuyển động)
 		this.animFrame = Screen.rand.nextInt(8);
@@ -168,6 +176,7 @@ public class Minion extends Mob {
 		else{
 			lastShootTime = 0;
 			hasShotArrow = false;
+			isShootingArrow = false;
 		}
 
 		long currentTime = System.currentTimeMillis();
@@ -185,6 +194,7 @@ public class Minion extends Mob {
 		if (lastShootTime == 0){
 			lastShootTime = now;
 			hasShotArrow = false;
+			isShootingArrow = true;
 		}
 
 		long elapsed = now - lastShootTime;
@@ -192,14 +202,23 @@ public class Minion extends Mob {
 			lastShootTime = now;
 			hasShotArrow = false;
 			elapsed = 0;
+			isShootingArrow = true;
 		}
 
 		int totalShootingFrames = Screen.minionShootingAnim.length;
 		int shootFrame = totalShootingFrames - 2;
-		double progress = Math.min(1.0, (double) elapsed / cooldownMs);
-		currentShootFrame = (int) (progress * totalShootingFrames);
-		if (currentShootFrame >= shootFrame){
-			currentShootFrame = totalShootingFrames - 2;
+		long frameDurationMs = animSpeed * 2;
+		long shootAnimDurationMs = totalShootingFrames * frameDurationMs;
+
+		if (elapsed < shootAnimDurationMs){
+			isShootingArrow = true;
+			currentShootFrame = (int) (elapsed / frameDurationMs);
+			if (currentShootFrame >= shootFrame){
+				currentShootFrame = shootFrame;
+			}
+		} else {
+			isShootingArrow = false;
+			currentShootFrame = shootFrame;
 		}
 
 		// chạy đến frame ra đòn và chưa gây sát thương --> bắn
@@ -268,6 +287,8 @@ public class Minion extends Mob {
 	@Override
 	public void mobDead(){
 		isDying = true;
+		isAttacking = false;
+		isShootingArrow = false;
 		deadFrame = 0;
 		deadTick = 0;
 		deadDelay = 0;
@@ -277,6 +298,8 @@ public class Minion extends Mob {
 	public void deleteMob() {
 		isDying = false;
 		inGame = false;
+		isAttacking = false;
+		isShootingArrow = false;
 	}
 
 	private void selfHeal(){
@@ -316,23 +339,22 @@ public class Minion extends Mob {
 			}
 		}
 		// fighting
-		if (isMatching){
+		if (isMatching && isAttacking){
 			int frame = currentAttackFrame % Screen.minionAttack1Anim.length;
 			if (Screen.minionAttack1Anim != null && Screen.minionAttack1Anim.length > 0
 			&& Screen.minionAttack2Anim != null && Screen.minionAttack2Anim.length > 0){
-				if (animFrame % Screen.minionAttack1Anim.length == 0) this.rand = (int) (Math.random()*2);
 				if (rand == 0)
 					return Screen.minionAttack1Anim[frame];
 				return Screen.minionAttack2Anim[frame];
 			}
 		}
-		if (isShooting){
+		if (isShooting && isShootingArrow){
 			int frame = currentShootFrame % Screen.minionShootingAnim.length;
 			if (Screen.minionShootingAnim != null && Screen.minionShootingAnim.length > 0){
 				return Screen.minionShootingAnim[frame];
 			}
 		}
-		// mob's normal walking animation
+		// idle animation
 		if (Screen.minionIdleAnim != null && Screen.minionIdleAnim.length > 0){
 			return Screen.minionIdleAnim[animFrame % Screen.minionIdleAnim.length];
 		}

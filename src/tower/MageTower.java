@@ -13,20 +13,19 @@ public class MageTower extends Tower {
     }
 
     @Override
+    protected int getTotalAnimationFrames() {
+        return Screen.mageTower != null ? Screen.mageTower.length : 8;
+    }
+
+    @Override
     public void draw(Graphics g) {
     
         if (Screen.mageTower == null || Screen.mageTower.length == 0) {
             return; 
         }
 
-        towerAnimFrame = 0;
-        
-        // Chỉ chạy hoạt ảnh khi đang khóa mục tiêu, nếu không thì đứng im ở frame 0
-        if (shotingMob1 || shotingMob2 || shotingMob3) {
-            towerAnimFrame = animFrame % Screen.mageTower.length;
-        }
-        
-        Image currentFrame = Screen.mageTower[towerAnimFrame];
+        int frame = towerAnimFrame % Screen.mageTower.length;
+        Image currentFrame = Screen.mageTower[frame];
         
         // Tìm tọa độ mục tiêu để lật ảnh
         int targetX = this.x + width / 2; 

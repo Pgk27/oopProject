@@ -15,6 +15,9 @@ public abstract class Tower {
     protected int towerAnimFrame = 0;
     protected int shootFrame; // frame bắn của từng tháp
     protected double damage;
+    protected double attackSpeed = 1.0;
+    protected long lastAttackTime = 0;
+    protected boolean isAttacking = false;
 
     public int id; // ID của tháp để Block nhận diện
 
@@ -131,13 +134,46 @@ public abstract class Tower {
             }
         }
 
-        // LOGIC TRỪ MÁU THEO THỜI GIAN KHỰNG
+        // C. LOGIC BẮN VÀ HOẠT ẢNH TẤN CÔNG
         if (shotingMob1 || shotingMob2 || shotingMob3) {
             Mob target = null;
             if (shotingMob1 && Screen.mobs[shotMob] != null) target = Screen.mobs[shotMob];
             else if (shotingMob2 && Screen.mobss[shotMob] != null) target = Screen.mobss[shotMob];
             else if (shotingMob3 && Screen.mobsss[shotMob] != null) target = Screen.mobsss[shotMob];
-            if (towerAnimFrame == shootFrame) {
+
+            long now = System.currentTimeMillis();
+            long cooldownMs = (long) (1000.0 / attackSpeed);
+
+            if (lastAttackTime == 0) {
+                lastAttackTime = now;
+                hasDealtDamage = false;
+                isAttacking = true;
+            }
+
+            long elapsed = now - lastAttackTime;
+            if (elapsed >= cooldownMs) {
+                lastAttackTime = now;
+                hasDealtDamage = false;
+                elapsed = 0;
+                isAttacking = true;
+            }
+
+            int totalFrames = getTotalAnimationFrames();
+            long frameDurationMs = animSpeed * 2;
+            long attackAnimDurationMs = totalFrames * frameDurationMs;
+
+            if (elapsed < attackAnimDurationMs) {
+                isAttacking = true;
+                towerAnimFrame = (int) (elapsed / frameDurationMs);
+                if (towerAnimFrame >= totalFrames) {
+                    towerAnimFrame = totalFrames - 1;
+                }
+            } else {
+                isAttacking = false;
+                towerAnimFrame = 0; // Trở về idle frame 0
+            }
+
+            if (towerAnimFrame >= shootFrame) {
                 double startX = x + width/2;
 				double startY = y + height/2;
                 if (target != null && !hasDealtDamage){
@@ -151,12 +187,18 @@ public abstract class Tower {
 						shotingMob1 = false;
 						shotingMob2 = false;
 						shotingMob3 = false;
+                        isAttacking = false;
 						Screen.hasWon();
 					}
                 }
             } else {
                 hasDealtDamage = false;
             }
+        } else {
+            lastAttackTime = 0;
+            hasDealtDamage = false;
+            isAttacking = false;
+            towerAnimFrame = 0;
         }
     }
 
@@ -164,6 +206,10 @@ public abstract class Tower {
         if (shootSound != null){
             Screen.sound.playSfx(shootSound);
         }
+    }
+
+    protected int getTotalAnimationFrames() {
+        return 8;
     }
 
     public abstract void draw(Graphics g);
