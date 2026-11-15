@@ -1,11 +1,12 @@
 package core;
 
 import entity.Projectiles;
-import entity.mob.Mercenary;
-import entity.mob.Minion;
-import entity.mob.Mob;
-import entity.mob.Mob2;
-import entity.mob.Mob3;
+import entity.defender.CastleDefender;
+import entity.defender.Mercenary;
+import entity.enemy.DemonMob;
+import entity.enemy.Mob;
+import entity.enemy.OrcMob;
+import entity.enemy.SlimeMob;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -20,7 +21,7 @@ import spell.CursedSkull;
 import spell.Enhancement;
 import spell.FireSword;
 import spell.Spell;
-import tower.CacherTower;
+import tower.ArcherTower;
 import tower.Cannon;
 import tower.MageTower;
 import tower.Tower;
@@ -47,22 +48,20 @@ public final class StoreBuffRegressionTest {
     }
 
     private static void setup() {
-        Screen.gameState = Value.IN_GAME;
+        Screen.gameState = Constants.IN_GAME;
         Screen.chosenCard = 1;
         Screen.room = new Room();
         // Production map loading sets these IDs after Room construction.
         for (int y = 0; y < Screen.room.worldHeight; y++) {
             for (int x = 0; x < Screen.room.worldWidth; x++) {
-                Screen.room.block[y][x].towerID = Value.PLACEHOLDER;
+                Screen.room.block[y][x].towerID = Constants.PLACEHOLDER;
             }
         }
         Screen.store = new Store();
         Screen.activeSpells.clear();
         Screen.pjt.clear();
-        Screen.mobs = new Mob[0];
-        Screen.mobss = new Mob2[0];
-        Screen.mobsss = new Mob3[0];
-        Screen.mini = new Minion[0];
+        Screen.activeMobs.clear();
+        Screen.mini = new CastleDefender[0];
         Screen.merc = new Mercenary[0];
         Screen.fireSword = 0;
         Screen.cursedSkull = 0;
@@ -74,13 +73,13 @@ public final class StoreBuffRegressionTest {
     private static void inventoryAndExpiration() throws Exception {
         setup();
         Screen.fireSword = Screen.cursedSkull = 2;
-        Screen.gameState = Value.ITEM_SHOP;
+        Screen.gameState = Constants.ITEM_SHOP;
         Screen.store.useFireSword();
         Screen.store.useCursedSkull();
         check(Screen.fireSword == 2 && Screen.cursedSkull == 2
                 && Screen.activeSpells.isEmpty(), "Items cannot activate before the match");
 
-        Screen.gameState = Value.IN_GAME;
+        Screen.gameState = Constants.IN_GAME;
         Screen.fireSword = Screen.cursedSkull = 0;
         Screen.store.useFireSword();
         Screen.store.useCursedSkull();
@@ -150,15 +149,15 @@ public final class StoreBuffRegressionTest {
 
     private static void purchases() {
         setup();
-        Screen.gameState = Value.ITEM_SHOP;
+        Screen.gameState = Constants.ITEM_SHOP;
         Screen.coinage = 49;
-        ManageNut.buyFireSword.onClick();
-        ManageNut.buyCursedSkull.onClick();
+        UIManager.buyFireSword.onClick();
+        UIManager.buyCursedSkull.onClick();
         check(Screen.coinage == 49 && Screen.fireSword == 0 && Screen.cursedSkull == 0,
                 "Insufficient gold cannot purchase either new buff");
         Screen.coinage = 100;
-        ManageNut.buyFireSword.onClick();
-        ManageNut.buyCursedSkull.onClick();
+        UIManager.buyFireSword.onClick();
+        UIManager.buyCursedSkull.onClick();
         check(Screen.coinage == 0 && Screen.fireSword == 1 && Screen.cursedSkull == 1,
                 "Pre-match shop charges 50 gold per new item");
     }
@@ -167,7 +166,7 @@ public final class StoreBuffRegressionTest {
         setup();
         Screen.chosenCard = card;
         for (int y = 4; y <= 5; y++) {
-            for (int x = 4; x <= 5; x++) Screen.room.block[y][x].groundID = Value.groundRoad;
+            for (int x = 4; x <= 5; x++) Screen.room.block[y][x].groundID = Constants.groundRoad;
         }
         if (card == 3) Screen.merc = new Mercenary[] {new Mercenary()};
         Screen.store.selectChosenSkill();
@@ -177,7 +176,7 @@ public final class StoreBuffRegressionTest {
         long before = System.currentTimeMillis();
         Screen.store.click(1);
         long after = System.currentTimeMillis();
-        long readyAt = (long) read(Store.class, Screen.store, "skillReadyAt");
+        long readyAt = (long) read(BuffManager.class, Screen.store.buffManager, "skillReadyAt");
         check(readyAt >= before + seconds * 1000L && readyAt <= after + seconds * 1000L,
                 "Placed card " + card + " starts the requested " + seconds + "s cooldown");
         check(!Screen.store.holdsItem && !Screen.store.isSkillReady(),
@@ -186,7 +185,7 @@ public final class StoreBuffRegressionTest {
         else check(Screen.merc[0].inGame, "Mercenary is placed");
         Screen.store.selectChosenSkill();
         check(!Screen.store.holdsItem, "Skill cannot be selected again during cooldown");
-        write(Store.class, Screen.store, "skillReadyAt", System.currentTimeMillis() - 1);
+        write(BuffManager.class, Screen.store.buffManager, "skillReadyAt", System.currentTimeMillis() - 1);
         check(Screen.store.isSkillReady() && Screen.store.getSkillCooldownSeconds() == 0,
                 "Skill becomes available at the end of cooldown");
     }
@@ -198,7 +197,7 @@ public final class StoreBuffRegressionTest {
         Enhancement buff = active(Enhancement.class);
         check(inRange(Screen.store.getEnhancementRemainingSeconds(), 29, 30),
                 "Enhancement retains its 30-second effect");
-        long readyAt = (long) read(Store.class, Screen.store, "skillReadyAt");
+        long readyAt = (long) read(BuffManager.class, Screen.store.buffManager, "skillReadyAt");
         check(readyAt - buff.getEndTime() == 45_000,
                 "Enhancement cooldown is 45 seconds after its effect ends");
         check(!Screen.store.isSkillReady() && Screen.store.getSkillCooldownSeconds() == 0,
@@ -206,7 +205,7 @@ public final class StoreBuffRegressionTest {
         Screen.store.selectChosenSkill();
         check(Screen.activeSpells.size() == 1, "Enhancement cannot stack while active");
         age(buff, 30_010);
-        write(Store.class, Screen.store, "skillReadyAt", buff.getEndTime() + 45_000);
+        write(BuffManager.class, Screen.store.buffManager, "skillReadyAt", buff.getEndTime() + 45_000);
         close(1.0, Screen.store.getHeroDamageMultiplier(), "Hero damage restores after 30 seconds");
         check(Screen.store.getEnhancementRemainingSeconds() == 0
                 && Screen.store.getSkillCooldownSeconds() == 45 && !Screen.store.isSkillReady(),
@@ -216,7 +215,7 @@ public final class StoreBuffRegressionTest {
     private static void towerShots() throws Exception {
         setup();
         List<Supplier<Tower>> towers = Arrays.asList(
-            () -> new CacherTower(100, 100, 60, 60),
+            () -> new ArcherTower(100, 100, 60, 60),
             () -> new MageTower(100, 100, 60, 60),
             () -> new Cannon(100, 100, 60, 60));
         double[] armor = {0, 0.25, 0.5};
@@ -244,12 +243,13 @@ public final class StoreBuffRegressionTest {
     }
 
     private static double shotDamage(Tower tower, double armor) throws Exception {
-        Mob target = new Mob();
+        Mob target = new OrcMob();
         target.setBounds(120, 120, 32, 32);
         target.health = 1000;
         target.inGame = true;
         target.dmgReduction = armor;
-        Screen.mobs = new Mob[] {target};
+        Screen.activeMobs.clear();
+        Screen.activeMobs.add(target);
         Screen.pjt.clear();
         write(Tower.class, tower, "shootSound", null);
         write(Tower.class, tower, "towerAnimFrame", read(Tower.class, tower, "shootFrame"));
@@ -264,9 +264,9 @@ public final class StoreBuffRegressionTest {
     private static void monsterMovement() throws Exception {
         setup();
         for (int x = 0; x < Screen.room.worldWidth; x++) {
-            Screen.room.block[5][x].groundID = Value.groundRoad;
+            Screen.room.block[5][x].groundID = Constants.groundRoad;
         }
-        List<Supplier<Mob>> types = Arrays.asList(Mob::new, Mob2::new, Mob3::new);
+        List<Supplier<Mob>> types = Arrays.asList(OrcMob::new, DemonMob::new, SlimeMob::new);
         int[] baseline = new int[types.size()];
         Mob[] existing = new Mob[types.size()];
         for (int i = 0; i < types.size(); i++) {
@@ -292,20 +292,20 @@ public final class StoreBuffRegressionTest {
     }
 
     private static int distanceAfterTicks(Mob mob, int ticks) {
-        mob.spawnMob(Value.ORC_MONSTER);
+        mob.spawnMob(Constants.ORC_MONSTER);
         return advanceDistance(mob, ticks);
     }
 
     private static int advanceDistance(Mob mob, int ticks) {
-        int start = mob.x;
+        int start = mob.getX();
         for (int i = 0; i < ticks; i++) mob.physic();
-        return mob.x - start;
+        return mob.getX() - start;
     }
 
     private static void actionRowAndEmptyPlane() {
         setup();
-        NutBamVip[] buttons = {ManageNut.GoldenPickaxeButton, ManageNut.fireSwordButton,
-            ManageNut.cursedSkullButton, ManageNut.bomberButton, ManageNut.skillButton};
+        UIButton[] buttons = {UIManager.GoldenPickaxeButton, UIManager.fireSwordButton,
+            UIManager.cursedSkullButton, UIManager.bomberButton, UIManager.skillButton};
         for (int i = 0; i < buttons.length; i++) {
             Rectangle bounds = Screen.store.getItemButtonBounds(i);
             Rectangle trash = Screen.store.button[Screen.store.button.length - 1];
@@ -327,15 +327,15 @@ public final class StoreBuffRegressionTest {
         whiteGraphics.dispose();
         Screen.tiles.button = Screen.tiles.touchedButton = Screen.tiles.iconGoldenPickaxe = white;
         Screen.airplane = white;
-        int emptyPlane = centerPixel(ManageNut.bomberButton, 3);
-        int emptyPickaxe = centerPixel(ManageNut.GoldenPickaxeButton, 0);
+        int emptyPlane = centerPixel(UIManager.bomberButton, 3);
+        int emptyPickaxe = centerPixel(UIManager.GoldenPickaxeButton, 0);
         Screen.paperPlane = 1;
-        int availablePlane = centerPixel(ManageNut.bomberButton, 3);
+        int availablePlane = centerPixel(UIManager.bomberButton, 3);
         check(emptyPlane == emptyPickaxe && emptyPlane < availablePlane,
                 "An empty Paper Plane is darkened like an empty Golden Pickaxe");
     }
 
-    private static int centerPixel(NutBamVip button, int column) {
+    private static int centerPixel(UIButton button, int column) {
         BufferedImage canvas = new BufferedImage(Screen.VIRTUAL_WIDTH, Screen.VIRTUAL_HEIGHT,
                 BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = canvas.createGraphics();
@@ -348,12 +348,12 @@ public final class StoreBuffRegressionTest {
 
     private static void unavailableItemInteraction() throws Exception {
         configureInteractionImages();
-        new ManageNut(null);
-        NutBamVip[] buffs = {ManageNut.GoldenPickaxeButton, ManageNut.fireSwordButton,
-            ManageNut.cursedSkullButton};
+        new UIManager(null);
+        UIButton[] buffs = {UIManager.GoldenPickaxeButton, UIManager.fireSwordButton,
+            UIManager.cursedSkullButton};
         for (int i = 0; i < buffs.length; i++) {
             setup();
-            NutBamVip button = buffs[i];
+            UIButton button = buffs[i];
             assertUnavailable(button, i, "Empty buff " + i);
             setInventory(i, 2);
             clickEnabled(button, i, "Available buff " + i);
@@ -369,10 +369,10 @@ public final class StoreBuffRegressionTest {
                     "Last buff " + i + " is consumed without leaving a hover effect");
         }
         setup();
-        assertUnavailable(ManageNut.bomberButton, 3, "Empty Paper Plane");
+        assertUnavailable(UIManager.bomberButton, 3, "Empty Paper Plane");
         Rectangle towerButton = Screen.store.button[0];
-        check(KeyHandel.isHoveringButton(towerButton.x + 10, towerButton.y + 10)
-                && !KeyHandel.isOverDisabledGameButton(towerButton.x + 10, towerButton.y + 10),
+        check(MouseHandler.isHoveringButton(towerButton.x + 10, towerButton.y + 10)
+                && !MouseHandler.isOverDisabledGameButton(towerButton.x + 10, towerButton.y + 10),
                 "Tower store buttons keep their cursor feedback");
 
         setup();
@@ -380,61 +380,61 @@ public final class StoreBuffRegressionTest {
         Rectangle bounds = Screen.store.getItemButtonBounds(1);
         int mouseX = bounds.x + bounds.width / 2;
         int mouseY = bounds.y + bounds.height / 2;
-        ManageNut.fireSwordButton.mousePressed(mouseX, mouseY);
+        UIManager.fireSwordButton.mousePressed(mouseX, mouseY);
         Screen.fireSword = 0;
-        ManageNut.fireSwordButton.mouseReleased(mouseX, mouseY);
-        check(ManageNut.fireSwordButton.state == 0 && Screen.activeSpells.isEmpty(),
+        UIManager.fireSwordButton.mouseReleased(mouseX, mouseY);
+        check(UIManager.fireSwordButton.state == 0 && Screen.activeSpells.isEmpty(),
                 "Losing availability between press and release cancels interaction");
     }
 
     private static void unavailableSkillInteraction() throws Exception {
         setup();
         Screen.chosenCard = 0;
-        assertUnavailable(ManageNut.skillButton, 4, "No selected skill");
+        assertUnavailable(UIManager.skillButton, 4, "No selected skill");
         for (int card = 1; card <= 3; card++) {
             setup();
             Screen.chosenCard = card;
-            write(Store.class, Screen.store, "skillReadyAt", System.currentTimeMillis() + 90_000);
-            assertUnavailable(ManageNut.skillButton, 4, "Cooling skill " + card);
+            write(BuffManager.class, Screen.store.buffManager, "skillReadyAt", System.currentTimeMillis() + 90_000);
+            assertUnavailable(UIManager.skillButton, 4, "Cooling skill " + card);
         }
         setup();
         Screen.chosenCard = 2;
-        clickEnabled(ManageNut.skillButton, 4, "Ready Enhancement");
-        check(Screen.store.getEnhancementRemainingSeconds() > 0 && ManageNut.skillButton.state == 0,
+        clickEnabled(UIManager.skillButton, 4, "Ready Enhancement");
+        check(Screen.store.getEnhancementRemainingSeconds() > 0 && UIManager.skillButton.state == 0,
                 "Enhancement activation immediately clears its hover effect");
-        assertUnavailable(ManageNut.skillButton, 4, "Active Enhancement");
+        assertUnavailable(UIManager.skillButton, 4, "Active Enhancement");
     }
 
     private static void enabledSelectionInteraction() throws Exception {
         setup();
         Screen.paperPlane = 1;
-        clickEnabled(ManageNut.bomberButton, 3, "Available Paper Plane");
-        check(Screen.store.holdsItem && Store.heldID == Value.SPELL_BOMBER_PLANE,
+        clickEnabled(UIManager.bomberButton, 3, "Available Paper Plane");
+        check(Screen.store.holdsItem && Store.heldID == Constants.SPELL_BOMBER_PLANE,
                 "An available Paper Plane can be selected");
-        clickEnabled(ManageNut.bomberButton, 3, "Selected Paper Plane");
+        clickEnabled(UIManager.bomberButton, 3, "Selected Paper Plane");
         check(!Screen.store.holdsItem && Screen.paperPlane == 1,
                 "Clicking a selected Paper Plane cancels selection without spending it");
 
         for (int card : new int[] {1, 3}) {
             setup();
             Screen.chosenCard = card;
-            clickEnabled(ManageNut.skillButton, 4, "Ready placement skill " + card);
+            clickEnabled(UIManager.skillButton, 4, "Ready placement skill " + card);
             check(Screen.store.holdsItem, "Ready skill " + card + " can be selected");
-            clickEnabled(ManageNut.skillButton, 4, "Selected placement skill " + card);
+            clickEnabled(UIManager.skillButton, 4, "Selected placement skill " + card);
             check(!Screen.store.holdsItem, "Selected skill " + card + " can be deselected");
         }
 
         setup();
         Screen.fireSword = Screen.cursedSkull = Screen.goldenPickaxe = Screen.paperPlane = 1;
-        Screen.gameState = Value.TITLE_SCREEN;
-        NutBamVip[] buttons = {ManageNut.GoldenPickaxeButton, ManageNut.fireSwordButton,
-            ManageNut.cursedSkullButton, ManageNut.bomberButton, ManageNut.skillButton};
+        Screen.gameState = Constants.TITLE_SCREEN;
+        UIButton[] buttons = {UIManager.GoldenPickaxeButton, UIManager.fireSwordButton,
+            UIManager.cursedSkullButton, UIManager.bomberButton, UIManager.skillButton};
         for (int i = 0; i < buttons.length; i++) {
             assertUnavailable(buttons[i], i, "Control outside a match " + i);
         }
 
         final int[] ordinaryClicks = {0};
-        NutBamVip ordinary = new NutBamVip(10, 10, 20, 20) {
+        UIButton ordinary = new UIButton(10, 10, 20, 20) {
             @Override
             public void onClick() { ordinaryClicks[0]++; }
         };
@@ -448,15 +448,15 @@ public final class StoreBuffRegressionTest {
                 "Ordinary menu controls still click normally");
     }
 
-    private static void assertUnavailable(NutBamVip button, int column, String label) throws Exception {
+    private static void assertUnavailable(UIButton button, int column, String label) throws Exception {
         Rectangle bounds = Screen.store.getItemButtonBounds(column);
         int mouseX = bounds.x + bounds.width / 2;
         int mouseY = bounds.y + bounds.height / 2;
         check(button.contains(mouseX, mouseY), label + " keeps its geometric hitbox");
         check(!button.isEnabled(), label + " is unavailable");
-        if (Screen.gameState == Value.IN_GAME) {
-            check(!KeyHandel.isHoveringButton(mouseX, mouseY)
-                    && KeyHandel.isOverDisabledGameButton(mouseX, mouseY),
+        if (Screen.gameState == Constants.IN_GAME) {
+            check(!MouseHandler.isHoveringButton(mouseX, mouseY)
+                    && MouseHandler.isOverDisabledGameButton(mouseX, mouseY),
                     label + " uses the normal cursor even during a click");
         }
         button.updateMouse(mouseX, mouseY);
@@ -465,13 +465,13 @@ public final class StoreBuffRegressionTest {
         check(button.state == 0 && !button.startPressInNut, label + " has no press feedback");
         int[] inventory = {Screen.goldenPickaxe, Screen.fireSword, Screen.cursedSkull, Screen.paperPlane};
         int spells = Screen.activeSpells.size();
-        long readyAt = (long) read(Store.class, Screen.store, "skillReadyAt");
+        long readyAt = (long) read(BuffManager.class, Screen.store.buffManager, "skillReadyAt");
         int heldID = Store.heldID;
         boolean holding = Screen.store.holdsItem;
         button.mouseReleased(mouseX, mouseY);
         check(Arrays.equals(inventory, new int[] {Screen.goldenPickaxe, Screen.fireSword,
                 Screen.cursedSkull, Screen.paperPlane}) && spells == Screen.activeSpells.size()
-                && readyAt == (long) read(Store.class, Screen.store, "skillReadyAt")
+                && readyAt == (long) read(BuffManager.class, Screen.store.buffManager, "skillReadyAt")
                 && heldID == Store.heldID && holding == Screen.store.holdsItem,
                 label + " does not trigger an action");
         button.state = 0;
@@ -487,13 +487,13 @@ public final class StoreBuffRegressionTest {
         }
     }
 
-    private static void clickEnabled(NutBamVip button, int column, String label) {
+    private static void clickEnabled(UIButton button, int column, String label) {
         Rectangle bounds = Screen.store.getItemButtonBounds(column);
         int mouseX = bounds.x + bounds.width / 2;
         int mouseY = bounds.y + bounds.height / 2;
         check(button.isEnabled(), label + " permits interaction");
-        check(KeyHandel.isHoveringButton(mouseX, mouseY)
-                && !KeyHandel.isOverDisabledGameButton(mouseX, mouseY),
+        check(MouseHandler.isHoveringButton(mouseX, mouseY)
+                && !MouseHandler.isOverDisabledGameButton(mouseX, mouseY),
                 label + " permits cursor feedback");
         button.updateMouse(mouseX, mouseY);
         check(button.state == 1, label + " has hover feedback");
@@ -502,7 +502,7 @@ public final class StoreBuffRegressionTest {
         button.mouseReleased(mouseX, mouseY);
     }
 
-    private static int[] edgePixels(NutBamVip button, Rectangle bounds) {
+    private static int[] edgePixels(UIButton button, Rectangle bounds) {
         BufferedImage canvas = new BufferedImage(Screen.VIRTUAL_WIDTH, Screen.VIRTUAL_HEIGHT,
                 BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = canvas.createGraphics();

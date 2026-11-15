@@ -1,10 +1,10 @@
-package entity.mob;
+package entity.defender;
 import java.awt.Image;
 
 import core.Screen;
-import core.Value;
+import core.Constants;
 
-public class Mercenary extends Minion{
+public class Mercenary extends CastleDefender{
 	int rootX = -1;
 	int rootY = -1;
 
@@ -36,7 +36,7 @@ public class Mercenary extends Minion{
 		this.deadDelay = 0;
 		this.rootX = rootX;
 		this.rootY = rootY;
-		this.attackRangeBox.setBounds(x + 2, y + 2, mobSize / 2 - 2, mobSize - 4); 
+		this.attackRangeBox.setBounds(bounds.x + 2, bounds.y + 2, mobSize / 2 - 2, mobSize - 4); 
 		
         inGame = true;
     }
@@ -72,11 +72,11 @@ public class Mercenary extends Minion{
 			animTick = 0;
 		}
 		
-		if (this.target != null && (this.target.isDead() || !this.target.inGame || !this.attackRangeBox.intersects(this.target))){
+		if (this.target != null && (this.target.isDead() || !this.target.inGame || !this.attackRangeBox.intersects(this.target.getBounds()))){
 			this.target = null;
 		}
 
-		isMatching = checkMatching(Screen.mobs, Screen.mobss, Screen.mobsss);
+		isMatching = checkMatching(Screen.activeMobs);
 
 		if(isMatching){
 			// int currentAttackFrame = animFrame % 6;
@@ -105,28 +105,7 @@ public class Mercenary extends Minion{
 		deadFrame = 0;
 		deadTick = 0;
 		deadDelay = 0;
-		Screen.room.block[rootY][rootX].towerID = Value.PLACEHOLDER;
-	}
-
-	@Override
-	boolean checkMatching(Mob[]... mobGroups){
-		// if the current target is still in Game & in range & not dead, LOCK ON it
-		if (this.target != null && this.target.inGame && this.attackRangeBox.intersects(this.target) &&  !this.target.isDead()){
-			return true;
-		}
-
-		// otherwise, switch to a new target
-		for (Mob[] mob : mobGroups){
-			for (int i = 0; i < mob.length; i++){
-				if (this.attackRangeBox.intersects(mob[i]) && mob[i] != null && mob[i].inGame && !mob[i].isDead()){
-					this.target = mob[i];
-					this.target.gotDamage = true;
-					this.target.lastGotDamagedTime = System.currentTimeMillis();
-					return true;
-				}
-			}
-		}
-		return false;
+		Screen.room.block[rootY][rootX].towerID = Constants.PLACEHOLDER;
 	}
 
     @Override

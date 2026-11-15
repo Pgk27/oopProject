@@ -1,9 +1,9 @@
-package entity.mob;
+package entity.enemy;
 import java.awt.*;
 
 import core.Screen;
-public class Mob2 extends Mob {
-	public Mob2() {
+public class DemonMob extends Mob {
+	public DemonMob() {
 		super();
 		this.walkSpeed = 5;
 		this.spawnTime = 1200;
@@ -17,7 +17,7 @@ public class Mob2 extends Mob {
 	}
 
 	@Override
-	Image getSprite(){
+	public Image getSprite(){
 		if (isDying){
 			if (Screen.mobDemonDeadAnim != null && Screen.mobDemonDeadAnim.length > 0){
 				return Screen.mobDemonDeadAnim[deadFrame];

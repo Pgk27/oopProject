@@ -1,9 +1,9 @@
-package entity.mob;
+package entity.enemy;
 import java.awt.*;
 
 import core.Screen;
-public class Mob3 extends Mob {
-	public Mob3(){
+public class SlimeMob extends Mob {
+	public SlimeMob(){
 		super();
 		this.walkSpeed = 3;
 		this.spawnTime = 1200;
@@ -16,8 +16,7 @@ public class Mob3 extends Mob {
 		this.attackSound = Screen.sound.sfxBite;
 	}
 	
-	@Override 
-	Image getSprite(){
+	public Image getSprite(){
 		if (isDying){
 			if (Screen.mobSlimeDeadAnim != null && Screen.mobSlimeDeadAnim.length > 0){
 				return Screen.mobSlimeDeadAnim[deadFrame];

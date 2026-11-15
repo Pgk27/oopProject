@@ -1,37 +1,41 @@
-package entity.mob;
+package entity.defender;
 import java.awt.*;
 import java.net.URL;
 
 import core.Screen;
-import core.Value;
+import core.Constants;
 import entity.Projectiles;
+import entity.enemy.Mob;
 import map.Block;
+import java.util.List;
 
-public class Minion extends Mob {
-	private long HEAL_COOL_DOWN = MinionStats.HEAL_COOL_DOWN; //tgian giữa các lần hồi hp
-	private int healAmount = MinionStats.healAmount;  //lượng hp hồi 1 cục
+public class CastleDefender extends Mob {
+	// Stats
+	private long HEAL_COOL_DOWN = getHealCooldown(); //tgian giữa các lần hồi hp
+	private int healAmount = getHealAmount();  //lượng hp hồi 1 cục
 	private long lastHealTime = 0;
+	private double arrowDmg = getArrowDmg();  //st cung
+	private int shootRange = 300;
 
+	// Shooting Logic
 	private long lastShootTime;
 	private int currentShootFrame;
 	private boolean isShootingArrow = false;
-
 	private boolean isShooting = false;
 	private boolean hasShotArrow = false;
 	private Mob shootTarget = null;
-	private double arrowDmg = MinionStats.arrowDmg;  //st cung
-	private int shootRange = 300;
+	
 	private Rectangle rangeBox = new Rectangle();
 
 	protected boolean hasSpawned = false;
 
 	private URL bowReleaseSound;
 
-    public Minion(){    
+    public CastleDefender(){    
 		this.renderScale = 1.8;
-		this.dmgReduction = MinionStats.dmgReduction; //giảm st trừ thẳng
-		this.attackDmg = MinionStats.swordDmg; //st kiếm
-		this.maxHealth = MinionStats.maxHealth;
+		this.dmgReduction = getDmgReduction(); //giảm st trừ thẳng
+		this.attackDmg = getAttackDamage(); //st kiếm
+		this.maxHealth = getMaxHealth();
 		this.health = maxHealth;
 		this.mobSize = 80;
 		this.totalCombatFrames = Screen.minionAttack1Anim.length;
@@ -67,7 +71,7 @@ public class Minion extends Mob {
 			for (int y = 0; y < Screen.room.block.length; y++) {
 				for (int x = 0; x < Screen.room.block[y].length; x++) {
 					Block block = Screen.room.block[y][x];
-					if (block.towerID == Value.CASTLE) {
+					if (block.towerID == Constants.CASTLE) {
 						if (destination != null) {
 							throw new IllegalStateException("The map has more than one gate tile.");
 						}
@@ -95,13 +99,19 @@ public class Minion extends Mob {
 		yC = guardY;
 
 		// set tầm bắn
-		this.rangeBox.setBounds(x - shootRange, y - shootRange/ 2, width + shootRange * 2, height + shootRange);
+		this.rangeBox.setBounds(bounds.x - shootRange, bounds.y - shootRange/ 2, bounds.width + shootRange * 2, bounds.height + shootRange);
 		// set tầm đánh là sprite của minion luôn
-		this.attackRangeBox.setBounds(x, y, mobSize, mobSize); 
+		this.attackRangeBox.setBounds(bounds.x, bounds.y, mobSize, mobSize); 
 
+		// Stats
 		this.mobID = mobID;
-		this.maxHealth = MinionStats.maxHealth;
+		this.maxHealth = getMaxHealth();
 		this.health = this.maxHealth;
+		this.dmgReduction = getDmgReduction();
+		this.attackDmg = getSwordDmg();
+		this.arrowDmg = getArrowDmg();
+		this.HEAL_COOL_DOWN = getHealCooldown();
+		this.healAmount = getHealAmount();
 
 		// set ngẫu nhiên frame cho từng con mob (ngẫu nhiên hóa chuyển động)
 		this.animFrame = Screen.rand.nextInt(8);
@@ -151,7 +161,7 @@ public class Minion extends Mob {
 			this.target = null;
 		}
 
-		isMatching = checkMatching(Screen.mobs, Screen.mobss, Screen.mobsss);
+		isMatching = checkMatching(Screen.activeMobs);
 		isShooting = !isMatching; // nếu không bắn cung thì đánh cận chiến và ngược lại
 
 		if(isMatching){
@@ -161,12 +171,12 @@ public class Minion extends Mob {
 			hasDealtDamage = false;
 
 			// check if target is still alive and still inside the rangeBox before finding a new one
-			if (shootTarget != null && (shootTarget.isDead() || !shootTarget.inGame || !rangeBox.intersects(shootTarget))){
+			if (shootTarget != null && (shootTarget.isDead() || !shootTarget.inGame || !rangeBox.intersects(shootTarget.getBounds()))){
 				shootTarget = null;
 			}
 
 			if (shootTarget == null)
-				shootTarget = findTargetInRange(Screen.mobs, Screen.mobss, Screen.mobsss);
+				shootTarget = findTargetInRange(Screen.activeMobs);
 			isShooting = (shootTarget != null); // nếu target chết thì isShooting = false
 		}
 		
@@ -185,6 +195,31 @@ public class Minion extends Mob {
 			selfHeal();
 			lastHealTime = currentTime;
 		}
+	}
+
+	private Mob findTargetInRange(List<Mob> mob){
+		Mob closest = null;
+		double minDist = Integer.MAX_VALUE;
+
+		double myCenterX = this.bounds.x + this.bounds.width / 2.0;
+		double myCenterY = this.bounds.y + this.bounds.height / 2.0;
+
+		for (Mob m : mob){
+			if (m != null && m.inGame && !m.isDead()) {
+				if (rangeBox.intersects(m.getBounds())) {
+					double targetCenterX = m.getX() + m.getWidth() / 2.0;
+					double targetCenterY = m.getY() + m.getHeight() / 2.0;
+					double dx = myCenterX - targetCenterX;
+					double dy = myCenterY - targetCenterY;
+					double distSq = dx * dx + dy * dy;
+					if (distSq < minDist) {
+						minDist = distSq;
+						closest = m;
+					}
+				}
+			}
+		}
+		return closest;
 	}
 
 	private void updateShootArrow(){
@@ -231,21 +266,40 @@ public class Minion extends Mob {
 
 	private double getHeroDamageMultiplier() {
 		// Mercenary kế thừa Minion nhưng không nhận buff của hero.
-		return mobID == Value.MINION_SOLDIER && Screen.store != null
+		return mobID == Constants.MINION_SOLDIER && Screen.store != null
 			? Screen.store.getHeroDamageMultiplier() : 1.0;
 	}
 
 	@Override
-	protected double getAttackDamage() {
+	public double getAttackDamage() {
 		return super.getAttackDamage() * getHeroDamageMultiplier();
+	}
+
+	public boolean checkMatching(List<Mob> mob){
+		// if the current target is still in Game & in range & not dead, LOCK ON it
+		if (this.target != null && this.target.inGame && this.intersects(this.target) &&  !this.target.isDead()){
+			return true;
+		}
+
+		// otherwise, switch to a new target
+		for (Mob m : mob){
+			if (m != null && m.inGame && !m.isDead() && this.intersects(m)){
+				this.isMatching = true;
+				this.target = m;
+				this.target.gotDamage = true;
+				this.target.lastGotDamagedTime = System.currentTimeMillis();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void shootArrow(){
 		double finalDamage = arrowDmg * getHeroDamageMultiplier() * (1 - shootTarget.dmgReduction);
-		double startX = x + width / 2;
-		double startY = y + height / 2;
+		double startX = bounds.x + bounds.width / 2;
+		double startY = bounds.y + bounds.height / 2;
 		if (shootTarget != null && !hasShotArrow){
-			Screen.pjt.add(new Projectiles(startX, startY, shootTarget, finalDamage, Value.MINION_SOLDIER));
+			Screen.pjt.add(new Projectiles(startX, startY, shootTarget, finalDamage, Constants.MINION_SOLDIER));
 		}
 		playShootingArrowSound();
 	}
@@ -254,34 +308,6 @@ public class Minion extends Mob {
 		if (bowReleaseSound != null){
 			Screen.sound.playSfx(bowReleaseSound);
 		}
-	}
-
-	private Mob findTargetInRange(Mob[]... mobGroups){
-		Mob closest = null;
-		double minDist = Integer.MAX_VALUE;
-
-		double myCenterX = this.x + this.width / 2.0;
-		double myCenterY = this.y + this.height / 2.0;
-
-		for (Mob[] group : mobGroups){
-			for (int i = 0; i < group.length; i++){
-				Mob m = group[i];
-				if (m != null && m.inGame && !m.isDead()){
-					if (rangeBox.intersects(m)){
-						double targetCenterX = m.x + m.width;
-						double targetCenterY = m.y + m.height;
-						double dx = myCenterX - targetCenterX;
-						double dy = myCenterY - targetCenterY;
-						double distSq = dx * dx + dy *dy;
-						if (distSq < minDist){
-							minDist = distSq;
-							closest = m;
-						}
-					}
-				}
-			}
-		}
-		return closest;
 	}
 
 	@Override
@@ -307,28 +333,6 @@ public class Minion extends Mob {
 			health = maxHealth;
 		}
 		else health += healAmount;
-	}
-	
-	@Override
-	boolean checkMatching(Mob[]... mobGroups){
-		// if the current target is still in Game & in range & not dead, LOCK ON it
-		if (this.target != null && this.target.inGame && this.intersects(this.target) &&  !this.target.isDead()){
-			return true;
-		}
-
-		// otherwise, switch to a new target
-		for (Mob[] mob : mobGroups){
-			for (int i = 0; i < mob.length; i++){
-				if (this.intersects(mob[i]) && mob[i] != null && mob[i].inGame && !mob[i].isDead()){
-					this.isMatching = true;
-					this.target = mob[i];
-					this.target.gotDamage = true;
-					this.target.lastGotDamagedTime = System.currentTimeMillis();
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
 	@Override
@@ -368,12 +372,12 @@ public class Minion extends Mob {
 		Image Sprite = getSprite();
 		if (Sprite != null){
 			// 1. Tính kích thước vẽ dựa trên hệ số phóng to
-            int drawW = (int) (width * renderScale);
-            int drawH = (int) (height * renderScale);
+            int drawW = (int) (bounds.width * renderScale);
+            int drawH = (int) (bounds.height * renderScale);
 
             // 2. Căn giữa theo trục X, và giữ đáy chân quái chạm sàn (không bị bay lơ lửng)
-            int drawX = x - (drawW - width) / 2;
-            int drawY = y - (drawH - height);
+            int drawX = bounds.x - (drawW - bounds.width) / 2;
+            int drawY = bounds.y - (drawH - bounds.height);
 
 			// quay sang trái
             g.drawImage(Sprite, drawX + drawW, drawY, -drawW, drawH, null);
@@ -381,13 +385,13 @@ public class Minion extends Mob {
 
 		if (isDying) return;
 
-		int barY = y - (healthSpace + healthHeight);
+		int barY = bounds.y - (healthSpace + healthHeight);
 		double healthPercent = (double) health / maxHealth;
-		int currentBarWidth = (int) (healthPercent * width);
+		int currentBarWidth = (int) (healthPercent * bounds.width);
 
 		// 1. Dark gray / black background (empty track)
 		g.setColor(new Color(40, 40, 40));
-		g.fillRect(x, barY, width, healthHeight);
+		g.fillRect(bounds.x, barY, bounds.width, healthHeight);
 
 		// 2. Dynamic Color Selection based on health percentage
 		if (healthPercent > 0.50) {
@@ -399,11 +403,32 @@ public class Minion extends Mob {
 		}
 
 		if (currentBarWidth > 0) {
-			g.fillRect(x, barY, currentBarWidth, healthHeight);
+			g.fillRect(bounds.x, barY, currentBarWidth, healthHeight);
 		}
 
 		// 3. Static border around the entire bar
 		g.setColor(Color.BLACK);
-		g.drawRect(x, barY, width - 1, healthHeight - 1);
+		g.drawRect(bounds.x, barY, bounds.width - 1, healthHeight - 1);
 	}
+
+	// --- Dynamic Hero Stats (Merged from MinionStats) ---
+	public static int getMaxHealth() {
+		return 1200 + 100 * Screen.buffHp;
+	}
+	public static long getHealCooldown() {
+		return 1000L * (100 - 2 * Screen.buffHpRe) / 100;
+	}
+	public static int getHealAmount() {
+		return 150 + 5 * Screen.buffHpRe;
+	}
+	public static int getDmgReduction() {
+		return Screen.buffShield;
+	}
+	public static int getArrowDmg() {
+		return 150 + 20 * Screen.buffADmg;
+	}
+	public static int getSwordDmg() {
+		return 200 + 25 * Screen.buffSDmg;
+	}
+	
 }

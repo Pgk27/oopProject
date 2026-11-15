@@ -1,5 +1,5 @@
 package core;
-public class Value { // CẤM ĐƯỢC THAY ĐỔI
+public class Constants { // CẤM ĐƯỢC THAY ĐỔI
 	private static int idCounter = 2; // Start at 2 since 0 (BLACK_HOLE) and 1 (TRASH_CAN) map to tileset_air[0..1]
 
 	// hàm next id dùng để tạo id không trùng lặp.

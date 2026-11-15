@@ -11,8 +11,6 @@ public class Save {
 		
 			while(loadScanner.hasNext()) {
 				Screen.killsToWin = loadScanner.nextInt();	
-				// Screen.killsToWin = Screen.level * 10;
-				Screen.killsToWin = 10;
 
 				for(int y=0;y<Screen.room.block.length;y++) {
 					for(int x=0;x<Screen.room.block[0].length;x++) {
@@ -28,6 +26,8 @@ public class Save {
 			}
 			
 			loadScanner.close();
-		} catch(Exception e) { }
+		} catch(Exception e) { 
+			System.out.println("Error loading save");
+		}
 	}
 }

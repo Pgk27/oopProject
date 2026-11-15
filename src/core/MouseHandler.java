@@ -6,10 +6,10 @@ import java.awt.event.*;
 public class MouseHandler implements MouseMotionListener, MouseListener {
 	static boolean isMousePressed = false;
 
-	static boolean isMusicMuted = false;
-	static boolean isSfxMuted = false;
-	static boolean isSettingCancelPressed = false;
-	static boolean isSettingConfirmPressed = false;
+	public static boolean isMusicMuted = false;
+	public static boolean isSfxMuted = false;
+	public static boolean isSettingCancelPressed = false;
+	public static boolean isSettingConfirmPressed = false;
 	static boolean isUpdated = false;
 
 	static boolean prevMusicMuteState = isMusicMuted;
@@ -43,9 +43,9 @@ public class MouseHandler implements MouseMotionListener, MouseListener {
 	static Rectangle doiEnhanceButt = new Rectangle(670, 290, 95, 30);
 	static Rectangle doiMercenaryButt = new Rectangle(670, 370, 95, 30);
 
-	static Rectangle musicSliderBox = new Rectangle();
+	public static Rectangle musicSliderBox = new Rectangle();
 	static Rectangle musicMuteSlider = new Rectangle(735, 240, 100, 100);
-	static Rectangle sfxSliderBox = new Rectangle();
+	public static Rectangle sfxSliderBox = new Rectangle();
 	static Rectangle sfxMuteSlider = new Rectangle(735, 340, 100, 100);
 	static Rectangle fullscreenTickButton = new Rectangle(585, 465, 72, 80);
 	static Rectangle fullscreenXButton = new Rectangle(685, 465, 72, 80);
@@ -74,23 +74,23 @@ public class MouseHandler implements MouseMotionListener, MouseListener {
 			}
 		}
 		*/
-		if(Screen.gameState == Value.SHOP) {
+		if(Screen.gameState == Constants.SHOP) {
 			if(backz.contains(mouseX, mouseY)) {
 				// Screen.gameState = Value.TITLE_SCREEN;
 				// e.getComponent().repaint();
 			}
 			else if(toGacha.contains(mouseX, mouseY)) {
-				Screen.gameState = Value.GACHA;
+				Screen.gameState = Constants.GACHA;
 			}
 			else if(toBuyItem.contains(mouseX, mouseY)) {
-				Screen.gameState = Value.ITEM_SHOP;
+				Screen.gameState = Constants.ITEM_SHOP;
 			}
 		}
-		else if(Screen.gameState == Value.GACHA) {
+		else if(Screen.gameState == Constants.GACHA) {
 		}
-		else if(Screen.gameState == Value.GACHA_RATE) {
+		else if(Screen.gameState == Constants.GACHA_RATE) {
 		}
-		else if(Screen.gameState == Value.SHARD_SHOP) {
+		else if(Screen.gameState == Constants.SHARD_SHOP) {
 
 		}
 		// else if(Screen.gameState == Value.VICTORY_SCREEN) {
@@ -119,7 +119,7 @@ public class MouseHandler implements MouseMotionListener, MouseListener {
 		// 		e.getComponent().repaint();
 		// 	}
 		// }
-		else if(Screen.gameState == Value.SETTING){
+		else if(Screen.gameState == Constants.SETTING){
 			if(musicMuteSlider.contains(mouseX, mouseY)){
 				if (!isMusicMuted){
 					currMusicVolume = Screen.musicVolume;
@@ -176,18 +176,18 @@ public class MouseHandler implements MouseMotionListener, MouseListener {
         	UIManager.heThongNut[currentState][i].mouseReleased(p.x, p.y);
 		}
 		if (e.getButton() == MouseEvent.BUTTON1) isMousePressed = false;
-		if (Screen.gameState == Value.SETTING){
+		if (Screen.gameState == Constants.SETTING){
 			// // instant = true --> nhạc to nhỏ ngay tức thì, không bị trễ một giây mới update như trước
 			// if (musicSliderBox.contains(mse)){
 			// 	Screen.sound.setMusicVolume(Screen.musicVolume, true);
 			// }
 			if (isSettingCancelPressed){
 				isSettingCancelPressed = false;
-				Screen.gameState = Value.TITLE_SCREEN;
+				Screen.gameState = Constants.TITLE_SCREEN;
 			}
 			else if (isSettingConfirmPressed){
 				isSettingConfirmPressed = false;
-				Screen.gameState = Value.TITLE_SCREEN;
+				Screen.gameState = Constants.TITLE_SCREEN;
 			}
 		}
 	}
@@ -204,12 +204,12 @@ public class MouseHandler implements MouseMotionListener, MouseListener {
 			for(int i = 0; i < UIManager.countNut[currentState]; i++) {
 				UIButton button = UIManager.heThongNut[currentState][i];
 				button.mousePressed(p.x, p.y);
-				if (currentState == Value.IN_GAME && button.contains(p.x, p.y)) {
+				if (currentState == Constants.IN_GAME && button.contains(p.x, p.y)) {
 					pressedGameButton = true;
 				}
 			}
 		}
-		if (currentState == Value.SETTING){
+		if (currentState == Constants.SETTING){
 			if (musicSliderBox.contains(p.x, p.y)){
 				updateSlider(p.x, musicSliderBox, true);
 				if (Screen.musicVolume > 0) isMusicMuted = false;
@@ -239,7 +239,7 @@ public class MouseHandler implements MouseMotionListener, MouseListener {
 				isSettingCancelPressed = true;
 			}
 		}
-		if (currentState == Value.IN_GAME && Screen.store != null
+		if (currentState == Constants.IN_GAME && Screen.store != null
 				&& !pressedGameButton) {
 			Screen.store.click(e.getButton());
 		}
@@ -261,7 +261,7 @@ public class MouseHandler implements MouseMotionListener, MouseListener {
 
 		Screen.mse = p;
 
-		if (currentState == Value.SETTING){
+		if (currentState == Constants.SETTING){
 			if (musicSliderBox.contains(p.x, p.y) || 
 				(p.y >= musicSliderBox.y && 
 					p.y <= musicSliderBox.y + musicSliderBox.height)){
@@ -289,41 +289,41 @@ public class MouseHandler implements MouseMotionListener, MouseListener {
 	}
 
 	public static boolean isOverDisabledGameButton(int mouseX, int mouseY) {
-		if (Screen.gameState != Value.IN_GAME) return false;
-		for (int i = 0; i < UIManager.countNut[Value.IN_GAME]; i++) {
-			UIButton button = UIManager.heThongNut[Value.IN_GAME][i];
+		if (Screen.gameState != Constants.IN_GAME) return false;
+		for (int i = 0; i < UIManager.countNut[Constants.IN_GAME]; i++) {
+			UIButton button = UIManager.heThongNut[Constants.IN_GAME][i];
 			if (!button.isEnabled() && button.contains(mouseX, mouseY)) return true;
 		}
 		return false;
 	}
 
 	public static boolean isHoveringButton(int mouseX, int mouseY) {
-		if (Screen.gameState == Value.TITLE_SCREEN) 
+		if (Screen.gameState == Constants.TITLE_SCREEN) 
 			return startGame.contains(mouseX, mouseY) 
 				|| store.contains(mouseX, mouseY) 
 				|| quitGame.contains(mouseX, mouseY) 
 				|| settings.contains(mouseX, mouseY);
-		else if (Screen.gameState == Value.SHOP)
+		else if (Screen.gameState == Constants.SHOP)
 			return backz.contains(mouseX, mouseY) 
 				|| toGacha.contains(mouseX, mouseY) 
 				|| toBuyItem.contains(mouseX, mouseY);
-		else if (Screen.gameState == Value.GACHA)
+		else if (Screen.gameState == Constants.GACHA)
 			return backz.contains(mouseX, mouseY) 
 				|| in4gacha.contains(mouseX, mouseY) 
 				|| iconShardShop.contains(mouseX, mouseY)
 				|| gachaTornadoButt.contains(mouseX, mouseY) 
 				|| gachaEnhanceButt.contains(mouseX, mouseY)
 				|| gachaMercenaryButt.contains(mouseX, mouseY);
-		else if (Screen.gameState == Value.SHARD_SHOP)
+		else if (Screen.gameState == Constants.SHARD_SHOP)
 				return doiEnhanceButt.contains(mouseX, mouseY) 
 					|| doiMercenaryButt.contains(mouseX, mouseY);
 		// else if (Screen.gameState == Value.VICTORY_SCREEN)
 		// 		return TKWtoMenu.contains(mouseX, mouseY) || TKWtoPlay.contains(mouseX, mouseY);
 		// else if (Screen.gameState == Value.DEFEAT_SCREEN)
 		// 		return TKLtoMenu.contains(mouseX, mouseY) || TKLtoPlay.contains(mouseX, mouseY);
-		else if (Screen.gameState == Value.IN_GAME){
-			for (int i = 0; i < UIManager.countNut[Value.IN_GAME]; i++) {
-				UIButton button = UIManager.heThongNut[Value.IN_GAME][i];
+		else if (Screen.gameState == Constants.IN_GAME){
+			for (int i = 0; i < UIManager.countNut[Constants.IN_GAME]; i++) {
+				UIButton button = UIManager.heThongNut[Constants.IN_GAME][i];
 				if (button.isEnabled() && button.contains(mouseX, mouseY)) return true;
 			}
 			if (Screen.store != null && Screen.store.button != null) {

@@ -5,8 +5,8 @@ import java.awt.Image;
 import java.awt.geom.AffineTransform;
 
 import core.Screen;
-import core.Value;
-import entity.mob.Mob;
+import entity.enemy.Mob;
+import core.Constants;
 
 public class Projectiles {
     double x, y;
@@ -28,14 +28,14 @@ public class Projectiles {
     public void physic() {
         if (hasRemoved) return;
 
-        if (target.isDead() || !target.inGame || target.isDead()) {
+        if (target.isDead() || !target.inGame) {
             hasRemoved = true; // Quái chết trước khi tên bay đến thì hủy mũi tên
             return;
         }
 
         // Tính toán hướng bay bám đuổi mục tiêu
-        double targetCenterX = target.x + (target.width / 2.0);
-        double targetCenterY = target.y + (target.height / 2.0);
+        double targetCenterX = target.getBounds().x + (target.getBounds().width / 2.0);
+        double targetCenterY = target.getBounds().y + (target.getBounds().height / 2.0);
         
         double dx = targetCenterX - x;
         double dy = targetCenterY - y;
@@ -75,7 +75,7 @@ public class Projectiles {
 
         //update kích thước do mở rộng map, tăng số lượng, giảm kích thước block
         double scale=0.8;
-        if (towerID == Value.MINION_SOLDIER) scale = 2.0;
+        if (towerID == Constants.MINION_SOLDIER) scale = 2.0;
         tx.scale(scale, scale);
 
 

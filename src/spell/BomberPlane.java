@@ -2,7 +2,8 @@ package spell;
 import java.awt.*;
 
 import core.Screen;
-import entity.mob.Mob;
+import entity.enemy.Mob;
+import entity.enemy.OrcMob;
 
 /**
  * Kỹ năng Máy Bay Thả Bom (BomberPlane extends Spell)
@@ -136,21 +137,20 @@ public class BomberPlane extends Spell {
         explosionStartTime = System.currentTimeMillis();
 
         // Gây chết quái trong bán kính blastRadius và kích hoạt animation quái chết
-        killMobsInRadius(Screen.mobs);
-        killMobsInRadius(Screen.mobss);
-        killMobsInRadius(Screen.mobsss);
+        for (Mob mob : Screen.activeMobs){
+            killMobsInRadius(mob);
+        }
     }
 
-    private void killMobsInRadius(Mob[] mobs) {
-        if (mobs == null) return;
-        for (Mob m : mobs) {
-            if (m != null && m.inGame && !m.isDead()) {
-                double mobCenterX = m.x + (m.width / 2.0);
-                double mobCenterY = m.y + (m.height / 2.0);
-                double distSq = Math.pow(mobCenterX - targetX, 2) + Math.pow(mobCenterY - targetY, 2);
-                if (distSq <= blastRadius * blastRadius) {
-                    m.mobDead(); // Kích hoạt animation chết và cộng điểm hạ gục
-                }
+    private void killMobsInRadius(Mob mob) {
+        if (mob == null) return;
+
+        if (mob != null && mob.inGame && !mob.isDead()) {
+            double mobCenterX = mob.getBounds().x + (mob.getBounds().width / 2.0);
+            double mobCenterY = mob.getBounds().y + (mob.getBounds().height / 2.0);
+            double distSq = Math.pow(mobCenterX - targetX, 2) + Math.pow(mobCenterY - targetY, 2);
+            if (distSq <= blastRadius * blastRadius) {
+                mob.mobDead(); // Kích hoạt animation chết và cộng điểm hạ gục
             }
         }
     }

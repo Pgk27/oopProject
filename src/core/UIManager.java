@@ -1,13 +1,12 @@
 package core;
 
-import entity.mob.MinionStats;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
-
-
+import service.GachaService;
+import service.HeroUpgradeService;
 
 public class UIManager {
     public static int[] countNut = new int[35]; // Mở rộng từ 25 -> 35
@@ -21,79 +20,79 @@ public class UIManager {
         }
 
 		// Title Screen
-		addNut(playgame, Value.TITLE_SCREEN);
-		addNut(store, Value.TITLE_SCREEN);
-		addNut(updateHero, Value.TITLE_SCREEN);
-		addNut(quitgame, Value.TITLE_SCREEN);
-		addNut(setting, Value.TITLE_SCREEN);
-		addNut(toGacha, Value.TITLE_SCREEN);
+		addNut(playgame, Constants.TITLE_SCREEN);
+		addNut(store, Constants.TITLE_SCREEN);
+		addNut(updateHero, Constants.TITLE_SCREEN);
+		addNut(quitgame, Constants.TITLE_SCREEN);
+		addNut(setting, Constants.TITLE_SCREEN);
+		addNut(toGacha, Constants.TITLE_SCREEN);
 
 		// In-game
-		addNut(backToMenu, Value.IN_GAME);
-		addNut(GoldenPickaxeButton, Value.IN_GAME);
-		addNut(fireSwordButton, Value.IN_GAME);
-		addNut(cursedSkullButton, Value.IN_GAME);
-		addNut(bomberButton, Value.IN_GAME);
-		addNut(skillButton, Value.IN_GAME);
+		addNut(backToMenu, Constants.IN_GAME);
+		addNut(GoldenPickaxeButton, Constants.IN_GAME);
+		addNut(fireSwordButton, Constants.IN_GAME);
+		addNut(cursedSkullButton, Constants.IN_GAME);
+		addNut(bomberButton, Constants.IN_GAME);
+		addNut(skillButton, Constants.IN_GAME);
 
 		//Select Skill
-		addNut(selectBH, Value.SKILL_SELECT);
-		addNut(selectEnh, Value.SKILL_SELECT);
-		addNut(selectMer, Value.SKILL_SELECT);
-		addNut(selectSkillFrame, Value.SKILL_SELECT);
+		addNut(selectBH, Constants.SKILL_SELECT);
+		addNut(selectEnh, Constants.SKILL_SELECT);
+		addNut(selectMer, Constants.SKILL_SELECT);
+		addNut(selectSkillFrame, Constants.SKILL_SELECT);
 
 
 		// Buy Item
-		addNut(backInGacha, Value.ITEM_SHOP);
-		addNut(buyGoldenPickaxe, Value.ITEM_SHOP);
-		addNut(buyFireSword, Value.ITEM_SHOP);
-		addNut(buyCursedSkull, Value.ITEM_SHOP);
-		addNut(buyPaperPlane, Value.ITEM_SHOP);
-		addNut(buyHeart, Value.ITEM_SHOP);
+		addNut(backInGacha, Constants.ITEM_SHOP);
+		addNut(buyGoldenPickaxe, Constants.ITEM_SHOP);
+		addNut(buyFireSword, Constants.ITEM_SHOP);
+		addNut(buyCursedSkull, Constants.ITEM_SHOP);
+		addNut(buyPaperPlane, Constants.ITEM_SHOP);
+		addNut(buyHeart, Constants.ITEM_SHOP);
 
 
 		// Gacha
-		addNut(in4gacha, Value.GACHA);
-		addNut(shardShop, Value.GACHA);
-		addNut(backInGacha, Value.GACHA);
-		addNut(gachaBH, Value.GACHA);
-		addNut(gachaEnhance, Value.GACHA);
-		addNut(gachaMer, Value.GACHA);
-		addNut(summon, Value.GACHA);
-		addNut(iconShardShop, Value.GACHA);
-		addNut(info, Value.GACHA);
+		addNut(in4gacha, Constants.GACHA);
+		addNut(shardShop, Constants.GACHA);
+		addNut(backInGacha, Constants.GACHA);
+		addNut(gachaBH, Constants.GACHA);
+		addNut(gachaEnhance, Constants.GACHA);
+		addNut(gachaMer, Constants.GACHA);
+		addNut(summon, Constants.GACHA);
+		addNut(iconShardShop, Constants.GACHA);
+		addNut(info, Constants.GACHA);
 
 		// Shard Shop
-		addNut(shardShopBigFramee, Value.SHARD_SHOP);
-		addNut(doiBH, Value.SHARD_SHOP);
-		addNut(doiEnhance, Value.SHARD_SHOP);
-		addNut(doiMer, Value.SHARD_SHOP);
-		addNut(doiEC, Value.SHARD_SHOP);
+		addNut(shardShopBigFramee, Constants.SHARD_SHOP);
+		addNut(doiBH, Constants.SHARD_SHOP);
+		addNut(doiEnhance, Constants.SHARD_SHOP);
+		addNut(doiMer, Constants.SHARD_SHOP);
+		addNut(doiEC, Constants.SHARD_SHOP);
 		
 		// Thông báo
-		addNut(thongBaoFrame, Value.NOTI);
+		addNut(thongBaoFrame, Constants.NOTI);
 		
 		// Gacha Rate
-		addNut(gachaRateFrame, Value.GACHA_RATE);
+		addNut(gachaRateFrame, Constants.GACHA_RATE);
 
 		// Update Hero
-		addNut(backInGameShop, Value.UPDATE_HERO);
-		addNut(levelUp, Value.UPDATE_HERO);
-		addNut(expBar, Value.UPDATE_HERO);
-		addNut(add1, Value.UPDATE_HERO);
-		addNut(add2, Value.UPDATE_HERO);
-		addNut(add3, Value.UPDATE_HERO);
-		addNut(add4, Value.UPDATE_HERO);
-		addNut(add5, Value.UPDATE_HERO);
+		addNut(backInGameShop, Constants.UPDATE_HERO);
+		addNut(levelUp, Constants.UPDATE_HERO);
+		addNut(expBar, Constants.UPDATE_HERO);
+		addNut(add1, Constants.UPDATE_HERO);
+		addNut(add2, Constants.UPDATE_HERO);
+		addNut(add3, Constants.UPDATE_HERO);
+		addNut(add4, Constants.UPDATE_HERO);
+		addNut(add5, Constants.UPDATE_HERO);
 
 		// Tong Ket Thua
-		addNut(menuLose, Value.DEFEAT_SCREEN);
-		addNut(again, Value.DEFEAT_SCREEN);
+		addNut(menuLose, Constants.DEFEAT_SCREEN);
+		addNut(again, Constants.DEFEAT_SCREEN);
 		// addNut(expBarTK, Value.DEFEAT_SCREEN);
 
 		// Tong Ket Win
-		addNut(menuWin, Value.VICTORY_SCREEN);
-		addNut(next, Value.VICTORY_SCREEN);
+		addNut(menuWin, Constants.VICTORY_SCREEN);
+		addNut(next, Constants.VICTORY_SCREEN);
     }
    
     public static void addNut(UIButton x, int gState) {
@@ -181,18 +180,18 @@ public class UIManager {
         @Override
         protected void renderItem(Graphics g) {
             Image icon;
-            int skillID = Value.PLACEHOLDER;
+            int skillID = Constants.PLACEHOLDER;
             switch (Screen.chosenCard) {
                 case 1:
                     icon = Screen.tiles.iconBH;
-                    skillID = Value.SPELL_BLACK_HOLE;
+                    skillID = Constants.SPELL_BLACK_HOLE;
                     break;
                 case 2:
                     icon = Screen.tiles.iconEnhance;
                     break;
                 case 3:
                     icon = Screen.tiles.iconMercenary;
-                    skillID = Value.SPELL_MERCENARY;
+                    skillID = Constants.SPELL_MERCENARY;
                     break;
                 default:
                     return;
@@ -296,7 +295,7 @@ public class UIManager {
 
         @Override
         public void onClick() {
-            if (Screen.gameState == Value.IN_GAME && Screen.store != null) {
+            if (Screen.gameState == Constants.IN_GAME && Screen.store != null) {
                 Screen.store.selectBomberPlane();
             }
         }
@@ -313,7 +312,7 @@ public class UIManager {
                 g.fillRect(x, drawY, dx, dy);
             }
 
-            if (Screen.store != null && Screen.store.holdsItem && Store.heldID == Value.SPELL_BOMBER_PLANE) {
+            if (Screen.store != null && Screen.store.holdsItem && Store.heldID == Constants.SPELL_BOMBER_PLANE) {
                 g.setColor(new Color(255, 215, 0, 70));
                 g.fillRect(x, drawY, dx, dy);
                 g.setColor(Color.YELLOW);
@@ -331,11 +330,11 @@ public class UIManager {
         @Override 
         public void onClick() {
 			if (!Screen.unlockBH && !Screen.unlockEnhance && !Screen.unlockMercenary) {
-				Screen.gameState = Value.IN_GAME;
+				Screen.gameState = Constants.IN_GAME;
 				Screen.startGame();
 			}
 			else {
-				Screen.gameState = Value.SKILL_SELECT;
+				Screen.gameState = Constants.SKILL_SELECT;
 			}
         }
     }; 
@@ -343,7 +342,7 @@ public class UIManager {
     public static UIButton store = new UIButton(180, 590, 144, 72) {
         @Override
         public void onClick() {
-            Screen.gameState = Value.ITEM_SHOP;
+            Screen.gameState = Constants.ITEM_SHOP;
         }
     };
 
@@ -351,7 +350,7 @@ public class UIManager {
 	public static UIButton backToMenu = new UIButton(120, 672, 55, 37) {
 		@Override
 		public void onClick() {
-			Screen.gameState = Value.TITLE_SCREEN;
+			Screen.gameState = Constants.TITLE_SCREEN;
 			xuLyOutGame();
 		}
 
@@ -360,7 +359,7 @@ public class UIManager {
 	public static UIButton updateHero = new UIButton(180, 440, 144, 72) {
         @Override
         public void onClick() {
-			Screen.gameState = Value.UPDATE_HERO;
+			Screen.gameState = Constants.UPDATE_HERO;
 			Screen.upHeroXp[1]=200;
 			Screen.upHeroCoin[1]=50;
 			Screen.upHeroShard[1]=50;
@@ -385,7 +384,7 @@ public class UIManager {
 	public static UIButton toGacha = new UIButton(180, 515, 144, 72 ) {
 		@Override
 		public void onClick() {
-			Screen.gameState = Value.GACHA;
+			Screen.gameState = Constants.GACHA;
 			
 		}
 	};
@@ -395,7 +394,7 @@ public class UIManager {
 	public static UIButton setting = new UIButton( 5, 5, 40, 45 ) {
 		@Override
 		public void onClick() {
-			Screen.gameState = Value.SETTING;
+			Screen.gameState = Constants.SETTING;
 			
 		}
 	};
@@ -409,7 +408,7 @@ public class UIManager {
         return true;
         }
         public void onClick() {
-            Screen.gameState = Value.TITLE_SCREEN;
+            Screen.gameState = Constants.TITLE_SCREEN;
         }
 		public void renderNut(Graphics g){
 			g.drawImage(Screen.tiles.selectSkill, x, y, dx, dy, null);
@@ -505,7 +504,7 @@ public class UIManager {
 	public static UIButton backInGameShop = new UIButton( 5, 5, 50, 35 ) {
         @Override
         public void onClick() {
-            Screen.gameState = Value.TITLE_SCREEN;
+            Screen.gameState = Constants.TITLE_SCREEN;
             
         }
     };
@@ -513,7 +512,7 @@ public class UIManager {
     public static UIButton backInGacha = new UIButton( 5, 5, 50, 35 ) {
         @Override
         public void onClick() {
-            Screen.gameState = Value.TITLE_SCREEN;
+            Screen.gameState = Constants.TITLE_SCREEN;
             
         }
     };
@@ -656,7 +655,7 @@ public class UIManager {
     public static UIButton in4gacha = new UIButton( 1110, 20, 40, 40 ) {
         @Override
         public void onClick() {
-            Screen.gameState = Value.GACHA_RATE;
+            Screen.gameState = Constants.GACHA_RATE;
             
         }
     };
@@ -664,7 +663,7 @@ public class UIManager {
     public static UIButton shardShop = new UIButton( 1100, 80, 65, 65 ) {
         @Override
         public void onClick() {
-            Screen.gameState = Value.SHARD_SHOP;
+            Screen.gameState = Constants.SHARD_SHOP;
             
         }
     };
@@ -673,47 +672,43 @@ public class UIManager {
     public static UIButton gachaBH = new UIButton( 500, 345,  85, 50 ) {
         @Override
         public void onClick() {
-            Screen.gameState = Value.NOTI;
+            Screen.gameState = Constants.NOTI;
             Screen.gachaType = Screen.gachaBH;
-            logicGachaBH();
-            
+            GachaService.rollSkillGacha(GachaService.TARGET_BLACK_HOLE);
         }
     };
     
     public static UIButton gachaEnhance = new UIButton( 500, 475,  85, 50 ) {
         @Override
         public void onClick() {
-            Screen.gameState = Value.NOTI;
+            Screen.gameState = Constants.NOTI;
             Screen.gachaType = Screen.gachaEnhance;
-            logicGachaEnhance();
-            
+            GachaService.rollSkillGacha(GachaService.TARGET_ENHANCE);
         }
     };
 
     public static UIButton gachaMer = new UIButton( 500, 610,  90, 53 ) {
         @Override
         public void onClick() {
-            Screen.gameState = Value.NOTI;
+            Screen.gameState = Constants.NOTI;
             Screen.gachaType = Screen.gachaMercenary;
-            logicGachaMercenary();
-            
+            GachaService.rollSkillGacha(GachaService.TARGET_MERCENARY);
         }
     };
 
     public static UIButton summon = new UIButton( 800, 545, 125, 104 ) {
         @Override
         public void onClick() {
-            Screen.gameState = Value.NOTI;
+            Screen.gameState = Constants.NOTI;
 			Screen.gachaType = Screen.summon;
-			logicSummon();
-            
+			GachaService.rollSummon();
         }
     };
 
 	public static UIButton iconShardShop = new UIButton( 1110, 75, 50, 60 ) {
 		@Override
 		public void onClick() {
-			Screen.gameState = Value.SHARD_SHOP;
+			Screen.gameState = Constants.SHARD_SHOP;
 			
 		}
 	};
@@ -721,7 +716,7 @@ public class UIManager {
 	public static UIButton info = new UIButton( 1110, 20, 50, 50 ) {
 		@Override 
 		public void onClick() {
-			Screen.gameState = Value.GACHA_RATE;
+			Screen.gameState = Constants.GACHA_RATE;
 		}
 
 
@@ -736,7 +731,7 @@ public class UIManager {
         return true;
         }
         public void onClick() {
-            Screen.gameState = Value.GACHA;
+            Screen.gameState = Constants.GACHA;
         }
     };
 
@@ -751,7 +746,7 @@ public class UIManager {
             return true;
         }
         public void onClick() {
-            Screen.gameState = Value.GACHA;
+            Screen.gameState = Constants.GACHA;
             
         }
 		
@@ -762,12 +757,7 @@ public class UIManager {
     public static UIButton doiBH = new UIButton( 670, 210, 95, 30 ) {
         @Override
         public void onClick() {
-            if(Screen.coinage >= 100 && Screen.shard >=100  && Screen.unlockBH == false) {
-				Screen.coinage = Screen.coinage - 100;
-				Screen.shard = Screen.shard - 100;
-				Screen.unlockBH = true;
-			}
-            
+            GachaService.exchangeBlackHole();
         }
 		public void renderNut(Graphics g) {
 			if (Screen.unlockBH == true) {
@@ -793,12 +783,7 @@ public class UIManager {
     public static UIButton doiEnhance = new UIButton( 670, 290, 95, 30 ) {
         @Override
         public void onClick() {
-            if(Screen.coinage >= 100 && Screen.shard >=100  && Screen.unlockEnhance == false) {
-				Screen.coinage = Screen.coinage - 100;
-				Screen.shard = Screen.shard - 100;
-				Screen.unlockEnhance = true;
-			}
-            
+            GachaService.exchangeEnhance();
         }
 		public void renderNut(Graphics g) {
 			if (Screen.unlockEnhance == true) {
@@ -823,12 +808,7 @@ public class UIManager {
     public static UIButton doiMer = new UIButton( 670, 370, 95, 30 ) {
         @Override
         public void onClick() {
-            if(Screen.coinage >= 100 && Screen.shard >=100  && Screen.unlockMercenary == false) {
-				Screen.coinage = Screen.coinage - 100;
-				Screen.shard = Screen.shard - 100;
-				Screen.unlockMercenary = true;
-			}
-            
+            GachaService.exchangeMercenary();
         }
 		public void renderNut(Graphics g) {
 			if (Screen.unlockMercenary == true) {
@@ -854,12 +834,7 @@ public class UIManager {
     public static UIButton doiEC = new UIButton( 670, 450, 95, 30 ) {
         @Override
         public void onClick() {
-            if(Screen.coinage >= 200 && Screen.shard >=200 ) {
-				Screen.coinage = Screen.coinage - 200;
-				Screen.shard = Screen.shard - 200;
-				Screen.energyCore ++;
-			}
-            
+            GachaService.exchangeEnergyCore();
         }
 		public void renderNut(Graphics g) {
 			if (Screen.coinage >=200 && Screen.shard >=200) {
@@ -888,7 +863,7 @@ public class UIManager {
             return true;
         }
         public void onClick() {
-            Screen.gameState = Value.GACHA;
+            Screen.gameState = Constants.GACHA;
 			Screen.manageNut.screen.paintImmediately(0, 0, Screen.WIDTH, Screen.HEIGHT);
             
         }
@@ -897,7 +872,7 @@ public class UIManager {
 	public static UIButton levelUp = new UIButton ( 980, 180, 110, 40 ) {
 		@Override
 		public void onClick() {
-			logicLevelUp();
+			HeroUpgradeService.levelUp();
 		}
 		public void renderNut(Graphics g) {
 			if(Screen.heroLevel >=25) {
@@ -955,11 +930,7 @@ public class UIManager {
 	public static UIButton add1 = new UIButton( 1090, 340, 25, 25 ) {
 		@Override
 		public void onClick() {
-			if(Screen.buffHp <Screen.maxBuff && Screen.remainingPoint > 0) {
-				Screen.buffHp ++;
-				Screen.remainingPoint --;
-				MinionStats.maxHealth =  1200 + 100 * Screen.buffHp;
-			}
+			HeroUpgradeService.upgradeHp();
 		}
 		public void renderNut(Graphics g) {
 			if(Screen.buffHp >= Screen.maxBuff) {
@@ -985,12 +956,7 @@ public class UIManager {
 	public static UIButton add2 = new UIButton( 1090, 370, 25, 25 ) {
 		@Override
 		public void onClick() {
-			if(Screen.buffHpRe <Screen.maxBuff && Screen.remainingPoint > 0) {
-				Screen.buffHpRe ++;
-				Screen.remainingPoint --;
-				MinionStats.HEAL_COOL_DOWN = 1000*(100-2*Screen.buffHpRe)/100;
-				MinionStats.healAmount = 150+5*Screen.buffHpRe;
-			}
+			HeroUpgradeService.upgradeHpRegen();
 		}
 		public void renderNut(Graphics g) {
 			if(Screen.buffHpRe >= Screen.maxBuff) {
@@ -1016,11 +982,7 @@ public class UIManager {
 	public static UIButton add3 = new UIButton( 1090, 400, 25, 25 ) {
 		@Override
 		public void onClick() {
-			if(Screen.buffShield <Screen.maxBuff && Screen.remainingPoint > 0) {
-				Screen.buffShield ++;
-				Screen.remainingPoint --;
-				MinionStats.dmgReduction = Screen.buffShield;
-			}
+			HeroUpgradeService.upgradeShield();
 		}
 		public void renderNut(Graphics g) {
 			if(Screen.buffShield >= Screen.maxBuff) {
@@ -1046,11 +1008,7 @@ public class UIManager {
 	public static UIButton add4 = new UIButton( 1090, 430, 25, 25 ) {
 		@Override
 		public void onClick() {
-			if(Screen.buffADmg <Screen.maxBuff && Screen.remainingPoint > 0) {
-				Screen.buffADmg ++;
-				Screen.remainingPoint --;
-				MinionStats.arrowDmg = 150 + 20*Screen.buffADmg;
-			}
+			HeroUpgradeService.upgradeAttackDamage();
 		}
 		public void renderNut(Graphics g) {
 			if(Screen.buffADmg >= Screen.maxBuff) {
@@ -1076,11 +1034,7 @@ public class UIManager {
 	public static UIButton add5 = new UIButton( 1090, 460, 25, 25 ) {
 		@Override
 		public void onClick() {
-			if(Screen.buffSDmg <Screen.maxBuff && Screen.remainingPoint > 0) {
-				Screen.buffSDmg ++;
-				Screen.remainingPoint --;
-				MinionStats.swordDmg = 200 + 25*Screen.buffSDmg;
-			}
+			HeroUpgradeService.upgradeSkillDamage();
 		}
 		public void renderNut(Graphics g) {
 			if(Screen.buffSDmg >= Screen.maxBuff) {
@@ -1106,14 +1060,14 @@ public class UIManager {
 	public static UIButton menuLose = new UIButton( 280, 580, 220, 55 ) {
 		@Override 
 		public void onClick() {
-			Screen.gameState = Value.TITLE_SCREEN;
+			Screen.gameState = Constants.TITLE_SCREEN;
 		}
 	};
 	public static UIButton menuWin = new UIButton( 280, 580, 220, 55 ) {
 		@Override 
 		public void onClick() {
 			Screen.rielLevel++;
-			Screen.gameState = Value.TITLE_SCREEN;
+			Screen.gameState = Constants.TITLE_SCREEN;
 		}
 	};
 	public static UIButton again = new UIButton( 720, 580, 220, 55 ) {
@@ -1131,182 +1085,7 @@ public class UIManager {
 	};
 	
 
-    //Hàm phụ xử lí logic, thằng nào đụng vào bố chặt tay
-	private static void logicGachaBH() {
-		if(Screen.coinage >=11) {
-			Screen.coinage = Screen.coinage - 1;
-			Screen.ok=true;
-			Screen.randomNum = Screen.rand.nextInt(100) + 1;
-					
-			if (Screen.randomNum <=2) {
-				Screen.unlockBH = true;
-			}
-			else if(Screen.randomNum <=5) {
-				Screen.shard = Screen.shard + 50;
-			}
-			else if(Screen.randomNum <=10) {
-				Screen.shard = Screen.shard + 20;
-			}
-			else if(Screen.randomNum <=20) {
-				Screen.shard = Screen.shard + 10;
-			}
-			else if(Screen.randomNum <=30) {
-				Screen.shard = Screen.shard + 5;
-			}
-			else if(Screen.randomNum <=45) {
-				Screen.shard = Screen.shard + 3;
-			}
-			else if(Screen.randomNum <=65) {
-				Screen.shard = Screen.shard + 2;
-			}
-			else {
-				Screen.shard = Screen.shard + 1;
-			}
-		}
-		else{
-			Screen.ok=false;
-		}
-	}
-
-	private static void logicGachaEnhance() {
-		if(Screen.coinage >=11) {
-			Screen.coinage = Screen.coinage - 1;
-			Screen.ok=true;
-			Screen.randomNum = Screen.rand.nextInt(100) + 1;
-					
-			if (Screen.randomNum <=2) {
-				Screen.unlockEnhance = true;
-			}
-			else if(Screen.randomNum <=5) {
-				Screen.shard = Screen.shard + 50;
-			}
-			else if(Screen.randomNum <=10) {
-				Screen.shard = Screen.shard + 20;
-			}
-			else if(Screen.randomNum <=20) {
-				Screen.shard = Screen.shard + 10;
-			}
-			else if(Screen.randomNum <=30) {
-				Screen.shard = Screen.shard + 5;
-			}
-			else if(Screen.randomNum <=45) {
-				Screen.shard = Screen.shard + 3;
-			}
-			else if(Screen.randomNum <=65) {
-				Screen.shard = Screen.shard + 2;
-			}
-			else {
-				Screen.shard = Screen.shard + 1;
-			}
-		}
-		else{
-			Screen.ok=false;
-		}
-	}
-
-	private static void logicGachaMercenary() {
-		if(Screen.coinage >=11) {
-			Screen.coinage = Screen.coinage - 1;
-			Screen.ok=true;
-			Screen.randomNum = Screen.rand.nextInt(100) + 1;
-					
-			if (Screen.randomNum <=2) {
-				Screen.unlockMercenary = true;
-			}
-			else if(Screen.randomNum <=5) {
-				Screen.shard = Screen.shard + 50;
-			}
-			else if(Screen.randomNum <=10) {
-				Screen.shard = Screen.shard + 20;
-			}
-			else if(Screen.randomNum <=20) {
-				Screen.shard = Screen.shard + 10;
-			}
-			else if(Screen.randomNum <=30) {
-				Screen.shard = Screen.shard + 5;
-			}
-			else if(Screen.randomNum <=45) {
-				Screen.shard = Screen.shard + 3;
-			}
-			else if(Screen.randomNum <=65) {
-				Screen.shard = Screen.shard + 2;
-			}
-			else {
-				Screen.shard = Screen.shard + 1;
-			}
-		}
-		else{
-			Screen.ok=false;
-		}
-	}
-
-	private static void logicSummon() {
-		if(Screen.coinage >=12) {
-			Screen.coinage = Screen.coinage - 2;
-			Screen.ok=true;
-			Screen.randomNum = Screen.rand.nextInt(100) + 1;
-
-			if (Screen.randomNum ==1) {
-				Screen.energyCore++;
-			}
-			else if(Screen.randomNum ==2) {
-				Screen.shard = Screen.shard + 100;
-			}
-			else if(Screen.randomNum <=5) {
-				Screen.shard = Screen.shard + 50;
-			}
-			else if(Screen.randomNum <=20) {
-				Screen.shard = Screen.shard + 35;
-			}
-			else if(Screen.randomNum <=40) {
-				Screen.shard = Screen.shard + 20;
-			}
-			else if(Screen.randomNum <=60) {
-				Screen.shard = Screen.shard + 10;
-			}
-			else if(Screen.randomNum <=80) {
-				Screen.shard = Screen.shard + 5;
-			}
-			else {
-				Screen.shard = Screen.shard + 3;
-			}
-		}
-		else{
-			Screen.ok=false;
-		}
-	}
-
-	private static void logicLevelUp() {
-		if(Screen.heroLevel>=25) {
-			return;
-		}
-		int curLv = Screen.heroLevel;
-		if( Screen.heroXp>=Screen.upHeroXp[curLv] && Screen.coinage>=Screen.upHeroCoin[curLv] && 
-			Screen.shard>=Screen.upHeroShard[curLv] && Screen.energyCore>=Screen.upHeroECore[curLv]) {
-				Screen.heroXp -= Screen.upHeroXp[curLv];
-				Screen.coinage -= Screen.upHeroCoin[curLv];
-				Screen.shard -= Screen.upHeroXp[curLv];
-				Screen.energyCore -=Screen.upHeroECore[curLv];
-				Screen.heroLevel++;
-				Screen.remainingPoint +=5;
-				Screen.maxPoint = 5*Screen.heroLevel;
-		}
-	}
-
 	public static void xuLyOutGame() {
-		if(Screen.coinDauTran >=60) {
-			Screen.coinage = Screen.coinDauTran - 50;
-		}
-		else {
-			Screen.coinage = 50;
-		}
-
-		if(Screen.healthDauTran >=2 ) {
-			Screen.health = Screen.healthDauTran - 1;
-		}
-		else {
-			Screen.health = 1;
-		}
-
+		HeroUpgradeService.resetOutGame();
 	}
 }

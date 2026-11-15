@@ -2,13 +2,12 @@ package map;
 import java.awt.*;
 
 import core.Screen;
-import core.Value;
+import core.Constants;
 import tower.ArcherTower;
 import tower.Cannon;
 import tower.GoldMiner;
 import tower.MageTower;
 import tower.Tower; 
-import java.awt.image.BufferedImage;
 
 public class Block extends Rectangle {
 	public int groundID;
@@ -18,18 +17,8 @@ public class Block extends Rectangle {
 	
 	boolean hasDealtDamage = false;
 	
-	int shotMob = -1; // -1: chưa khóa mục tiêu nào (tránh lỗi quái ở vị trí số 0)
-	int targetType = 0; // 0: không có mục tiêu, 1: mobs, 2: mobss, 3: mobsss
 	private int lastAirID = -1; 
 	public Tower currentTower = null;
-
-	boolean shotingMob1 = false;
-	boolean shotingMob2 = false;
-	boolean shotingMob3 = false;
-
-	public static BufferedImage m1;
-
-
 
 	Block(int x, int y, int width, int height, int groundID, int towerID) { // kule menzillerinin oyunun içinde tanımlanması
     // Thêm biến chốt để theo dõi thay đổi ID
@@ -40,7 +29,7 @@ public class Block extends Rectangle {
 	} 
 
 	public boolean isRoad() {
-		return groundID >= Value.groundRoad && groundID <= 4;
+		return groundID >= Constants.groundRoad && groundID <= 4;
 	}
 
 	void SetTower() {
@@ -48,16 +37,16 @@ public class Block extends Rectangle {
 		if (towerID != lastAirID) {
 			lastAirID = towerID;
 			
-			if(towerID == Value.ARCHER_TOWER){
+			if(towerID == Constants.ARCHER_TOWER){
 				currentTower = new ArcherTower(x, y, width * 2, height * 2);
 			}
-			else if(towerID == Value.MAGE_TOWER){
+			else if(towerID == Constants.MAGE_TOWER){
 				currentTower = new MageTower(x, y, width * 2, height * 2);
 			}
-			else if(towerID == Value.CANNON_TOWER){
+			else if(towerID == Constants.CANNON_TOWER){
 				currentTower = new Cannon(x, y, width * 2, height * 2);
 			}
-			else if(towerID == Value.GOLD_MINER){
+			else if(towerID == Constants.GOLD_MINER){
 				currentTower = new GoldMiner(x, y, width * 2, height * 2);
 			} 
             else {
@@ -80,7 +69,7 @@ public class Block extends Rectangle {
         if (currentTower != null) {
             currentTower.draw(g); 
         } 
-		else if (towerID != Value.PLACEHOLDER && towerID != Value.TOWER_OCCUPIED && towerID != Value.SPELL_BLACK_HOLE && towerID >= 0 && towerID < Screen.tileset_air.length) {
+		else if (towerID != Constants.PLACEHOLDER && towerID != Constants.TOWER_OCCUPIED && towerID != Constants.SPELL_BLACK_HOLE && towerID >= 0 && towerID < Screen.tileset_air.length) {
             g.drawImage(Screen.tileset_air[towerID], x, y, width, height, null);
         }
 	}
@@ -95,12 +84,6 @@ public class Block extends Rectangle {
 		
         if (currentTower != null) {
             currentTower.physic();
-        }
-	}
-
-	void fight(Graphics g) {
-		if (currentTower != null) {
-            currentTower.fight(g);
         }
 	}
 }

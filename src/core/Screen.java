@@ -1,10 +1,9 @@
 package core;
 import entity.Projectiles;
-import entity.mob.Mercenary;
-import entity.mob.Minion;
-import entity.mob.Mob;
-import entity.mob.Mob2;
-import entity.mob.Mob3;
+import entity.defender.Mercenary;
+import entity.defender.CastleDefender;
+import entity.enemy.Mob;
+
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
@@ -19,21 +18,16 @@ import spell.Spell;
 import wave.WaveManager;
 
 public class Screen extends JPanel implements Runnable {
-
-    
-
 	Thread thread = new Thread(this);
 
 	public static CopyOnWriteArrayList<Projectiles> pjt = new CopyOnWriteArrayList<>();
-	
+	public static CopyOnWriteArrayList<Mob> activeMobs = new CopyOnWriteArrayList<>();
+
 	public static Image[] tileset_ground = new Image[100];
 	public static Image[] tileset_air = new Image[100];
 	public static Image[] tileset_res = new Image[100];    
 
-	public static Mob[] mobs = new Mob[100];
-	public static Mob2[] mobss = new Mob2[100];
-	public static Mob3[] mobsss = new Mob3[100];
-	public static Minion[] mini = new Minion[1];
+	public static CastleDefender[] mini = new CastleDefender[1];
 	public static Mercenary[] merc = new Mercenary[100];
 	
 	// khởi tạo chu kì animation
@@ -72,7 +66,7 @@ public class Screen extends JPanel implements Runnable {
 	public static Image[] mercenaryAttackAnim = new Image[7];
 
 	//for Tower
-	public static Image[] cacherTower = new Image[8];
+	public static Image[] archerTower = new Image[8];
 	public static Image[] mageTower = new Image[8];
 	public static Image[] cannon = new Image[8];
 	public static Image[] goldMiner = new Image[8];
@@ -83,8 +77,7 @@ public class Screen extends JPanel implements Runnable {
 	public static Random rand = new Random();
 	public static int randomNum;
 
-	public static int gameState = Value.TITLE_SCREEN; // cho biết mình đang ở màn hình nào
-
+	public static int gameState = Constants.TITLE_SCREEN; // cho biết mình đang ở màn hình nào
 
 	public static int gachaType;
 	public static final int gachaBH=1;
@@ -103,8 +96,6 @@ public class Screen extends JPanel implements Runnable {
 	public static double endGameTime;
 	public static int gameTime;
 
-	
-
 	public static boolean unlockBH = true;
 	public static boolean unlockEnhance = true;
 	public static boolean unlockMercenary = false;
@@ -120,7 +111,6 @@ public class Screen extends JPanel implements Runnable {
 	public static int energyCore =999;
 	public static int remainingPoint = 5 * heroLevel;
 	public static int maxPoint = 5 * heroLevel;
-	
 
 	public static int buffHp=0;
 	public static int buffHpRe=0;
@@ -136,16 +126,11 @@ public class Screen extends JPanel implements Runnable {
 	public static int cursedSkull = 0;
 	public static int paperPlane = 0;
 
-
-
-
-
 	public static boolean ok; 	//Đcm tluc thông minh vclll
 	//Con này fix bug đoạn coin sát mép số 10, đề phòng bọn nghẹo gacha ko có tiền mua tháp
 	//Nếu cứ so sánh thì bên keyhandle trừ tiền trước, sau đó sang bên render check coin thấy =10
 	//thì nó lại hiện tb cảnh cáo, bị lệch render với logic.
 
-	
 	public static final int VIRTUAL_WIDTH = 1220;
 	public static final int VIRTUAL_HEIGHT = 780;
 	public static int myWidth = VIRTUAL_WIDTH;  
@@ -245,7 +230,7 @@ public class Screen extends JPanel implements Runnable {
 		Screen.healthDauTran = health;
 		Screen.heroXpDauTran = Screen.heroXp;
 		Screen.startGameTime = System.currentTimeMillis();
-		gameState = Value.IN_GAME;
+		gameState = Constants.IN_GAME;
 	}
 
 	public static void loadLevel() {
@@ -257,25 +242,14 @@ public class Screen extends JPanel implements Runnable {
 
 		save.loadSave(new File("res/map/map" + level));
 		
-		
-		for( int i = 0 ; i < mobs.length;i++) {
-			mobs[i] = new Mob(); 
-		}
-		
-		for( int i = 0 ; i < mobss.length;i++) { 
-			mobss[i] = new Mob2();
-		}
-		
-		for( int i = 0 ; i < mobsss.length;i++) { 
-			mobsss[i] = new Mob3();
-		}
+		activeMobs.clear();
 
 		for (int i = 0; i < mini.length; i++){
-			mini[i] = new Minion();
+			mini[i] = new CastleDefender();
 		}
 
 		if (mini.length > 0 && mini[0] != null) {
-			mini[0].spawnMob(Value.MINION_SOLDIER);
+			mini[0].spawnMob(Constants.MINION_SOLDIER);
 		}
 
 		for (int i = 0; i < merc.length; i++){
@@ -284,7 +258,243 @@ public class Screen extends JPanel implements Runnable {
 		
 		waveManager = new WaveManager(level);
 	}
-	
+
+	public void run() {
+		final int TARGET_UPS = 420;
+		final double NS_PER_TICK = 1_000_000_000.0 / TARGET_UPS;
+
+		long lastTime = System.nanoTime();
+		double delta = 0;
+
+		while(true) {
+			long now = System.nanoTime();
+			delta += (now - lastTime) / NS_PER_TICK;
+			lastTime = now;
+
+			// Update physics at a guaranteed 60 times per second
+			if (delta > 5) delta = 5;
+
+			if(!isFirst && gameState == Constants.IN_GAME && room != null && waveManager != null) {
+				while (delta >= 1){
+					updateGamePhysics();
+					delta--;
+				}
+			} else delta = 0;
+
+			repaint();
+			
+			try {
+				Thread.sleep(2); // tính toán của Gehihi để được 60fps
+			} catch(Exception e)  {}
+		}
+	}
+
+	private void updateGamePhysics(){
+		if(health > 0 && !isWin) {
+			room.physic();
+
+			waveManager.update();
+			hasWon(); // Liên tục kiểm tra điều kiện thắng để bắt kịp lúc animation quái chết kết thúc
+
+			for (Mob mob : activeMobs){
+				if (mob.inGame){
+					mob.physic();
+				}
+				else{
+					activeMobs.remove(mob);
+				}
+			}
+
+			for (int i = 0; i < mini.length; i++){
+				if(mini[i].inGame){
+					mini[i].physic();
+				}
+			}
+
+			for (int i = 0; i < merc.length; i++){
+				if(merc[i].inGame){
+					merc[i].physic();
+				}
+			}
+
+			for (Projectiles a : pjt) {
+				a.physic();
+				if (a.hasRemoved) {
+					pjt.remove(a);
+				}
+			}
+
+			for (Spell s : activeSpells) {
+				s.physic();
+				if (s.isFinished()) {
+					s.destroy();
+					activeSpells.remove(s);
+				}
+			}
+
+		}
+		if (health <= 0) {
+			endGameTime = System.currentTimeMillis();
+			gameTime = (int)((endGameTime - startGameTime)/1000);
+
+			gameState = Constants.DEFEAT_SCREEN;
+			health = rand.nextInt(3) + 2; // reset health random ;)) // chịu em lực
+			int luckyNumber = rand.nextInt(3)+2;
+			//Số kia vừa là hp radom reset, vừa là % heroXp bị trừ :))
+			health = luckyNumber; // reset health random ;))
+			heroXp = (int)(heroXp *(100-3*luckyNumber)/100); // trừ heroXp theo % :)))))))))))))))))
+		} else if (isWin) {
+			// rielLevel++;
+			gameState = Constants.VICTORY_SCREEN;
+			heroXp = heroXp + killed;
+		}
+	}
+
+	// đẩy define xuống dưới vì nó kém quan trọng, phải lướt nhiều >:(
+	public void define() {
+		loadStatus = "Loading configurations...";
+		loadProgress = 10;
+		save = new Save();
+		
+		loadStatus = "Loading textures...";
+		loadProgress = 25;
+		Screen.tiles = new Tiles();
+
+		loadStatus = "Loading game systems...";
+		loadProgress = 45;
+		store = new Store();
+		
+		// tạo con trỏ trong suốt
+		// mục đích để chèn "skin" con trỏ khác lên
+		blankCursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+		blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(blankCursorImg, new Point(0,0), "blank cursor");
+		SwingUtilities.invokeLater(() -> this.setCursor(blankCursor));
+		
+		loadStatus = "Loading map tiles...";
+		loadProgress = 55;
+		try {
+			BufferedImage groundSheet = javax.imageio.ImageIO.read(new File("res/tileset_ground.png"));
+			int count = Math.min(tileset_ground.length, groundSheet.getHeight() / 26);
+			for(int i = 0; i < count; i++) {
+				tileset_ground[i] = groundSheet.getSubimage(0, 26 * i, 26, 26);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			BufferedImage airSheet = javax.imageio.ImageIO.read(new File("res/tileset_air.png"));
+			int count = Math.min(tileset_air.length, airSheet.getHeight() / 26);
+			for(int i = 0; i < count; i++) {
+				tileset_air[i] = airSheet.getSubimage(0, 26 * i, 26, 26);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+		loadStatus = "Loading tower frames...";
+		loadProgress = 70;
+		for (int i = 0; i < archerTower.length; i++) {
+			archerTower[i] = loadFrame("res/archerTower/archerTower" + i + ".png");
+		}
+		for (int i = 0; i < mageTower.length; i++) {
+			mageTower[i] = loadFrame("res/mageTower/mageTower" + i + ".png");
+		}
+		for(int i = 0; i < cannon.length; i++){
+			cannon[i] = loadFrame("res/cannon/cannon" + i + ".png");
+		}
+		for(int i = 0; i < goldMiner.length; i++){
+			goldMiner[i] = loadFrame("res/goldMiner/goldMiner" + i + ".png");
+		}
+		for(int i = 0; i < blackHole.length; i++){
+			blackHole[i] = loadFrame("res/blackHole/blackHole" + i + ".png");
+		}
+		airplane = loadFrame("res/airplane/airplane.png");
+		for(int i = 0; i < explosion.length; i++){
+			explosion[i] = loadFrame("res/airplane/explosion" + i + ".png");
+		}
+
+		tileset_res[0] = loadFrame("res/cell.png");
+		tileset_res[1] = loadFrame("res/heart.png");
+		tileset_res[2] = loadFrame("res/coin.png");
+		
+		loadStatus = "Loading unit animations...";
+		loadProgress = 85;
+		for (int i = 0; i < mobOrcWalkAnim.length; i++){
+			mobOrcWalkAnim[i] = loadFrame("res/orc/walk00" + i + ".png");
+			mobDemonWalkAnim[i] = loadFrame("res/demon/walk00" + i + ".png");
+			mobSlimeWalkAnim[i] = loadFrame("res/slime/walk00" + i + ".png");
+		}
+		for (int i = 0; i < mobOrcDeadAnim.length; i++){
+			mobOrcDeadAnim[i] = loadFrame("res/orc/dead00" + i + ".png");
+			mobDemonDeadAnim[i] = loadFrame("res/demon/dead00" + i + ".png");
+		}
+		for (int i = 0; i < mobOrcIdleAnim.length; i++){
+			mobOrcIdleAnim[i] = loadFrame("res/orc/idle00" + i + ".png");
+		}
+		for (int i = 0; i < mobDemonIdleAnim.length; i++){
+			mobDemonIdleAnim[i] = loadFrame("res/demon/idle00" + i + ".png");
+		}
+		for (int i = 0; i < mobSlimeIdleAnim.length; i++){
+			mobSlimeIdleAnim[i] = loadFrame("res/slime/idle00" + i + ".png");
+		}
+		for(int i = 0; i < mobSlimeDeadAnim.length; i++){
+			mobSlimeDeadAnim[i] = loadFrame("res/slime/dead00" + i + ".png");
+		}
+
+
+		for (int i = 0; i < minionIdleAnim.length; i++){
+			minionIdleAnim[i] = loadFrame("res/minion/idle00" + i + ".png");
+		}
+
+		mercenaryIcon = loadFrame("res/mercenary/icon.png");
+		for (int i = 0; i < mercenaryIdleAnim.length; i++){
+			mercenaryIdleAnim[i] = loadFrame("res/mercenary/idle00" + i + ".png");
+		}
+		for (int i = 0; i < mercenaryDeadAnim.length; i++){
+			mercenaryDeadAnim[i] = loadFrame("res/mercenary/dead00" + i + ".png");
+		}
+		for (int i = 0; i < mercenaryAttackAnim.length; i++){
+			mercenaryAttackAnim[i] = loadFrame("res/mercenary/attack00" + i + ".png");
+		}
+
+		for (int i = 0; i < mobOrcAttack1Anim.length; i++){
+			mobOrcAttack1Anim[i] = loadFrame("res/orc/attack100" + i + ".png");
+			mobOrcAttack2Anim[i] = loadFrame("res/orc/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < mobDemonAttack1Anim.length; i++){
+			mobDemonAttack1Anim[i] = loadFrame("res/demon/attack100" + i + ".png");
+			mobDemonAttack2Anim[i] = loadFrame("res/demon/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < mobSlimeAttack1Anim.length; i++){
+			mobSlimeAttack1Anim[i] = loadFrame("res/slime/attack100" + i + ".png");
+			mobSlimeAttack2Anim[i] = loadFrame("res/slime/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < minionAttack1Anim.length; i++){
+			minionAttack1Anim[i] = loadFrame("res/minion/attack100" + i + ".png");
+			minionAttack2Anim[i] = loadFrame("res/minion/attack200" + i + ".png");
+		}
+
+		for (int i = 0; i < minionShootingAnim.length; i++){
+			minionShootingAnim[i] = loadFrame("res/minion/bowAttack00" + i + ".png");
+		}
+		
+		for (int i = 0; i < minionDeadAnim.length; i++){
+			minionDeadAnim[i] = loadFrame("res/minion/dead00" + i + ".png");
+		}
+
+		projectiles.put(Constants.ARCHER_TOWER, loadFrame("res/archerTower/arrow000.png")); // bắn tên thường
+		projectiles.put(Constants.MAGE_TOWER, loadFrame("res/mageTower/energyBall.png"));
+		projectiles.put(Constants.CANNON_TOWER, loadFrame("res/cannon/cannonBall.png"));
+		projectiles.put(Constants.MINION_SOLDIER, loadFrame("res/archerTower/arrow002.png")); // bắn tên đỏ
+		
+		loadStatus = "Ready to play!";
+		loadProgress = 100;
+	}
+
 	@Override 
 	public void paintComponent(Graphics g) {  // Hàm vẽ chính --> đẩy sang gamerender.java
 		super.paintComponent(g);
@@ -378,229 +588,6 @@ public class Screen extends JPanel implements Runnable {
 
 		// Flushes graphics buffer to eliminate display queue stutter in fullscreen
 		Toolkit.getDefaultToolkit().sync(); //Cái này để đỡ lag, cụ thể ntn t đ.. rõ nữa :))
-	}
-
-	public void run() {
-		while(true) {
-			if(!isFirst && gameState == Value.IN_GAME && room != null && waveManager != null) {
-				if(health > 0 && !isWin) {
-					room.physic();
-
-					waveManager.update();
-					hasWon(); // Liên tục kiểm tra điều kiện thắng để bắt kịp lúc animation quái chết kết thúc
-
-					for(int i = 0; i < mobs.length; i++) { // mobun hareketi
-						if(mobs[i].inGame) {
-							mobs[i].physic();
-						}
-					}
-					
-					for(int i = 0; i <mobss.length; i++) { 
-						if(mobss[i].inGame) {
-							mobss[i].physic();
-						}
-					}
-					
-					for(int i = 0; i < mobsss.length; i++) { 
-						if(mobsss[i].inGame) {
-							mobsss[i].physic();
-						}
-					}	
-
-					for (int i = 0; i < mini.length; i++){
-						if(mini[i].inGame){
-							mini[i].physic();
-						}
-					}
-
-					for (int i = 0; i < merc.length; i++){
-						if(merc[i].inGame){
-							merc[i].physic();
-						}
-					}
-
-					for (Projectiles a : pjt) {
-						a.physic();
-						if (a.hasRemoved) {
-							pjt.remove(a);
-						}
-					}
-
-					for (Spell s : activeSpells) {
-						s.physic();
-						if (s.isFinished()) {
-							s.destroy();
-							activeSpells.remove(s);
-						}
-					}
-
-				}
-				if (health <= 0) {
-					endGameTime = System.currentTimeMillis();
-					gameTime = (int)((endGameTime - startGameTime)/1000);
-
-					gameState = Value.DEFEAT_SCREEN;
-					health = rand.nextInt(3) + 2; // reset health random ;)) // chịu em lực
-					int luckyNumber = rand.nextInt(3)+2;
-					//Số kia vừa là hp radom reset, vừa là % heroXp bị trừ :))
-					health = luckyNumber; // reset health random ;))
-					heroXp = (int)(heroXp *(100-3*luckyNumber)/100); // trừ heroXp theo % :)))))))))))))))))
-				} else if (isWin) {
-					// rielLevel++;
-					gameState = Value.VICTORY_SCREEN;
-					heroXp = heroXp + killed;
-				}
-			}
-			repaint();
-			try {
-				Thread.sleep(1);
-			} catch(Exception e)  {}
-		}
-	}
-
-	// đẩy define xuống dưới vì nó kém quan trọng, phải lướt nhiều >:(
-	public void define() {
-		loadStatus = "Loading configurations...";
-		loadProgress = 10;
-		save = new Save();
-		
-		loadStatus = "Loading textures...";
-		loadProgress = 25;
-		Screen.tiles = new Tiles();
-
-		loadStatus = "Loading game systems...";
-		loadProgress = 45;
-		store = new Store();
-		
-		// tạo con trỏ trong suốt
-		// mục đích để chèn "skin" con trỏ khác lên
-		blankCursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-		blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(blankCursorImg, new Point(0,0), "blank cursor");
-		SwingUtilities.invokeLater(() -> this.setCursor(blankCursor));
-		
-		loadStatus = "Loading map tiles...";
-		loadProgress = 55;
-		try {
-			BufferedImage groundSheet = javax.imageio.ImageIO.read(new File("res/tileset_ground.png"));
-			int count = Math.min(tileset_ground.length, groundSheet.getHeight() / 26);
-			for(int i = 0; i < count; i++) {
-				tileset_ground[i] = groundSheet.getSubimage(0, 26 * i, 26, 26);
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-
-		try {
-			BufferedImage airSheet = javax.imageio.ImageIO.read(new File("res/tileset_air.png"));
-			int count = Math.min(tileset_air.length, airSheet.getHeight() / 26);
-			for(int i = 0; i < count; i++) {
-				tileset_air[i] = airSheet.getSubimage(0, 26 * i, 26, 26);
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-
-		loadStatus = "Loading tower frames...";
-		loadProgress = 70;
-		for (int i = 0; i < cacherTower.length; i++) {
-			cacherTower[i] = loadFrame("res/cacherTower/cacherTower" + i + ".png");
-		}
-		for (int i = 0; i < mageTower.length; i++) {
-			mageTower[i] = loadFrame("res/mageTower/mageTower" + i + ".png");
-		}
-		for(int i = 0; i < cannon.length; i++){
-			cannon[i] = loadFrame("res/cannon/cannon" + i + ".png");
-		}
-		for(int i = 0; i < goldMiner.length; i++){
-			goldMiner[i] = loadFrame("res/goldMiner/goldMiner" + i + ".png");
-		}
-		for(int i = 0; i < blackHole.length; i++){
-			blackHole[i] = loadFrame("res/blackHole/blackHole" + i + ".png");
-		}
-		airplane = loadFrame("res/airplane/airplane.png");
-		for(int i = 0; i < explosion.length; i++){
-			explosion[i] = loadFrame("res/airplane/explosion" + i + ".png");
-		}
-
-		tileset_res[0] = loadFrame("res/cell.png");
-		tileset_res[1] = loadFrame("res/heart.png");
-		tileset_res[2] = loadFrame("res/coin.png");
-		
-		loadStatus = "Loading unit animations...";
-		loadProgress = 85;
-		for (int i = 0; i < mobOrcWalkAnim.length; i++){
-			mobOrcWalkAnim[i] = loadFrame("res/orc/walk00" + i + ".png");
-			mobDemonWalkAnim[i] = loadFrame("res/demon/walk00" + i + ".png");
-			mobSlimeWalkAnim[i] = loadFrame("res/slime/walk00" + i + ".png");
-		}
-		for (int i = 0; i < mobOrcDeadAnim.length; i++){
-			mobOrcDeadAnim[i] = loadFrame("res/orc/dead00" + i + ".png");
-			mobDemonDeadAnim[i] = loadFrame("res/demon/dead00" + i + ".png");
-		}
-		for (int i = 0; i < mobOrcIdleAnim.length; i++){
-			mobOrcIdleAnim[i] = loadFrame("res/orc/idle00" + i + ".png");
-		}
-		for (int i = 0; i < mobDemonIdleAnim.length; i++){
-			mobDemonIdleAnim[i] = loadFrame("res/demon/idle00" + i + ".png");
-		}
-		for (int i = 0; i < mobSlimeIdleAnim.length; i++){
-			mobSlimeIdleAnim[i] = loadFrame("res/slime/idle00" + i + ".png");
-		}
-		for(int i = 0; i < mobSlimeDeadAnim.length; i++){
-			mobSlimeDeadAnim[i] = loadFrame("res/slime/dead00" + i + ".png");
-		}
-
-
-		for (int i = 0; i < minionIdleAnim.length; i++){
-			minionIdleAnim[i] = loadFrame("res/minion/idle00" + i + ".png");
-		}
-
-		mercenaryIcon = loadFrame("res/mercenary/icon.png");
-		for (int i = 0; i < mercenaryIdleAnim.length; i++){
-			mercenaryIdleAnim[i] = loadFrame("res/mercenary/idle00" + i + ".png");
-		}
-		for (int i = 0; i < mercenaryDeadAnim.length; i++){
-			mercenaryDeadAnim[i] = loadFrame("res/mercenary/dead00" + i + ".png");
-		}
-		for (int i = 0; i < mercenaryAttackAnim.length; i++){
-			mercenaryAttackAnim[i] = loadFrame("res/mercenary/attack00" + i + ".png");
-		}
-
-		for (int i = 0; i < mobOrcAttack1Anim.length; i++){
-			mobOrcAttack1Anim[i] = loadFrame("res/orc/attack100" + i + ".png");
-			mobOrcAttack2Anim[i] = loadFrame("res/orc/attack200" + i + ".png");
-		}
-
-		for (int i = 0; i < mobDemonAttack1Anim.length; i++){
-			mobDemonAttack1Anim[i] = loadFrame("res/demon/attack100" + i + ".png");
-			mobDemonAttack2Anim[i] = loadFrame("res/demon/attack200" + i + ".png");
-		}
-
-		for (int i = 0; i < mobSlimeAttack1Anim.length; i++){
-			mobSlimeAttack1Anim[i] = loadFrame("res/slime/attack100" + i + ".png");
-			mobSlimeAttack2Anim[i] = loadFrame("res/slime/attack200" + i + ".png");
-		}
-
-		for (int i = 0; i < minionAttack1Anim.length; i++){
-			minionAttack1Anim[i] = loadFrame("res/minion/attack100" + i + ".png");
-			minionAttack2Anim[i] = loadFrame("res/minion/attack200" + i + ".png");
-		}
-
-		for (int i = 0; i < minionShootingAnim.length; i++){
-			minionShootingAnim[i] = loadFrame("res/minion/bowAttack00" + i + ".png");
-		}
-		
-		for (int i = 0; i < minionDeadAnim.length; i++){
-			minionDeadAnim[i] = loadFrame("res/minion/dead00" + i + ".png");
-		}
-
-		projectiles.put(Value.ARCHER_TOWER, loadFrame("res/cacherTower/arrow000.png")); // bắn tên thường
-		projectiles.put(Value.MAGE_TOWER, loadFrame("res/mageTower/energyBall.png"));
-		projectiles.put(Value.CANNON_TOWER, loadFrame("res/cannon/cannonBall.png"));
-		projectiles.put(Value.MINION_SOLDIER, loadFrame("res/cacherTower/arrow002.png")); // bắn tên đỏ
-		
-		loadStatus = "Ready to play!";
-		loadProgress = 100;
 	}
 
 	// crop frame by frame

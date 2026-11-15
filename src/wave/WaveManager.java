@@ -1,6 +1,12 @@
 package wave;
 import core.Screen;
-import core.Value;
+import entity.enemy.DemonMob;
+import entity.enemy.Mob;
+import entity.enemy.OrcMob;
+import entity.enemy.SlimeMob;
+import core.Constants;
+import wave.LevelConfig.WaveData;
+import wave.LevelConfig.MobSpawnInfo;
 
 /**
  * Lớp quản lý toàn bộ hệ thống sinh quái (Wave Management).
@@ -94,31 +100,20 @@ public class WaveManager {
     }
     
     private void spawnMob(MobSpawnInfo info) {
-        if (info.mobType == Value.SLIME_MONSTER) { // Slime
-            for(int i = 0; i < Screen.mobsss.length; i++) {
-                if(!Screen.mobsss[i].inGame) {
-                    Screen.mobsss[i].spawnMob(info.mobType);
-                    Screen.mobsss[i].applyMultiplier(info.hpMultiplier, info.speedMultiplier);
-                    break;
-                }
-            }
-        } else if (info.mobType == Value.ORC_MONSTER) { // Orc
-            for(int i = 0; i < Screen.mobs.length; i++) {
-                if(!Screen.mobs[i].inGame) {
-                    Screen.mobs[i].spawnMob(info.mobType);
-                    Screen.mobs[i].applyMultiplier(info.hpMultiplier, info.speedMultiplier);
-                    break;
-                }
-            }
-        } else if (info.mobType == Value.BLOOD_DEMON_MONSTER) { // Demon
-            for(int i = 0; i < Screen.mobss.length; i++) {
-                if(!Screen.mobss[i].inGame) {
-                    Screen.mobss[i].spawnMob(info.mobType);
-                    Screen.mobss[i].applyMultiplier(info.hpMultiplier, info.speedMultiplier);
-                    break;
-                }
-            }
+         Mob mob;
+        if (info.mobType == Constants.ORC_MONSTER) {
+            mob = new OrcMob();
+        } else if (info.mobType == Constants.BLOOD_DEMON_MONSTER) {
+            mob = new DemonMob();
+        } else if (info.mobType == Constants.SLIME_MONSTER) {
+            mob = new SlimeMob();
+        } else{
+            mob = new OrcMob();
         }
+        
+        mob.spawnMob(info.mobType);
+        mob.applyMultiplier(info.hpMultiplier, info.speedMultiplier);
+        Screen.activeMobs.add(mob); // Add directly to the unified list!
     }
     
     public boolean isAllWavesFinished() {
@@ -129,21 +124,6 @@ public class WaveManager {
     }
     
     public boolean isAnyMobAlive() {
-        if (Screen.mobs != null) {
-            for(int i = 0; i < Screen.mobs.length; i++) {
-                if (Screen.mobs[i] != null && Screen.mobs[i].inGame) return true;
-            }
-        }
-        if (Screen.mobss != null) {
-            for(int i = 0; i < Screen.mobss.length; i++) {
-                if (Screen.mobss[i] != null && Screen.mobss[i].inGame) return true;
-            }
-        }
-        if (Screen.mobsss != null) {
-            for(int i = 0; i < Screen.mobsss.length; i++) {
-                if (Screen.mobsss[i] != null && Screen.mobsss[i].inGame) return true;
-            }
-        }
-        return false;
+        return !Screen.activeMobs.isEmpty();
     }
 }
