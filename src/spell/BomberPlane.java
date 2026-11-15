@@ -3,7 +3,6 @@ import java.awt.*;
 
 import core.Screen;
 import entity.enemy.Mob;
-import entity.enemy.OrcMob;
 
 /**
  * Kỹ năng Máy Bay Thả Bom (BomberPlane extends Spell)

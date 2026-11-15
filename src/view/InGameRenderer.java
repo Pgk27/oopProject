@@ -1,6 +1,5 @@
 package view;
 
-import core.Constants;
 import core.Screen;
 import core.Store;
 import core.UIManager;

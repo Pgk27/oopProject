@@ -7,6 +7,20 @@ import core.Screen;
  */
 public class HeroUpgradeService {
 
+    public static void initUpgradeCosts() {
+        Screen.upHeroXp[1] = 200;
+        Screen.upHeroCoin[1] = 50;
+        Screen.upHeroShard[1] = 50;
+        Screen.upHeroECore[1] = 1;
+
+        for (int i = 2; i < 25; i++) {
+            Screen.upHeroXp[i] = (int) (1.2 * Screen.upHeroXp[i - 1]);
+            Screen.upHeroCoin[i] = (int) (1.2 * Screen.upHeroCoin[i - 1]);
+            Screen.upHeroShard[i] = 50 * i;
+            Screen.upHeroECore[i] = i;
+        }
+    }
+
     public static boolean canLevelUp() {
         if (Screen.heroLevel >= 25) return false;
         int curLv = Screen.heroLevel;
