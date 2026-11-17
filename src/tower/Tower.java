@@ -4,7 +4,7 @@ import java.net.URL;
 
 import core.Screen;
 import entity.Projectiles;
-import entity.mob.Mob;
+import entity.enemy.Mob;
 
 public abstract class Tower {
     protected int x, y, width, height;
@@ -15,14 +15,14 @@ public abstract class Tower {
     protected int towerAnimFrame = 0;
     protected int shootFrame; // frame bắn của từng tháp
     protected double damage;
+    protected double attackSpeed = 1.0;
+    protected long lastAttackTime = 0;
+    protected boolean isAttacking = false;
 
     public int id; // ID của tháp để Block nhận diện
 
     // Quản lý mục tiêu
-    protected int shotMob = -1;
-    protected boolean shotingMob1 = false;
-    protected boolean shotingMob2 = false;
-    protected boolean shotingMob3 = false;
+    protected Mob target = null;
     protected boolean hasDealtDamage = false;
     protected Rectangle towerSquare;
 
@@ -65,79 +65,59 @@ public abstract class Tower {
 		}
 
         // A. KIỂM TRA MỤC TIÊU CŨ (Mất dấu hoặc quái chết thì buông mục tiêu ngay)
-        if (shotMob != -1) {
-            if (shotingMob1 && (Screen.mobs[shotMob] == null || Screen.mobs[shotMob].isDead() || !Screen.mobs[shotMob].inGame || !towerSquare.intersects(Screen.mobs[shotMob]))) {
-                shotingMob1 = false;
-            }
-            else if (shotingMob2 && (Screen.mobss[shotMob] == null || Screen.mobss[shotMob].isDead() || !Screen.mobss[shotMob].inGame || !towerSquare.intersects(Screen.mobss[shotMob]))) {
-                shotingMob2 = false;
-            }
-            else if (shotingMob3 && (Screen.mobsss[shotMob] == null || Screen.mobsss[shotMob].isDead() || !Screen.mobsss[shotMob].inGame || !towerSquare.intersects(Screen.mobsss[shotMob]))) {
-                shotingMob3 = false;
-            }
-
-            // Nếu không còn khóa mục tiêu nào thì reset index
-            if (!shotingMob1 && !shotingMob2 && !shotingMob3) {
-                shotMob = -1;
-            }
+        if (target != null && (target.isDead() || !towerSquare.intersects(target.getBounds()))){
+            target = null;
         }
 
         // B. TÌM KIẾM MỤC TIÊU MỚI GẦN NHẤT
-        if (shotMob == -1) {
+        if (target == null) {
             double closestDistance = Double.MAX_VALUE;
-            int potentialTarget = -1;
-            int targetGroup = 0; // 1: mobs, 2: mobss, 3: mobsss
-
-            // Quét nhóm quái 1
-            for (int i = 0; i < Screen.mobs.length; i++) {
-                if (Screen.mobs[i] != null && Screen.mobs[i].inGame && !Screen.mobs[i].isDead() && towerSquare.intersects(Screen.mobs[i])) {
-                    double dist = distanceCheck(Screen.mobs[i]);
-                    if (dist < closestDistance) {
+            for (Mob mob : Screen.activeMobs){
+                if (!mob.isDead() && towerSquare.intersects(mob.getBounds())){
+                    double dist = distanceCheck(mob.getBounds());
+                    if (dist < closestDistance){
                         closestDistance = dist;
-                        potentialTarget = i;
-                        targetGroup = 1;
+                        target = mob;
                     }
                 }
-            }
-            // Quét nhóm quái 2
-            for (int i = 0; i < Screen.mobss.length; i++) {
-                if (Screen.mobss[i] != null && Screen.mobss[i].inGame && !Screen.mobss[i].isDead() && towerSquare.intersects(Screen.mobss[i])) {
-                    double dist = distanceCheck(Screen.mobss[i]);
-                    if (dist < closestDistance) {
-                        closestDistance = dist;
-                        potentialTarget = i;
-                        targetGroup = 2;
-                    }
-                }
-            }
-            // Quét nhóm quái 3
-            for (int i = 0; i < Screen.mobsss.length; i++) {
-                if (Screen.mobsss[i] != null && Screen.mobsss[i].inGame && !Screen.mobsss[i].isDead() && towerSquare.intersects(Screen.mobsss[i])) {
-                    double dist = distanceCheck(Screen.mobsss[i]);
-                    if (dist < closestDistance) {
-                        closestDistance = dist;
-                        potentialTarget = i;
-                        targetGroup = 3;
-                    }
-                }
-            }
-
-            // Ghi nhận mục tiêu gần nhất tìm được
-            if (potentialTarget != -1) {
-                shotMob = potentialTarget;
-                if (targetGroup == 1) shotingMob1 = true;
-                else if (targetGroup == 2) shotingMob2 = true;
-                else if (targetGroup == 3) shotingMob3 = true;
             }
         }
 
-        // LOGIC TRỪ MÁU THEO THỜI GIAN KHỰNG
-        if (shotingMob1 || shotingMob2 || shotingMob3) {
-            Mob target = null;
-            if (shotingMob1 && Screen.mobs[shotMob] != null) target = Screen.mobs[shotMob];
-            else if (shotingMob2 && Screen.mobss[shotMob] != null) target = Screen.mobss[shotMob];
-            else if (shotingMob3 && Screen.mobsss[shotMob] != null) target = Screen.mobsss[shotMob];
-            if (towerAnimFrame == shootFrame) {
+        // C. LOGIC BẮN VÀ HOẠT ẢNH TẤN CÔNG
+        if (target != null) {
+            long now = System.currentTimeMillis();
+            long cooldownMs = (long) (1000.0 / attackSpeed);
+
+            if (lastAttackTime == 0) {
+                lastAttackTime = now;
+                hasDealtDamage = false;
+                isAttacking = true;
+            }
+
+            long elapsed = now - lastAttackTime;
+            if (elapsed >= cooldownMs) {
+                lastAttackTime = now;
+                hasDealtDamage = false;
+                elapsed = 0;
+                isAttacking = true;
+            }
+
+            int totalFrames = getTotalAnimationFrames();
+            long frameDurationMs = animSpeed * 2;
+            long attackAnimDurationMs = totalFrames * frameDurationMs;
+
+            if (elapsed < attackAnimDurationMs) {
+                isAttacking = true;
+                towerAnimFrame = (int) (elapsed / frameDurationMs);
+                if (towerAnimFrame >= totalFrames) {
+                    towerAnimFrame = totalFrames - 1;
+                }
+            } else {
+                isAttacking = false;
+                towerAnimFrame = 0; // Trở về idle frame 0
+            }
+
+            if (towerAnimFrame >= shootFrame) {
                 double startX = x + width/2;
 				double startY = y + height/2;
                 if (target != null && !hasDealtDamage){
@@ -147,16 +127,18 @@ public abstract class Tower {
                     Screen.pjt.add(new Projectiles(startX, startY, target, finalDamage, id));
 					hasDealtDamage = true;
 					if (target.isDead()) {
-						shotMob = -1;
-						shotingMob1 = false;
-						shotingMob2 = false;
-						shotingMob3 = false;
+						target = null;
 						Screen.hasWon();
 					}
                 }
             } else {
                 hasDealtDamage = false;
             }
+        } else {
+            lastAttackTime = 0;
+            hasDealtDamage = false;
+            isAttacking = false;
+            towerAnimFrame = 0;
         }
     }
 
@@ -166,6 +148,24 @@ public abstract class Tower {
         }
     }
 
+    protected int getTotalAnimationFrames() {
+        return 8;
+    }
+
+    // In Tower.java
+    protected void drawOriented(Graphics g, Image frame) {
+        if (frame == null) return;
+        
+        // If there is a target, face it; otherwise face right by default
+        int targetX = (target != null) ? target.getX() : (this.x + width);
+        if (targetX < this.x + width / 2) {
+            // Target is to the left -> flip horizontally using negative width
+            g.drawImage(frame, x + width, y, -width, height, null);
+        } else {
+            // Target is to the right -> draw normally
+            g.drawImage(frame, x, y, width, height, null);
+        }
+    }
+
     public abstract void draw(Graphics g);
-    public abstract void fight(Graphics g);
 }

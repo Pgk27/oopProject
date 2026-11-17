@@ -51,14 +51,16 @@ public class Sound {
             spellCast = readAudio("sfx/04_Fire_explosion_04_medium.wav");
             boomShot = readAudio("sfx/boom.wav");
 
-            preloadSfx(sfxBite, 3);
-            preloadSfx(sfxClaw, 3);
-            preloadSfx(sfxSlash, 3);
-            preloadSfx(sfxDeath, 2);
-            preloadSfx(sfxPierce, 3);
-            preloadSfx(bowRelease, 3);
-            preloadSfx(spellCast, 3);
-            preloadSfx(boomShot, 3);
+            sfxExecutor.submit(() -> {
+                preloadSfx(sfxBite, 2);
+                preloadSfx(sfxClaw, 2);
+                preloadSfx(sfxSlash, 2);
+                preloadSfx(sfxDeath, 2);
+                preloadSfx(sfxPierce, 2);
+                preloadSfx(bowRelease, 2);
+                preloadSfx(spellCast, 2);
+                preloadSfx(boomShot, 2);
+            });
 
         } catch(Exception e){
             e.printStackTrace();
@@ -139,19 +141,22 @@ public class Sound {
 
     public void playMusic(URL soundURL){
         if (soundURL == null) return;
-        try{
-            stopMusic(); // dừng bài cũ
+        sfxExecutor.submit(() -> {
+            try{
+                stopMusic(); // dừng bài cũ
 
-            AudioInputStream ais = getPlayableStream(soundURL);
-            musicClip = AudioSystem.getClip();
-            musicClip.open(ais);
+                AudioInputStream ais = getPlayableStream(soundURL);
+                Clip clip = AudioSystem.getClip();
+                clip.open(ais);
 
-            setClipVolume(musicClip, Screen.musicVolume);
+                musicClip = clip;
+                setClipVolume(musicClip, Screen.musicVolume);
 
-            musicClip.loop(Clip.LOOP_CONTINUOUSLY);
-        } catch(Exception e){
-            e.printStackTrace();
-        }
+                musicClip.loop(Clip.LOOP_CONTINUOUSLY);
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+        });
     }
 
     public void playSfx(URL soundURL){
