@@ -34,13 +34,14 @@ public abstract class Mob {
     
     // Stats
     protected double renderScale;
-    public double health;
-    protected double maxHealth;
+    public double health = 80;
+    protected double maxHealth = health;
     protected int mobSize = 32;
     protected int healthSpace = 3, healthHeight = 6;
     public double dmgReduction = 0;
     public double attackDmg;
     public double attackSpeed = 1.0;
+    public int rewardCoin = 1;
 
     // Movement & Lane
     protected int mobID = Constants.PLACEHOLDER;
@@ -80,8 +81,12 @@ public abstract class Mob {
     }
 
     public void playerLoseHealth() {
-		Screen.health -= 1;   
+		Screen.health -= getCastleDamage();   
 	}
+
+    public int getCastleDamage() {
+        return 1;
+    }
 
     // Common enemy movement, combat, and damage logic
     public void physic(){
@@ -235,8 +240,6 @@ public abstract class Mob {
 		yC = spawnY;
 
 		this.mobID = mobID;
-		this.health = 1000;
-		this.maxHealth = health;
 
 		// set ngẫu nhiên frame cho từng con mob (ngẫu nhiên hóa chuyển động)
 		this.animFrame = Screen.rand.nextInt(8);
@@ -252,7 +255,6 @@ public abstract class Mob {
 		this.deadDelay = 0;
 
 		inGame = true;
-		
 	}
 	   
     public void updateCombat(int totalFrames, int hitFrame){
@@ -269,6 +271,10 @@ public abstract class Mob {
 
 		long elapsed = now - lastAttackTime;
 		if (elapsed >= cooldownMs){
+			if (!hasDealtDamage){
+				attack();
+				hasDealtDamage = true;
+			}
 			lastAttackTime = now;
 			hasDealtDamage = false;
 			elapsed = 0;
@@ -277,7 +283,7 @@ public abstract class Mob {
 		}
 
 		// Thời gian hiển thị 1 frame hoạt ảnh đánh (ví dụ 100ms)
-		long frameDurationMs = animSpeed * 3; 
+		long frameDurationMs = Math.max(1, (long) ((animSpeed * 3) / attackSpeed)); 
 		long attackAnimDurationMs = totalFrames * frameDurationMs;
 
 		if (elapsed < attackAnimDurationMs){
@@ -361,6 +367,7 @@ public abstract class Mob {
 		deadTick = 0;
 		deadDelay = 0;
 		Screen.killed++;
+		Screen.coinage += rewardCoin;
 	}
     
     // SFX Handler
@@ -435,10 +442,12 @@ public abstract class Mob {
 	}
     
     public void applyMultiplier(double hpMult, double speedMult) {
-		this.maxHealth = (int)(this.maxHealth * hpMult);
-		this.attackSpeed *= 1.5;
+		this.maxHealth = Math.max(1, (int)(this.maxHealth * hpMult));
+		this.attackSpeed *= Math.max(1.0, speedMult);
 		this.health = this.maxHealth;
-		this.walkSpeed = (int)(this.walkSpeed / speedMult); // walkSpeed is frame delay
+		if (speedMult > 1.0) {
+			this.walkSpeed = Math.max(1, (int)(this.walkSpeed / speedMult)); // walkSpeed is frame delay
+		}
 	}
 
     // Getters

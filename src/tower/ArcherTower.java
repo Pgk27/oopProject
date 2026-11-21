@@ -6,8 +6,9 @@ import core.Constants;
 
 public class ArcherTower extends Tower {
     public ArcherTower(int x, int y, int width, int height) {
-        // Truyền thông số: Tầm bắn 100, Sát thương 2, frame bắn 6, ID tháp
-        super(x, y, width, height, 1000, 1, 5, Constants.ARCHER_TOWER); //check id
+        // Truyền thông số: Tầm bắn 150, Sát thương 4, frame bắn 5, ID tháp
+        super(x, y, width, height, 150, 4, 5, Constants.ARCHER_TOWER); //check id
+        
     }
 
     @Override

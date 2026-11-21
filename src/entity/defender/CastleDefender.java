@@ -15,7 +15,7 @@ public class CastleDefender extends Mob {
 	private int healAmount = getHealAmount();  //lượng hp hồi 1 cục
 	private long lastHealTime = 0;
 	private double arrowDmg = getArrowDmg();  //st cung
-	private int shootRange = 300;
+	private int shootRange = 320;
 
 	// Shooting Logic
 	private long lastShootTime;
@@ -112,6 +112,7 @@ public class CastleDefender extends Mob {
 		this.arrowDmg = getArrowDmg();
 		this.HEAL_COOL_DOWN = getHealCooldown();
 		this.healAmount = getHealAmount();
+		this.attackSpeed = 1.5;
 
 		// set ngẫu nhiên frame cho từng con mob (ngẫu nhiên hóa chuyển động)
 		this.animFrame = Screen.rand.nextInt(8);
@@ -234,6 +235,10 @@ public class CastleDefender extends Mob {
 
 		long elapsed = now - lastShootTime;
 		if (elapsed >= cooldownMs){
+			if (!hasShotArrow){
+				shootArrow();
+				hasShotArrow = true;
+			}
 			lastShootTime = now;
 			hasShotArrow = false;
 			elapsed = 0;
@@ -413,22 +418,22 @@ public class CastleDefender extends Mob {
 
 	// --- Dynamic Hero Stats (Merged from MinionStats) ---
 	public static int getMaxHealth() {
-		return 1200 + 100 * Screen.buffHp;
+		return 500 + 50 * Screen.buffHp;
 	}
 	public static long getHealCooldown() {
-		return 1000L * (100 - 2 * Screen.buffHpRe) / 100;
+		return 2000L * (100 - 2 * Screen.buffHpRe) / 100;
 	}
 	public static int getHealAmount() {
-		return 150 + 5 * Screen.buffHpRe;
+		return 50 + 10 * Screen.buffHpRe;
 	}
 	public static int getDmgReduction() {
 		return Screen.buffShield;
 	}
 	public static int getArrowDmg() {
-		return 150 + 20 * Screen.buffADmg;
+		return 15 + 3 * Screen.buffADmg;
 	}
 	public static int getSwordDmg() {
-		return 200 + 25 * Screen.buffSDmg;
+		return 35 + 8 * Screen.buffSDmg;
 	}
 	
 }

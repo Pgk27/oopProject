@@ -5,15 +5,23 @@ import core.Screen;
 public class SlimeMob extends Mob {
 	public SlimeMob(){
 		super();
-		this.walkSpeed = 3;
+		this.walkSpeed = 8;
+		this.health = 260;
+		this.maxHealth = 260;
 		this.spawnTime = 1200;
 		this.renderScale = 1.8;
-		this.dmgReduction = 0.50;
-		this.attackDmg = 1.5;
-		this.attackSpeed = 0.65;
+		this.dmgReduction = 0.25;
+		this.attackDmg = 10;
+		this.attackSpeed = 0.60;
+		this.rewardCoin = 3;
 		this.totalCombatFrames = Screen.mobSlimeAttack1Anim.length;
 		this.hitFrame = Screen.mobSlimeAttack1Anim.length - 1;
 		this.attackSound = Screen.sound.sfxBite;
+	}
+
+	@Override
+	public int getCastleDamage() {
+		return 1;
 	}
 	
 	public Image getSprite(){

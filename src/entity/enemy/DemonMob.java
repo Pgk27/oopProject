@@ -6,14 +6,22 @@ public class DemonMob extends Mob {
 	public DemonMob() {
 		super();
 		this.walkSpeed = 5;
+		this.health = 140;
+		this.maxHealth = 140;
 		this.spawnTime = 1200;
 		this.renderScale = 1.3;
-		this.dmgReduction = 0.25;
-		this.attackDmg = 1.5;
+		this.dmgReduction = 0.15;
+		this.attackDmg = 8;
 		this.attackSpeed = 0.75;
+		this.rewardCoin = 2;
 		this.totalCombatFrames = Screen.mobDemonAttack1Anim.length;
 		this.hitFrame = Screen.mobDemonAttack1Anim.length-2;
 		this.attackSound = Screen.sound.sfxSlash;
+	}
+
+	@Override
+	public int getCastleDamage() {
+		return 1;
 	}
 
 	@Override

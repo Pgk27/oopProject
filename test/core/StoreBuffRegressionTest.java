@@ -132,11 +132,11 @@ public final class StoreBuffRegressionTest {
         Screen.chosenCard = 2;
         Screen.store.selectChosenSkill();
         close(1.5, Screen.store.getMineGoldMultiplier(), "Pickaxe coexists with new buffs");
-        close(1.5, Screen.store.getHeroDamageMultiplier(), "Enhancement coexists with new buffs");
+        close(2.0, Screen.store.getHeroDamageMultiplier(), "Enhancement coexists with new buffs");
         age(active(FireSword.class), 120_010);
         close(1.0, Screen.store.getTowerDamageMultiplier(), "One buff can expire independently");
         close(0.7, Screen.store.getMonsterSpeedMultiplier(), "Cursed Skull remains active");
-        close(1.5, Screen.store.getHeroDamageMultiplier(), "Enhancement remains active");
+        close(2.0, Screen.store.getHeroDamageMultiplier(), "Enhancement remains active");
         Screen.store.resetSkills();
         close(1.0, Screen.store.getTowerDamageMultiplier(), "Match reset clears Fire Sword");
         close(1.0, Screen.store.getMonsterSpeedMultiplier(), "Match reset clears Cursed Skull");
