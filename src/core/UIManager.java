@@ -512,10 +512,10 @@ public class UIManager {
     public static UIButton backInGameShop = createButton(5, 5, 50, 35, () -> Screen.gameState = Constants.TITLE_SCREEN);
     public static UIButton backInGacha = createButton(5, 5, 50, 35, () -> Screen.gameState = Constants.TITLE_SCREEN);
 
-    public static UIButton buyGoldenPickaxe = new BuyItemButton(350, 465, 80, 30, 50, () -> Screen.goldenPickaxe++);
-    public static UIButton buyFireSword = new BuyItemButton(622, 465, 80, 30, 50, () -> Screen.fireSword++);
-    public static UIButton buyCursedSkull = new BuyItemButton(350, 648, 80, 30, 50, () -> Screen.cursedSkull++);
-    public static UIButton buyPaperPlane = new BuyItemButton(622, 648, 80, 30, 50, () -> Screen.paperPlane++);
+    public static UIButton buyGoldenPickaxe = new BuyItemButton(360, 465, 80, 30, 50, () -> Screen.goldenPickaxe++);
+    public static UIButton buyFireSword = new BuyItemButton(632, 465, 80, 30, 50, () -> Screen.fireSword++);
+    public static UIButton buyCursedSkull = new BuyItemButton(360, 648, 80, 30, 50, () -> Screen.cursedSkull++);
+    public static UIButton buyPaperPlane = new BuyItemButton(632, 648, 80, 30, 50, () -> Screen.paperPlane++);
 
     public static UIButton buyHeart = new UIButton(938, 646, 56, 35) {
         @Override
@@ -644,11 +644,16 @@ public class UIManager {
     // =========================================================================
 
     public static UIButton menuLose = createButton(280, 580, 220, 55, () -> Screen.gameState = Constants.TITLE_SCREEN);
-    public static UIButton menuWin = createButton(280, 580, 220, 55, () -> Screen.gameState = Constants.TITLE_SCREEN);
+    public static UIButton menuWin = createButton(280, 580, 220, 55, () -> {
+        Screen.rielLevel++;
+        Screen.gameState = Constants.TITLE_SCREEN; 
+    });
+
     public static UIButton again = createButton(720, 580, 220, 55, () -> {
         Screen.gameState = Constants.IN_GAME;
         Screen.startGame();
     });
+
     public static UIButton next = createButton(720, 580, 220, 55, () -> {
         Screen.rielLevel++;
         Screen.startGame();

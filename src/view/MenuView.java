@@ -118,7 +118,7 @@ public class MenuView {
         g.drawString("Wave survived: " + Screen.waveManager.getTotalWaves() + "/" + Screen.waveManager.getTotalWaves(), 225, 435);
         g.drawString("Battle Duration: " + Screen.gameTime + " seconds", 225, 460);
         g.drawString("Enermy Killed: " + Screen.killed, 225, 485);
-        g.drawString("Enermy Esscaped: " + (-Screen.health + Screen.healthDauTran), 225, 510);
+        g.drawString("Enermy Escaped: " + (-Screen.health + Screen.healthDauTran), 225, 510);
         g.drawString("Remaining Health: " + Screen.health, 225, 535);
 
         g.drawImage(Screen.tiles.iconCoin, 630, 390, 100, 100, null);
@@ -140,7 +140,7 @@ public class MenuView {
         g.drawString("Wave survived: " + (Screen.waveManager.getCurrentWave() - 1) + "/" + Screen.waveManager.getTotalWaves(), 225, 435);
         g.drawString("Battle Duration: " + Screen.gameTime + " seconds", 225, 460);
         g.drawString("Enermy Killed: " + Screen.killed, 225, 485);
-        g.drawString("Enermy Esscaped: " + Screen.healthDauTran, 225, 510);
+        g.drawString("Enermy Escaped: " + Screen.healthDauTran, 225, 510);
         g.drawString("Remaining Health: " + Screen.health, 225, 535);
 
         g.drawImage(Screen.tiles.iconCoin, 630, 390, 100, 100, null);

@@ -12,11 +12,14 @@ public class OrcMob extends Mob{
 	// scale kích thước cho một số mob có frame ảnh rộng
 	public OrcMob() {
 		this.walkSpeed = 2; // lower is faster
+		this.health = 60;
+		this.maxHealth = 60;
 		this.spawnTime = 1600;
 		this.renderScale = 1.5;
 		this.dmgReduction = 0;
-		this.attackDmg = 10;
-		this.attackSpeed = 0.75;
+		this.attackDmg = 6;
+		this.attackSpeed = 0.70;
+		this.rewardCoin = 1;
 		this.totalCombatFrames = Screen.mobOrcAttack1Anim.length;
 		this.hitFrame = Screen.mobOrcAttack1Anim.length - 1;
 		this.attackSound = Screen.sound.sfxSlash;

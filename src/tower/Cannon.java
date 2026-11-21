@@ -6,8 +6,8 @@ import core.Constants;
 
 public class Cannon extends Tower {
     public Cannon(int x, int y, int width, int height) {
-        // Truyền thông số: Tầm bắn 70, Sát thương 2, frame bắn: 2, ID tháp
-        super(x, y, width, height, 70, 1, 2, Constants.CANNON_TOWER); //check id
+        // Truyền thông số: Tầm bắn 160, Sát thương 20, frame bắn: 2, ID tháp
+        super(x, y, width, height, 160, 20, 2, Constants.CANNON_TOWER); //check id
         this.shootSound = Screen.sound.boomShot;
     }
 

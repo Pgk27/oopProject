@@ -6,8 +6,8 @@ import core.Constants;
 
 public class MageTower extends Tower {
     public MageTower(int x, int y, int width, int height) {
-        // Truyền thông số: Tầm bắn 100, Sát thương 2, frame bắn 5, ID tháp
-        super(x, y, width, height, 100, 2, 5, Constants.MAGE_TOWER); 
+        // Truyền thông số: Tầm bắn 240, Sát thương 8, frame bắn 5, ID tháp
+        super(x, y, width, height, 240, 8, 5, Constants.MAGE_TOWER); 
         this.shootSound = Screen.sound.spellCast;
     }
 

@@ -85,8 +85,8 @@ public class Screen extends JPanel implements Runnable {
 	public static final int gachaMercenary=3;
 	public static final int summon=4;
 
-	public static int heroXp=999999;
-	public static int heroLevel=1;
+	public static int heroXp = 100;
+	public static int heroLevel = 1;
 	public static int[] upHeroXp = new int[26];
 	public static int[] upHeroCoin = new int[26];
 	public static int[] upHeroShard = new int[26];
@@ -103,12 +103,12 @@ public class Screen extends JPanel implements Runnable {
 	public static int chosenCard = 0; // 1=BH, 2=Enhance, 3=Mercenary
 	public static String strChosenCard = "None";
 
-	public static int coinage = 9999;
+	public static int coinage = 100;
 	public static int heroXpDauTran = 0;
 	public static int coinDauTran;
 	public static int healthDauTran;
-	public static int shard =99999;
-	public static int energyCore =999;
+	public static int shard = 100;
+	public static int energyCore = 10;
 	public static int remainingPoint = 5 * heroLevel;
 	public static int maxPoint = 5 * heroLevel;
 
@@ -140,8 +140,8 @@ public class Screen extends JPanel implements Runnable {
 	public static int offsetX = 0;
 	public static int offsetY = 0;
 
-	public static int health = 20000000;
-	public static int maxHealth = 20;
+	public static int health = 25;
+	public static int maxHealth = 25;
 	public static int killed = 0;
     public static int killsToWin = 0;
 
@@ -225,6 +225,9 @@ public class Screen extends JPanel implements Runnable {
 
 	static void startGame() {
 		level = (int) ((rielLevel - 1) % 3) + 1;
+		if (health <= 0) {
+			health = maxHealth;
+		}
 		loadLevel();
 		Screen.coinDauTran = coinage;
 		Screen.healthDauTran = health;

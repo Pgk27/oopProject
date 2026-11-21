@@ -12,8 +12,8 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Comparator;
-import spell.BomberPlane;
-import spell.Spell;
+
+import spell.*;
 
 /**
  * Xu ly render cho che do choi trong tran (IN_GAME),
@@ -117,17 +117,17 @@ public class InGameRenderer {
         g.drawImage(Screen.tiles.tileBuy, 0, 0, width, height, null);
         g.setColor(Screen.tiles.darkSilver);
         g.setFont(Screen.tiles.pixelFontvSmall);
-        g.drawString("gold mine +50%", 240, 479);
-        g.drawString("in 2 minutes", 240, 491);
+        g.drawString("Gold Mine +" + (int) (GoldenPickaxe.GOLD_MULTIPLIER * 100) + "%", 240, 479);
+        g.drawString("In " + (int) (GoldenPickaxe.DURATION_MS) / 1000 + " seconds", 240, 491);
 
-        g.drawString("tower dps +50%", 512, 479);
-        g.drawString("in 2 minutes", 512, 491);
+        g.drawString("Tower DMG +" + (int) (FireSword.DAMAGE_MULTIPLIER * 100) + "%", 512, 479);
+        g.drawString("In " + (int) (FireSword.DURATION_MS) / 1000 + " seconds", 512, 491);
 
-        g.drawString("monster speed ", 240, 662);
-        g.drawString("-30% in 2 minutes", 240, 674);
+        g.drawString("Monster Speed ", 240, 662);
+        g.drawString("-" + (int) (1 - CursedSkull.SPEED_MULTIPLIER * 100) + "% in 2 minutes", 240, 674);
 
-        g.drawString("Boommmm", 512, 662);
-        g.drawString("Destroy all !!!", 512, 674);
+        g.drawString("BOOOOOOMMM", 512, 662);
+        g.drawString("INSTANT KILL!!!", 512, 674);
 
         UIManager.backInGacha.renderNut(g);
         UIManager.buyGoldenPickaxe.renderNut(g);

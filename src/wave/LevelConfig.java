@@ -20,66 +20,77 @@ public class LevelConfig {
         LevelConfig config = new LevelConfig();
 
         if (level == 1) {
-            // LEVEL 1
-            // Wave 1 (0:00 - 0:25): 10x Slime (Spawn mỗi 2s).
-            WaveData w1 = new WaveData(5000); // 0s
-            w1.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 1, 500, 1.0, 1.0, 1.0, 4));
-            w1.addSpawn(new MobSpawnInfo(Constants.SLIME_MONSTER, 1, 500, 1.0, 1.0, 1.0, 4)); // Slime
+            // LEVEL 1: The Frontier Defense (Trung bình - Dễ)
+            // Wave 1: 8 Orc + 2 Slime
+            WaveData w1 = new WaveData(3000);
+            w1.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 8, 500, 1.0, 1.0, 1.0, 2));
+            w1.addSpawn(new MobSpawnInfo(Constants.SLIME_MONSTER, 2, 700, 1.0, 1.0, 1.0, 1));
             config.waves.add(w1);
 
-            // Wave 2 (0:30 - 0:55): 8x Slime + 3x Orc xuất hiện xen kẽ (Spawn mỗi 1.5s).
-            WaveData w2 = new WaveData(30000); // 30s
-            w2.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 28, 500, 1.0, 1.0, 1.0, 4)); // Slime
-            w2.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 28, 500, 1.0, 1.0, 1.0, 4)); // Orc
+            // Wave 2: 12 Orc + 4 Demon + 3 Slime
+            WaveData w2 = new WaveData(30000);
+            w2.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 12, 450, 1.0, 1.0, 1.0, 3));
+            w2.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 4, 600, 1.0, 1.0, 1.0, 2));
+            w2.addSpawn(new MobSpawnInfo(Constants.SLIME_MONSTER, 3, 650, 1.0, 1.0, 1.0, 1));
             config.waves.add(w2);
+
+            // Wave 3: 16 Orc + 8 Demon + 5 Slime
+            WaveData w3 = new WaveData(65000);
+            w3.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 16, 420, 1.05, 1.0, 1.0, 4));
+            w3.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 8, 500, 1.05, 1.0, 1.0, 2));
+            w3.addSpawn(new MobSpawnInfo(Constants.SLIME_MONSTER, 5, 600, 1.1, 1.0, 1.0, 2));
+            config.waves.add(w3);
 
         } else if (level == 2) {
-            // LEVEL 2
-            // Wave 1 (0:00 - 0:45): 15x Slime + 5x Orc.
-            WaveData w1 = new WaveData(5000);
-            w1.addSpawn(new MobSpawnInfo(Constants.SLIME_MONSTER, 35, 500, 1.0, 1.0, 1.0, 5));
-            w1.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 35, 500, 1.0, 1.0, 1.0, 5));
+            // LEVEL 2: The Blighted Valley (Trung bình - Dễ)
+            // Wave 1: 15 Orc + 6 Demon
+            WaveData w1 = new WaveData(4000);
+            w1.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 15, 420, 1.05, 1.0, 1.0, 3));
+            w1.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 6, 550, 1.05, 1.0, 1.0, 2));
             config.waves.add(w1);
 
-            // Wave 2 (0:55 - 1:45): 10x Orc + 5x Demon (Máu tăng nhẹ 10%).
-            WaveData w2 = new WaveData(55000); // 55s
-            w2.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 38, 500, 1.1, 1.0, 1.0, 5)); // Orc
-            w2.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 38, 500, 1.1, 1.0, 1.0, 5)); // Demon
+            // Wave 2: 12 Demon + 8 Slime + 14 Orc
+            WaveData w2 = new WaveData(40000);
+            w2.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 12, 450, 1.1, 1.0, 1.0, 3));
+            w2.addSpawn(new MobSpawnInfo(Constants.SLIME_MONSTER, 8, 550, 1.15, 1.0, 1.0, 2));
+            w2.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 14, 400, 1.1, 1.0, 1.0, 3));
             config.waves.add(w2);
 
-            // Wave 3 (1:55 - 2:45): 15x Slime + 10x Orc + 3x Demon xuất hiện hỗn hợp.
-            WaveData w3 = new WaveData(115000); // 1m55s = 115s
-            w3.addSpawn(new MobSpawnInfo(Constants.SLIME_MONSTER, 30, 500, 1.0, 1.0, 1.0, 6));
-            w3.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 30, 500, 1.0, 1.0, 1.0, 5));
-            w3.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 30, 500, 1.0, 1.0, 1.0, 5));
+            // Wave 3: 20 Orc + 14 Demon + 10 Slime
+            WaveData w3 = new WaveData(85000);
+            w3.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 20, 380, 1.15, 1.05, 1.0, 4));
+            w3.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 14, 450, 1.15, 1.0, 1.0, 3));
+            w3.addSpawn(new MobSpawnInfo(Constants.SLIME_MONSTER, 10, 500, 1.2, 1.0, 1.0, 2));
             config.waves.add(w3);
 
         } else {
-            // LEVEL 3
-            // Wave 1 (0:00 - 1:15): 20x Slime + 10x Orc.
-            WaveData w1 = new WaveData(5000);
-            w1.addSpawn(new MobSpawnInfo(Constants.SLIME_MONSTER, 32, 500, 1.0, 1.0, 1.0, 4));
-            w1.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 32, 500, 1.0, 1.0, 1.0, 4));
+            // LEVEL 3: The Abyssal Citadel (Trung bình - Dễ)
+            // Wave 1: 18 Orc + 10 Demon + 6 Slime
+            WaveData w1 = new WaveData(4000);
+            w1.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 18, 400, 1.1, 1.05, 1.0, 3));
+            w1.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 10, 500, 1.1, 1.0, 1.0, 2));
+            w1.addSpawn(new MobSpawnInfo(Constants.SLIME_MONSTER, 6, 550, 1.15, 1.0, 1.0, 2));
             config.waves.add(w1);
 
-            // Wave 2 (1:25 - 2:30): 15x Orc + 8x Demon (Máu tăng 20%).
-            WaveData w2 = new WaveData(85000); // 1m25s = 85s
-            w2.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 40, 500, 1.2, 1.0, 1.2, 5));
-            w2.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 30, 500, 1.2, 1.0, 1.2, 5));
+            // Wave 2: 18 Demon + 10 Slime + 20 Orc
+            WaveData w2 = new WaveData(45000);
+            w2.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 18, 420, 1.15, 1.0, 1.0, 3));
+            w2.addSpawn(new MobSpawnInfo(Constants.SLIME_MONSTER, 10, 500, 1.2, 1.0, 1.0, 2));
+            w2.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 20, 380, 1.15, 1.05, 1.0, 4));
             config.waves.add(w2);
 
-            // Wave 3 (2:40 - 3:45): 25x Slime (Spam tốc độ cao) + 12x Orc + 6x Demon.
-            WaveData w3 = new WaveData(160000); // 2m40s = 160s
-            w3.addSpawn(new MobSpawnInfo(Constants.SLIME_MONSTER, 30, 500, 1.0, 1.0, 1.0, 6)); // Spam Slime
-            w3.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 30, 500, 1.0, 1.0, 1.0, 5));
-            w3.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 30, 500, 1.0, 1.0, 1.0, 5));
+            // Wave 3: 24 Orc + 16 Demon + 12 Slime
+            WaveData w3 = new WaveData(95000);
+            w3.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 24, 350, 1.2, 1.1, 1.0, 4));
+            w3.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 16, 400, 1.2, 1.05, 1.0, 3));
+            w3.addSpawn(new MobSpawnInfo(Constants.SLIME_MONSTER, 12, 480, 1.25, 1.0, 1.0, 3));
             config.waves.add(w3);
 
-            // Wave 4 (3:55 - 4:45): Wave tổng hợp dồn dập: 20x Slime + 15x Orc + 10x Demon (Máu & Tốc độ tăng 15-20%).
-            WaveData w4 = new WaveData(235000); // 3m55s = 235s
-            w4.addSpawn(new MobSpawnInfo(Constants.SLIME_MONSTER, 30, 500, 1.2, 1.2, 1.5, 6));
-            w4.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 30, 500, 1.2, 1.15, 1.5, 6));
-            w4.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 30, 500, 1.2, 1.15, 1.5, 6));
+            // Wave 4: Final Wave (12 Slime + 18 Demon + 25 Orc)
+            WaveData w4 = new WaveData(150000);
+            w4.addSpawn(new MobSpawnInfo(Constants.SLIME_MONSTER, 12, 420, 1.35, 1.0, 1.0, 3));
+            w4.addSpawn(new MobSpawnInfo(Constants.BLOOD_DEMON_MONSTER, 18, 380, 1.25, 1.05, 1.0, 3));
+            w4.addSpawn(new MobSpawnInfo(Constants.ORC_MONSTER, 25, 340, 1.2, 1.1, 1.0, 5));
             config.waves.add(w4);
         }
 
